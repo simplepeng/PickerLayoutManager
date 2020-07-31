@@ -24,7 +24,7 @@ class PickerLayoutManager(
         const val TAG = "PickerLayoutManager"
     }
 
-    private fun debug(msg: String) {
+    private fun logDebug(msg: String) {
         if (!BuildConfig.DEBUG) return
         Log.d(TAG, msg)
     }
@@ -74,7 +74,7 @@ class PickerLayoutManager(
 
         mItemWidth = getDecoratedMeasuredWidth(itemView)
         mItemHeight = getDecoratedMeasuredHeight(itemView)
-        debug("itemWidth = $mItemWidth -- itemHeight = $mItemHeight")
+        logDebug("itemWidth = $mItemWidth -- itemHeight = $mItemHeight")
         detachAndScrapView(itemView, recycler)
 
         if (orientation == HORIZONTAL) {
@@ -116,16 +116,16 @@ class PickerLayoutManager(
         state: RecyclerView.State
     ): Int {
         if (dy == 0 || childCount == 0) return 0
-//        debug("dy == $dy")
+        logDebug("dy == $dy")
 
         val realDy = fillVertically(recycler, dy)
         val consumed = if (isLoop) dy else realDy
-        debug("consumed == $consumed")
+        logDebug("consumed == $consumed")
 
-        recyclerVertically(recycler, consumed)
         offsetChildrenVertical(-consumed)
+        recyclerVertically(recycler, consumed)
 
-        logChildCount(recycler)
+//        logChildCount(recycler)
         return consumed
     }
 
@@ -183,7 +183,7 @@ class PickerLayoutManager(
 
         val nextPosition = getNextPosition(lastView)
         //如果不是无限循环模式且已经是最后一个itemView，
-        debug("height == $height")
+//        debug("height == $height")
         if (!isLoop && nextPosition > itemCount - 1) return min(dy, lastBottom - height)
 
         var top = lastBottom
@@ -195,11 +195,11 @@ class PickerLayoutManager(
             bottom = top + getDecoratedMeasuredHeight(child)
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
 
-            if (bottom > height) break
+//            if (bottom > height) break
             top = bottom
         }
 
-        return if (isLoop) dy else dy
+        return dy
     }
 
     //dy<0
@@ -240,10 +240,12 @@ class PickerLayoutManager(
 
             //dy>0,recyclerStart
             if (getDecoratedBottom(child) - dy < 0) {
+                logDebug("recyclerStart -- ${getPosition(child)}")
                 removeAndRecycleView(child, recycler)
             }
             //dy<0,recyclerEnd
             if (getDecoratedTop(child) - dy > height) {
+                logDebug("recyclerEnd -- ${getPosition(child)}")
                 removeAndRecycleView(child, recycler)
             }
         }

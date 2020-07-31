@@ -14,7 +14,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:background="@color/colorPrimary"
+        android:background="@color/colorPrimary"
         tools:layout_height="200dp"
         tools:layout_width="match_parent" />
 
