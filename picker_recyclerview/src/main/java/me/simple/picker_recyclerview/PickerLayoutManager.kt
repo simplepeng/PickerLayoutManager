@@ -3,6 +3,7 @@ package me.simple.picker_recyclerview
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.max
 import kotlin.math.min
 
 class PickerLayoutManager(
@@ -10,6 +11,8 @@ class PickerLayoutManager(
     private val visibleCount: Int = 3,
     private val isLoop: Boolean = false
 ) : RecyclerView.LayoutManager() {
+
+    private var mStartPosition = 0
 
     companion object {
         const val HORIZONTAL = RecyclerView.HORIZONTAL
@@ -44,7 +47,7 @@ class PickerLayoutManager(
     private fun getInnerItemCount() = if (isLoop) Int.MAX_VALUE else super.getItemCount()
 
     override fun isAutoMeasureEnabled(): Boolean {
-        return true
+        return false
     }
 
     override fun onMeasure(
@@ -139,7 +142,7 @@ class PickerLayoutManager(
                 return fillVerticallyEnd(recycler, dy)
             }
             dy < 0 -> {
-                fillVerticallyStart(recycler, dy)
+                return fillVerticallyStart(recycler, dy)
             }
         }
         return dy
@@ -148,7 +151,12 @@ class PickerLayoutManager(
     private fun initFillVertically(recycler: RecyclerView.Recycler) {
         var top = 0
         var bottom: Int
-        for (i in 0 until visibleCount) {
+        var endPosition = mStartPosition + visibleCount
+        if (!isLoop && endPosition > itemCount - 1) {
+            endPosition = itemCount
+        }
+
+        for (i in mStartPosition until endPosition) {
             val child = getViewForPosition(recycler, i)
             addView(child)
             measureChildWithMargins(child, 0, 0)
@@ -191,14 +199,16 @@ class PickerLayoutManager(
     }
 
     //dy<0
-    private fun fillVerticallyStart(recycler: RecyclerView.Recycler, dy: Int) {
-        if (childCount == 0) return
+    private fun fillVerticallyStart(recycler: RecyclerView.Recycler, dy: Int): Int {
+        if (childCount == 0) return 0
 
-        val firstView = getChildAt(0) ?: return
-        if (getDecoratedBottom(firstView) - dy < 0) return
+        val firstView = getChildAt(0) ?: return 0
+        val firstBottom = getDecoratedBottom(firstView)
+        if (firstBottom - dy < 0) return dy
 
         val prePosition = getPrePosition(firstView)
-        if (!isLoop && prePosition < 0) return
+        //如果不是无限循环模式且已经填充了position=0的item
+        if (!isLoop && prePosition < 0) return max(dy, getDecoratedTop(firstView))
 
         var bottom = getDecoratedTop(firstView)
         var top: Int
@@ -212,6 +222,8 @@ class PickerLayoutManager(
             if (top < 0) break
             bottom = top
         }
+
+        return dy
     }
 
     private fun recyclerVertically(
@@ -251,6 +263,28 @@ class PickerLayoutManager(
         recycler: RecyclerView.Recycler,
         position: Int
     ): View {
+        if (isLoop && position > itemCount - 1) {
+            return recycler.getViewForPosition(position % itemCount)
+        }
+
         return recycler.getViewForPosition(position)
+    }
+
+    override fun scrollToPosition(position: Int) {
+        mStartPosition = if (position > getInnerItemCount() - 1) {
+            getInnerItemCount() - 1
+        } else {
+            position
+        }
+
+        requestLayout()
+    }
+
+    override fun smoothScrollToPosition(
+        recyclerView: RecyclerView,
+        state: RecyclerView.State,
+        position: Int
+    ) {
+
     }
 }

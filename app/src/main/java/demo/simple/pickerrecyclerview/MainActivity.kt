@@ -6,11 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_picker.*
 import me.simple.picker_recyclerview.PickerLayoutManager
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,6 +33,26 @@ class MainActivity : AppCompatActivity() {
             mItems.add(i.toString())
         }
         mAdapter.notifyDataSetChanged()
+    }
+
+    fun reLayout(view: View) {
+        val isLoop = checkBoxIsLoop.isChecked
+        val visibleCount = etVisibleCount.text.toString().toInt()
+        val lm = PickerLayoutManager(PickerLayoutManager.VERTICAL, visibleCount, isLoop)
+        pickerRecyclerView.layoutManager = lm
+    }
+
+    fun scrollTo(view: View) {
+        try {
+            val position = etScrollTo.text.toString().toInt()
+            pickerRecyclerView.scrollToPosition(position)
+        } catch (e: Exception) {
+            toast(e.message)
+        }
+    }
+
+    private fun toast(msg: String?) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
     inner class PickerAdapter : RecyclerView.Adapter<PickerViewHolder>() {

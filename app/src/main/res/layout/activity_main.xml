@@ -13,6 +13,71 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/colorPrimary"
+        tools:layout_height="200dp"
+        tools:layout_width="match_parent" />
 
+    <CheckBox
+        android:id="@+id/checkBoxIsLoop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="无限循环"
+        app:layout_constraintStart_toStartOf="@+id/pickerRecyclerView"
+        app:layout_constraintTop_toBottomOf="@+id/pickerRecyclerView" />
+
+    <EditText
+        android:id="@+id/etVisibleCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:gravity="center"
+        android:hint="可见数量"
+        android:inputType="number"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="3"
+        android:textSize="13dp"
+        app:layout_constraintLeft_toRightOf="@id/checkBoxIsLoop"
+        app:layout_constraintTop_toTopOf="@+id/checkBoxIsLoop"
+        tools:layout_editor_absoluteX="10dp" />
+
+    <Button
+        android:id="@+id/btnOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:onClick="reLayout"
+        android:text="确定"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toEndOf="@+id/etVisibleCount"
+        app:layout_constraintTop_toTopOf="@+id/etVisibleCount" />
+
+    <EditText
+        android:id="@+id/etScrollTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:hint="scrollTo"
+        android:inputType="number"
+        android:maxLines="1"
+        android:singleLine="true"
+        app:layout_constraintStart_toStartOf="@+id/checkBoxIsLoop"
+        app:layout_constraintTop_toBottomOf="@+id/btnOk" />
+
+    <Button
+        android:id="@+id/btnScrollTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:onClick="scrollTo"
+        android:text="确定"
+        android:textColor="@android:color/white"
+        app:layout_constraintLeft_toRightOf="@id/etScrollTo"
+        app:layout_constraintTop_toTopOf="@+id/etScrollTo"
+        tools:layout_editor_absoluteX="10dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
