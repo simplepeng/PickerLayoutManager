@@ -22,8 +22,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         pickerRecyclerView.run {
-            layoutManager =
-                GitHubPickerLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
+            layoutManager = PickerLayoutManager()
 //            layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = mAdapter
         }
@@ -47,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: PickerViewHolder, position: Int) {
-            holder.tvItem.text = mItems[position].toString()
+            holder.tvItem.text = mItems[position]
         }
 
     }

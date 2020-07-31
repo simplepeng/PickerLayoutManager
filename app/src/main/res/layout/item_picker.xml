@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorAccent"
     android:minHeight="70dp">
 
     <TextView
@@ -11,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="1"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="19dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,10 +18,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:layout_width="match_parent"
-        android:background="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_height="1dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
