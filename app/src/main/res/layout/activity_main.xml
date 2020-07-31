@@ -62,7 +62,9 @@
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:hint="scrollTo"
+        android:text="7"
         android:inputType="number"
+        android:textSize="13dp"
         android:maxLines="1"
         android:singleLine="true"
         app:layout_constraintStart_toStartOf="@+id/checkBoxIsLoop"
@@ -72,12 +74,42 @@
         android:id="@+id/btnScrollTo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="10dp"
         android:backgroundTint="@color/colorPrimary"
         android:onClick="scrollTo"
+        android:textSize="13dp"
         android:text="确定"
         android:textColor="@android:color/white"
         app:layout_constraintLeft_toRightOf="@id/etScrollTo"
         app:layout_constraintTop_toTopOf="@+id/etScrollTo"
         tools:layout_editor_absoluteX="10dp" />
+
+    <EditText
+        android:id="@+id/etSmoothScrollTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:hint="smoothScrollTo"
+        android:inputType="number"
+        android:maxLines="1"
+        android:text="16"
+        android:textSize="13dp"
+        android:singleLine="true"
+        app:layout_constraintLeft_toRightOf="@id/btnScrollTo"
+        app:layout_constraintStart_toStartOf="@+id/etScrollTo"
+        app:layout_constraintTop_toBottomOf="@+id/etScrollTo" />
+
+    <Button
+        android:id="@+id/btnSmoothScrollTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:textSize="13dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:onClick="smoothScrollTo"
+        android:text="确定"
+        android:textColor="@android:color/white"
+        app:layout_constraintLeft_toRightOf="@id/etSmoothScrollTo"
+        app:layout_constraintTop_toTopOf="@+id/etSmoothScrollTo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

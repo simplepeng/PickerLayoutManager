@@ -51,6 +51,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun smoothScrollTo(view: View) {
+        try {
+            val position = etSmoothScrollTo.text.toString().toInt()
+            pickerRecyclerView.smoothScrollToPosition(position)
+        } catch (e: Exception) {
+            toast(e.message)
+        }
+    }
+
     private fun toast(msg: String?) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
