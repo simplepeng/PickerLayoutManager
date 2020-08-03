@@ -126,10 +126,10 @@ class PickerLayoutManager(
 
         val realDy = fillVertically(recycler, dy)
         val consumed = if (isLoop) dy else realDy
-//        logDebug("consumed == $consumed")
+        logDebug("consumed == $consumed")
 
         offsetChildrenVertical(-consumed)
-        recyclerVertically(recycler, consumed)
+//        recyclerVertically(recycler, consumed)
 
 //        logChildCount(recycler)
         return consumed
@@ -194,15 +194,19 @@ class PickerLayoutManager(
 
         var top = lastBottom
         var bottom: Int
+        var offsetHeight: Int = 0
         for (i in nextPosition until getInnerItemCount()) {
             val child = getViewForPosition(recycler, i)
             addView(child)
             measureChildWithMargins(child, 0, 0)
             bottom = top + getDecoratedMeasuredHeight(child)
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
+            offsetHeight += getDecoratedMeasuredHeight(child)
             logDebug("fillVerticallyEnd -- $i")
 
+            //这里判断修改，修改为：dy还剩余多少就还可以摆放多少个itemView
 //            if (bottom > height) break
+            if (offsetHeight >= dy) break
             top = bottom
         }
 
@@ -223,15 +227,17 @@ class PickerLayoutManager(
 
         var bottom = getDecoratedTop(firstView)
         var top: Int
+        var offsetHeight: Int = 0
         for (i in prePosition downTo 0) {
             val child = getViewForPosition(recycler, i)
             addView(child, 0)
             measureChildWithMargins(child, 0, 0)
             top = bottom - getDecoratedMeasuredHeight(child)
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
+            offsetHeight += dy
             logDebug("fillVerticallyStart -- $i")
 
-            if (top < 0) break
+            if (offsetHeight <= dy) break
             bottom = top
         }
 
@@ -245,28 +251,33 @@ class PickerLayoutManager(
         if (childCount == 0) return
 
         if (dy > 0) {
-            recycleStart(recycler)
+            recycleVerticallyStart(recycler, dy)
         } else {
-            recycleEnd(recycler)
+            recycleVerticallyEnd(recycler)
         }
     }
 
-    private fun recycleStart(recycler: RecyclerView.Recycler) {
+    private fun recycleVerticallyStart(
+        recycler: RecyclerView.Recycler,
+        dy: Int
+    ) {
+        var offsetHeight: Int = 0
         for (i in 0 until childCount) {
-            val child = getChildAt(i) ?: continue
+            val child = getChildAt(i)!!
             //stop here
-            if (getDecoratedBottom(child) + mItemHeight > 0) {
+            if (getDecoratedBottom(child) >= 0 - mItemHeight) {
                 recycleChildren(recycler, 0, i)
                 break
             }
+            offsetHeight += getDecoratedMeasuredHeight(child)
         }
     }
 
-    private fun recycleEnd(recycler: RecyclerView.Recycler) {
+    private fun recycleVerticallyEnd(recycler: RecyclerView.Recycler) {
         for (i in childCount - 1 downTo 0) {
-            val child = getChildAt(i) ?: continue
+            val child = getChildAt(i)!!
             //stop here
-            if (getDecoratedTop(child) < height) {
+            if (getDecoratedTop(child) < height + mItemHeight) {
                 recycleChildren(recycler, childCount - 1, i)
                 break
             }
@@ -281,6 +292,7 @@ class PickerLayoutManager(
         //recycleStart
         if (startIndex < endIndex) {
             for (i in startIndex until endIndex) {
+                getChildAt(i) ?: continue
                 val position = getPosition(getChildAt(i)!!)
                 logDebug("recycleStart -- $position")
                 removeAndRecycleViewAt(i, recycler)
@@ -289,6 +301,7 @@ class PickerLayoutManager(
         //recycleEnd
         if (startIndex > endIndex) {
             for (i in startIndex downTo endIndex + 1) {
+                getChildAt(i) ?: continue
                 val position = getPosition(getChildAt(i)!!)
                 logDebug("recycleEnd -- $position")
                 removeAndRecycleViewAt(i, recycler)
@@ -326,7 +339,6 @@ class PickerLayoutManager(
         if (isLoop && position > itemCount - 1) {
             return recycler.getViewForPosition(position % itemCount)
         }
-
         return recycler.getViewForPosition(position)
     }
 

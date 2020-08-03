@@ -62,7 +62,7 @@
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:hint="scrollTo"
-        android:text="7"
+        android:text="90"
         android:inputType="number"
         android:textSize="13dp"
         android:maxLines="1"
