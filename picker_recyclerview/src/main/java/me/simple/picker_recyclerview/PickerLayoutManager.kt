@@ -18,6 +18,9 @@ class PickerLayoutManager(
     private var mItemWidth = 0
     private var mItemHeight = 0
 
+    //增加一个偏移量减少误差
+    private var mItemOffset = 0
+
     companion object {
         const val HORIZONTAL = RecyclerView.HORIZONTAL
         const val VERTICAL = RecyclerView.VERTICAL
@@ -74,7 +77,8 @@ class PickerLayoutManager(
 
         mItemWidth = getDecoratedMeasuredWidth(itemView)
         mItemHeight = getDecoratedMeasuredHeight(itemView)
-        logDebug("itemWidth = $mItemWidth -- itemHeight = $mItemHeight")
+        mItemOffset = if (orientation == VERTICAL) mItemHeight / 2 else mItemWidth / 2
+        logDebug("itemWidth = $mItemWidth -- itemHeight = $mItemHeight -- mItemOffset == $mItemOffset")
         detachAndScrapView(itemView, recycler)
 
         if (orientation == HORIZONTAL) {
@@ -116,16 +120,16 @@ class PickerLayoutManager(
         state: RecyclerView.State
     ): Int {
         if (dy == 0 || childCount == 0) return 0
-        logDebug("dy == $dy")
+//        logDebug("dy == $dy")
 
         val realDy = fillVertically(recycler, dy)
         val consumed = if (isLoop) dy else realDy
-        logDebug("consumed == $consumed")
+//        logDebug("consumed == $consumed")
 
         offsetChildrenVertical(-consumed)
         recyclerVertically(recycler, consumed)
 
-//        logChildCount(recycler)
+        logChildCount(recycler)
         return consumed
     }
 
@@ -222,6 +226,7 @@ class PickerLayoutManager(
             measureChildWithMargins(child, 0, 0)
             top = bottom - getDecoratedMeasuredHeight(child)
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
+            logDebug("fillVerticallyStart -- $i")
 
             if (top < 0) break
             bottom = top
@@ -235,20 +240,70 @@ class PickerLayoutManager(
         dy: Int
     ) {
         if (childCount == 0) return
+
+        if (dy > 0) {
+            recycleStart(recycler)
+        } else {
+            recycleEnd(recycler)
+        }
+    }
+
+    private fun recycleStart(recycler: RecyclerView.Recycler) {
         for (i in 0 until childCount) {
             val child = getChildAt(i) ?: continue
-
-            //dy>0,recyclerStart
-            if (getDecoratedBottom(child) - dy < 0) {
+            //stop here
+            if (getDecoratedBottom(child) > 0) {
                 logDebug("recyclerStart -- ${getPosition(child)}")
-                removeAndRecycleView(child, recycler)
-            }
-            //dy<0,recyclerEnd
-            if (getDecoratedTop(child) - dy > height) {
-                logDebug("recyclerEnd -- ${getPosition(child)}")
-                removeAndRecycleView(child, recycler)
+//                removeAndRecycleView(child, recycler)
+                val startIndex = getPosition(getChildAt(0)!!)
+                recycleChildren(recycler, 0, i)
+                break
             }
         }
+    }
+
+    private fun recycleEnd(recycler: RecyclerView.Recycler) {
+        var top: Int
+
+        for (i in childCount - 1 downTo 0) {
+            val child = getChildAt(i) ?: continue
+            top = getDecoratedTop(child)
+            //stop here
+            if (top < height) {
+                logDebug("recyclerEnd -- ${getPosition(child)} -- top:$top -- height:$height")
+//                removeAndRecycleView(child, recycler)
+//                val startIndex = getPosition(getChildAt(childCount - 1)!!)
+                recycleChildren(recycler, childCount - 1, i)
+                break
+            }
+        }
+    }
+
+    private fun recycleChildren(
+        recycler: RecyclerView.Recycler,
+        startIndex: Int,
+        endIndex: Int
+    ) {
+        if (startIndex < endIndex) {
+            for (i in startIndex until endIndex) {
+                removeAndRecycleViewAt(i, recycler)
+            }
+        }
+
+        if (startIndex > endIndex) {
+            for (i in startIndex downTo endIndex + 1) {
+                removeAndRecycleViewAt(i, recycler)
+            }
+        }
+    }
+
+    private fun removeChildren(recycler: RecyclerView.Recycler) {
+        val scrapList = recycler.scrapList
+        logChildCount(recycler)
+        scrapList.forEach {
+            removeAndRecycleView(it.itemView, recycler)
+        }
+        logChildCount(recycler)
     }
 
     private fun getNextPosition(view: View): Int {
