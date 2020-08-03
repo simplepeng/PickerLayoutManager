@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             adapter = mAdapter
         }
 
-        for (i in 0..20) {
+        for (i in 0..100) {
             mItems.add(i.toString())
         }
         mAdapter.notifyDataSetChanged()
@@ -54,6 +54,15 @@ class MainActivity : AppCompatActivity() {
     fun smoothScrollTo(view: View) {
         try {
             val position = etSmoothScrollTo.text.toString().toInt()
+            pickerRecyclerView.smoothScrollToPosition(position)
+        } catch (e: Exception) {
+            toast(e.message)
+        }
+    }
+
+    fun smoothScrollTo2(view:View){
+        try {
+            val position = etSmoothScrollTo2.text.toString().toInt()
             pickerRecyclerView.smoothScrollToPosition(position)
         } catch (e: Exception) {
             toast(e.message)

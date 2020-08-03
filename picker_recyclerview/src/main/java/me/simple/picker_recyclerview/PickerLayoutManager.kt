@@ -1,8 +1,10 @@
 package me.simple.picker_recyclerview
 
 import android.graphics.PointF
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.max
@@ -12,7 +14,7 @@ class PickerLayoutManager(
     private val orientation: Int = VERTICAL,
     private val visibleCount: Int = 3,
     private val isLoop: Boolean = false
-) : RecyclerView.LayoutManager() {
+) : RecyclerView.LayoutManager(), RecyclerView.SmoothScroller.ScrollVectorProvider {
 
     private var mStartPosition = 0
     private var mItemWidth = 0
@@ -129,7 +131,7 @@ class PickerLayoutManager(
         offsetChildrenVertical(-consumed)
         recyclerVertically(recycler, consumed)
 
-        logChildCount(recycler)
+//        logChildCount(recycler)
         return consumed
     }
 
@@ -198,6 +200,7 @@ class PickerLayoutManager(
             measureChildWithMargins(child, 0, 0)
             bottom = top + getDecoratedMeasuredHeight(child)
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
+            logDebug("fillVerticallyEnd -- $i")
 
 //            if (bottom > height) break
             top = bottom
@@ -252,10 +255,7 @@ class PickerLayoutManager(
         for (i in 0 until childCount) {
             val child = getChildAt(i) ?: continue
             //stop here
-            if (getDecoratedBottom(child) > 0) {
-                logDebug("recyclerStart -- ${getPosition(child)}")
-//                removeAndRecycleView(child, recycler)
-                val startIndex = getPosition(getChildAt(0)!!)
+            if (getDecoratedBottom(child) + mItemHeight > 0) {
                 recycleChildren(recycler, 0, i)
                 break
             }
@@ -263,16 +263,10 @@ class PickerLayoutManager(
     }
 
     private fun recycleEnd(recycler: RecyclerView.Recycler) {
-        var top: Int
-
         for (i in childCount - 1 downTo 0) {
             val child = getChildAt(i) ?: continue
-            top = getDecoratedTop(child)
             //stop here
-            if (top < height) {
-                logDebug("recyclerEnd -- ${getPosition(child)} -- top:$top -- height:$height")
-//                removeAndRecycleView(child, recycler)
-//                val startIndex = getPosition(getChildAt(childCount - 1)!!)
+            if (getDecoratedTop(child) < height) {
                 recycleChildren(recycler, childCount - 1, i)
                 break
             }
@@ -284,14 +278,19 @@ class PickerLayoutManager(
         startIndex: Int,
         endIndex: Int
     ) {
+        //recycleStart
         if (startIndex < endIndex) {
             for (i in startIndex until endIndex) {
+                val position = getPosition(getChildAt(i)!!)
+                logDebug("recycleStart -- $position")
                 removeAndRecycleViewAt(i, recycler)
             }
         }
-
+        //recycleEnd
         if (startIndex > endIndex) {
             for (i in startIndex downTo endIndex + 1) {
+                val position = getPosition(getChildAt(i)!!)
+                logDebug("recycleEnd -- $position")
                 removeAndRecycleViewAt(i, recycler)
             }
         }
@@ -354,15 +353,41 @@ class PickerLayoutManager(
             toPosition = itemCount - 1
         }
 
-        val scroller = object : LinearSmoothScroller(recyclerView.context) {
-            override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {
-                val firstView = getChildAt(0) ?: return null
-                val y = targetPosition * mItemHeight - getDecoratedTop(firstView) + height
-                return PointF(0f, y.toFloat())
-            }
-        }
-        scroller.targetPosition = toPosition
-        startSmoothScroll(scroller)
+//        val scroller = object : LinearSmoothScroller(recyclerView.context) {
+//            override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {
+//                val firstView = getChildAt(0) ?: return null
+//                val y = targetPosition * mItemHeight - getDecoratedTop(firstView) + height
+//                return PointF(0f, y.toFloat())
+//            }
+//        }
+//        scroller.targetPosition = toPosition
+//        startSmoothScroll(scroller)
+
+        val linearSmoothScroller = LinearSmoothScroller(recyclerView.context)
+        linearSmoothScroller.targetPosition = position
+        startSmoothScroll(linearSmoothScroller)
     }
+
+    override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {
+        if (childCount == 0) return null
+        val firstChildPos = getPosition(getChildAt(0)!!)
+        val direction = if (targetPosition < firstChildPos) -1 else 1
+        return if (orientation == LinearLayoutManager.HORIZONTAL) {
+            PointF(direction.toFloat(), 0f)
+        } else {
+            PointF(0f, direction.toFloat())
+        }
+    }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        logDebug("onSaveInstanceState")
+        return super.onSaveInstanceState()
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        logDebug("onRestoreInstanceState")
+        super.onRestoreInstanceState(state)
+    }
+
 
 }

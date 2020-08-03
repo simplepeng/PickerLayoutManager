@@ -93,7 +93,7 @@
         android:hint="smoothScrollTo"
         android:inputType="number"
         android:maxLines="1"
-        android:text="16"
+        android:text="90"
         android:textSize="13dp"
         android:singleLine="true"
         app:layout_constraintLeft_toRightOf="@id/btnScrollTo"
@@ -112,4 +112,33 @@
         android:textColor="@android:color/white"
         app:layout_constraintLeft_toRightOf="@id/etSmoothScrollTo"
         app:layout_constraintTop_toTopOf="@+id/etSmoothScrollTo" />
+
+    <EditText
+        android:id="@+id/etSmoothScrollTo2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:hint="smoothScrollTo"
+        android:inputType="number"
+        android:maxLines="1"
+        android:text="10"
+        android:textSize="13dp"
+        android:singleLine="true"
+        app:layout_constraintLeft_toRightOf="@id/btnScrollTo"
+        app:layout_constraintStart_toStartOf="@+id/etScrollTo"
+        app:layout_constraintTop_toBottomOf="@+id/etSmoothScrollTo" />
+
+    <Button
+        android:id="@+id/btnSmoothScrollT2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:textSize="13dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:onClick="smoothScrollTo2"
+        android:text="确定"
+        android:textColor="@android:color/white"
+        app:layout_constraintLeft_toRightOf="@id/etSmoothScrollTo"
+        app:layout_constraintTop_toTopOf="@+id/etSmoothScrollTo2" />
 </androidx.constraintlayout.widget.ConstraintLayout>
