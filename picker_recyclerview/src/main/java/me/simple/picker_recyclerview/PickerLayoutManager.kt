@@ -7,6 +7,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -219,10 +220,11 @@ class PickerLayoutManager(
 
         val firstView = getChildAt(0) ?: return 0
         val firstBottom = getDecoratedBottom(firstView)
+        //如果第一个itemView的bottom+y的偏移量还是<0就不填充item
         if (firstBottom - dy < 0) return dy
 
         val prePosition = getPrePosition(firstView)
-        //如果不是无限循环模式且已经填充了position=0的item
+        //如果不是无限循环模式且已经填充了position=0的item，就返回大的偏移量
         if (!isLoop && prePosition < 0) return max(dy, getDecoratedTop(firstView))
 
         var bottom = getDecoratedTop(firstView)
@@ -234,10 +236,10 @@ class PickerLayoutManager(
             measureChildWithMargins(child, 0, 0)
             top = bottom - getDecoratedMeasuredHeight(child)
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
-            offsetHeight += dy
+            offsetHeight += getDecoratedMeasuredHeight(child)
             logDebug("fillVerticallyStart -- $i")
 
-            if (offsetHeight <= dy) break
+            if (offsetHeight >= abs(dy)) break
             bottom = top
         }
 
