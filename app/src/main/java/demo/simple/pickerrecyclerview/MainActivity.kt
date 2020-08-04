@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -28,6 +29,12 @@ class MainActivity : AppCompatActivity() {
 //            layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = mAdapter
         }
+        pickerRecyclerView.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.VERTICAL
+            )
+        )
 
         for (i in 0..100) {
             mItems.add(i.toString())
@@ -60,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun smoothScrollTo2(view:View){
+    fun smoothScrollTo2(view: View) {
         try {
             val position = etSmoothScrollTo2.text.toString().toInt()
             pickerRecyclerView.smoothScrollToPosition(position)
