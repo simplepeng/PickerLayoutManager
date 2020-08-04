@@ -123,14 +123,14 @@ class PickerLayoutManager(
         state: RecyclerView.State
     ): Int {
         if (dy == 0 || childCount == 0) return 0
-//        logDebug("dy == $dy")
+        logDebug("dy == $dy")
 
         val realDy = fillVertically(recycler, dy)
         val consumed = if (isLoop) dy else realDy
         logDebug("consumed == $consumed")
 
         offsetChildrenVertical(-consumed)
-//        recyclerVertically(recycler, consumed)
+        recyclerVertically(recycler, consumed)
 
 //        logChildCount(recycler)
         return consumed
@@ -352,6 +352,7 @@ class PickerLayoutManager(
             mStartPosition = itemCount - 1
         }
 
+        removeAllViews()
         requestLayout()
     }
 
@@ -367,16 +368,6 @@ class PickerLayoutManager(
             toPosition = itemCount - 1
         }
 
-//        val scroller = object : LinearSmoothScroller(recyclerView.context) {
-//            override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {
-//                val firstView = getChildAt(0) ?: return null
-//                val y = targetPosition * mItemHeight - getDecoratedTop(firstView) + height
-//                return PointF(0f, y.toFloat())
-//            }
-//        }
-//        scroller.targetPosition = toPosition
-//        startSmoothScroll(scroller)
-
         val linearSmoothScroller = LinearSmoothScroller(recyclerView.context)
         linearSmoothScroller.targetPosition = position
         startSmoothScroll(linearSmoothScroller)
@@ -391,6 +382,13 @@ class PickerLayoutManager(
         } else {
             PointF(0f, direction.toFloat())
         }
+    }
+
+    override fun onAdapterChanged(
+        oldAdapter: RecyclerView.Adapter<*>?,
+        newAdapter: RecyclerView.Adapter<*>?
+    ) {
+        removeAllViews()
     }
 
     override fun onSaveInstanceState(): Parcelable? {
