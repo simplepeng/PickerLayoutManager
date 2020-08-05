@@ -7,15 +7,21 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import java.lang.IllegalArgumentException
 import java.lang.StringBuilder
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * @param orientation 摆放子View的方向
+ * @param visibleCount 显示多少个子View
+ * @param isLoop 是否支持无线滚动
+ */
 class PickerLayoutManager(
     private val orientation: Int = VERTICAL,
-    private val visibleCount: Int = 3,
-    private val isLoop: Boolean = false
+    private val visibleCount: Int = 5,
+    private val isLoop: Boolean = true
 ) : RecyclerView.LayoutManager(), RecyclerView.SmoothScroller.ScrollVectorProvider {
 
     private var mStartPosition = 0
@@ -31,6 +37,11 @@ class PickerLayoutManager(
         const val HORIZONTAL = RecyclerView.HORIZONTAL
         const val VERTICAL = RecyclerView.VERTICAL
         const val TAG = "PickerLayoutManager"
+    }
+
+    init {
+        if (visibleCount % 2 == 0)
+            throw IllegalArgumentException("visibleCount == $visibleCount 不能是偶数")
     }
 
     private fun logDebug(msg: String) {
@@ -175,20 +186,30 @@ class PickerLayoutManager(
     }
 
     private fun initFillVertically(recycler: RecyclerView.Recycler) {
-        var endPosition = mStartPosition + visibleCount
-        if (!isLoop && endPosition > itemCount - 1) {
-            endPosition = itemCount
-        }
+        val startPosition = getStartPosition()
 
-        var top = mItemHeight
-        for (i in mStartPosition until endPosition) {
-            val child = getViewForPosition(recycler, i)
+        var top = getTopOffset()
+        for (i in 0 until visibleCount) {
+            val child = getViewForPosition(recycler, startPosition + i)
             addView(child)
             measureChildWithMargins(child, 0, 0)
             val bottom = top + getDecoratedMeasuredHeight(child)
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
             top = bottom
         }
+    }
+
+    private fun getStartPosition(): Int {
+        if (isLoop) {
+            return itemCount - 1
+        }
+        return mStartPosition
+    }
+
+    //3-1,5-2,7-3,9-4
+    private fun getTopOffset(): Int {
+        if (isLoop) return 0
+        return (visibleCount - 1) / 2 * mItemHeight
     }
 
     //dy<0
@@ -202,7 +223,7 @@ class PickerLayoutManager(
 
         val prePosition = getPrePosition(firstView)
         //如果不是无限循环模式且已经填充了position=0的item，就返回大的偏移量
-        if (!isLoop && prePosition < 0) return max(dy, getDecoratedTop(firstView) - mItemHeight)
+        if (!isLoop && prePosition < 0) return max(dy, getDecoratedTop(firstView) - getTopOffset())
 
         var bottom = getDecoratedTop(firstView)
         var top: Int
@@ -236,7 +257,7 @@ class PickerLayoutManager(
         val nextPosition = getNextPosition(lastView)
         //如果不是无限循环模式且已经是最后一个itemView，就返回
         if (!isLoop && nextPosition > itemCount - 1) {
-            return min(dy, lastBottom - height + mItemHeight)
+            return min(dy, lastBottom - height + getTopOffset())
         }
 
         var top = lastBottom
