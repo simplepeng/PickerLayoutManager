@@ -25,7 +25,10 @@ class PickerLayoutManager(
     private val orientation: Int = VERTICAL,
     private val visibleCount: Int = 3,
     private val isLoop: Boolean = false
-) : RecyclerView.LayoutManager(), RecyclerView.SmoothScroller.ScrollVectorProvider {
+) : RecyclerView.LayoutManager(),
+    RecyclerView.SmoothScroller.ScrollVectorProvider {
+
+
 
     private var mStartPosition = 0
     private var mItemWidth = 0
@@ -47,7 +50,7 @@ class PickerLayoutManager(
         const val HORIZONTAL = RecyclerView.HORIZONTAL
         const val VERTICAL = RecyclerView.VERTICAL
         const val TAG = "PickerLayoutManager"
-        const val DEBUG = true
+        var DEBUG = true
     }
 
     init {
@@ -380,6 +383,7 @@ class PickerLayoutManager(
 
         removeAllViews()
         requestLayout()
+
     }
 
     override fun smoothScrollToPosition(

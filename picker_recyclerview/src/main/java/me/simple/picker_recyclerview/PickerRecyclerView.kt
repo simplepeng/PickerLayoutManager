@@ -26,7 +26,13 @@ class PickerRecyclerView : RecyclerView {
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
 
+        drawDivider(canvas)
+
         drawCenterLine(canvas)
+    }
+
+    private fun drawDivider(canvas: Canvas) {
+
     }
 
     private fun drawCenterLine(canvas: Canvas) {
