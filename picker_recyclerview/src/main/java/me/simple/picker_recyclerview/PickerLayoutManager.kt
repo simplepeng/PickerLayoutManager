@@ -3,7 +3,6 @@ package me.simple.picker_recyclerview
 import android.graphics.PointF
 import android.os.Parcelable
 import android.util.Log
-import android.util.SparseArray
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
@@ -176,21 +175,52 @@ class PickerLayoutManager(
     }
 
     private fun initFillVertically(recycler: RecyclerView.Recycler) {
-        var top = 0
-        var bottom: Int
         var endPosition = mStartPosition + visibleCount
         if (!isLoop && endPosition > itemCount - 1) {
             endPosition = itemCount
         }
 
+        var top = mItemHeight
         for (i in mStartPosition until endPosition) {
             val child = getViewForPosition(recycler, i)
             addView(child)
             measureChildWithMargins(child, 0, 0)
-            bottom = top + getDecoratedMeasuredHeight(child)
+            val bottom = top + getDecoratedMeasuredHeight(child)
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
             top = bottom
         }
+    }
+
+    //dy<0
+    private fun fillVerticallyStart(recycler: RecyclerView.Recycler, dy: Int): Int {
+        if (childCount == 0) return 0
+
+        val firstView = getChildAt(0) ?: return 0
+        val firstBottom = getDecoratedBottom(firstView)
+        //如果第一个itemView的bottom+y的偏移量还是<0就不填充item
+        if (firstBottom - dy < 0) return dy
+
+        val prePosition = getPrePosition(firstView)
+        //如果不是无限循环模式且已经填充了position=0的item，就返回大的偏移量
+        if (!isLoop && prePosition < 0) return max(dy, getDecoratedTop(firstView) - mItemHeight)
+
+        var bottom = getDecoratedTop(firstView)
+        var top: Int
+        var offsetHeight: Int = 0
+        for (i in prePosition downTo 0) {
+            val child = getViewForPosition(recycler, i)
+            addView(child, 0)
+            measureChildWithMargins(child, 0, 0)
+            top = bottom - getDecoratedMeasuredHeight(child)
+            layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
+            offsetHeight += getDecoratedMeasuredHeight(child)
+            logDebug("fillVerticallyStart -- $i")
+
+            if (offsetHeight >= abs(dy)) break
+            bottom = top
+        }
+
+        return dy
     }
 
     //dy>0
@@ -200,14 +230,14 @@ class PickerLayoutManager(
         val lastView = getChildAt(childCount - 1) ?: return 0
         val lastBottom = getDecoratedBottom(lastView)
 
-        //如果当前最后一个child的bottom加上偏移量还是大于rv的height
-        //就不用填充itemView，直接返回dy
+        //如果当前最后一个child的bottom加上偏移量还是大于rv的height，就不用填充itemView，直接返回dy
         if (lastBottom - dy > height) return dy
 
         val nextPosition = getNextPosition(lastView)
-        //如果不是无限循环模式且已经是最后一个itemView，
-//        debug("height == $height")
-        if (!isLoop && nextPosition > itemCount - 1) return min(dy, lastBottom - height)
+        //如果不是无限循环模式且已经是最后一个itemView，就返回
+        if (!isLoop && nextPosition > itemCount - 1) {
+            return min(dy, lastBottom - height + mItemHeight)
+        }
 
         var top = lastBottom
         var offsetHeight = 0
@@ -224,38 +254,6 @@ class PickerLayoutManager(
 //            if (bottom > height) break
             if (offsetHeight >= dy) break
             top = bottom
-        }
-
-        return dy
-    }
-
-    //dy<0
-    private fun fillVerticallyStart(recycler: RecyclerView.Recycler, dy: Int): Int {
-        if (childCount == 0) return 0
-
-        val firstView = getChildAt(0) ?: return 0
-        val firstBottom = getDecoratedBottom(firstView)
-        //如果第一个itemView的bottom+y的偏移量还是<0就不填充item
-        if (firstBottom - dy < 0) return dy
-
-        val prePosition = getPrePosition(firstView)
-        //如果不是无限循环模式且已经填充了position=0的item，就返回大的偏移量
-        if (!isLoop && prePosition < 0) return max(dy, getDecoratedTop(firstView))
-
-        var bottom = getDecoratedTop(firstView)
-        var top: Int
-        var offsetHeight: Int = 0
-        for (i in prePosition downTo 0) {
-            val child = getViewForPosition(recycler, i)
-            addView(child, 0)
-            measureChildWithMargins(child, 0, 0)
-            top = bottom - getDecoratedMeasuredHeight(child)
-            layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
-            offsetHeight += getDecoratedMeasuredHeight(child)
-            logDebug("fillVerticallyStart -- $i")
-
-            if (offsetHeight >= abs(dy)) break
-            bottom = top
         }
 
         return dy
