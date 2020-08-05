@@ -1,11 +1,14 @@
 package me.simple.picker_recyclerview
 
+import android.animation.ValueAnimator
 import android.graphics.PointF
 import android.os.Parcelable
 import android.util.Log
 import android.view.View
+import android.view.animation.LinearInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import java.lang.IllegalArgumentException
 import java.lang.StringBuilder
@@ -20,8 +23,8 @@ import kotlin.math.min
  */
 class PickerLayoutManager(
     private val orientation: Int = VERTICAL,
-    private val visibleCount: Int = 5,
-    private val isLoop: Boolean = true
+    private val visibleCount: Int = 3,
+    private val isLoop: Boolean = false
 ) : RecyclerView.LayoutManager(), RecyclerView.SmoothScroller.ScrollVectorProvider {
 
     private var mStartPosition = 0
@@ -31,12 +34,20 @@ class PickerLayoutManager(
     //增加一个偏移量减少误差
     private var mItemOffset = 0
 
+    //要回收的View先缓存起来
     private val mCachedViews = mutableListOf<View>()
+
+    //
+    private val mSnapHelper = LinearSnapHelper()
+
+    //
+    private val mSelectedItemListener = mutableListOf<OnSelectedItemListener>()
 
     companion object {
         const val HORIZONTAL = RecyclerView.HORIZONTAL
         const val VERTICAL = RecyclerView.VERTICAL
         const val TAG = "PickerLayoutManager"
+        const val DEBUG = true
     }
 
     init {
@@ -335,39 +346,6 @@ class PickerLayoutManager(
         mCachedViews.clear()
     }
 
-    private fun recycleChildren(
-        recycler: RecyclerView.Recycler,
-        startIndex: Int,
-        endIndex: Int
-    ) {
-        //recycleStart
-        logDebug("recycleStart -- startIndex == $startIndex - endIndex == $endIndex")
-        if (startIndex < endIndex) {
-            for (i in startIndex until endIndex) {
-                val position = getPosition(getChildAt(i)!!)
-                logDebug("recycleStart -- $position")
-                removeAndRecycleViewAt(i, recycler)
-            }
-        }
-        //recycleEnd
-        if (startIndex > endIndex) {
-            for (i in startIndex downTo endIndex + 1) {
-                val position = getPosition(getChildAt(i)!!)
-                logDebug("recycleEnd -- $position")
-                removeAndRecycleViewAt(i, recycler)
-            }
-        }
-    }
-
-    private fun removeChildren(recycler: RecyclerView.Recycler) {
-        val scrapList = recycler.scrapList
-        logChildCount(recycler)
-        scrapList.forEach {
-            removeAndRecycleView(it.itemView, recycler)
-        }
-        logChildCount(recycler)
-    }
-
     private fun getNextPosition(view: View): Int {
         val position = getPosition(view)
         if (isLoop && position == itemCount - 1) return 0
@@ -433,11 +411,84 @@ class PickerLayoutManager(
         }
     }
 
+    override fun onScrollStateChanged(state: Int) {
+        super.onScrollStateChanged(state)
+        if (childCount == 0) return
+        if (state == RecyclerView.SCROLL_STATE_IDLE) {
+            val centerView = mSnapHelper.findSnapView(this)
+            if (centerView == null) {
+                dispatchListener(RecyclerView.NO_POSITION, null)
+                return
+            }
+            val position = getPosition(centerView)
+            dispatchListener(position, centerView)
+            logDebug("selected position == $position")
+            scrollToCenter(centerView)
+        }
+    }
+
+    private fun dispatchListener(position: Int, centerView: View?) {
+        for (listener in mSelectedItemListener) {
+            listener.onSelected(position, centerView)
+        }
+    }
+
+    private fun scrollToCenter(centerView: View) {
+        val distance = if (orientation == VERTICAL) {
+            val destTop = getVerticallySpace() / 2 - getDecoratedMeasuredHeight(centerView) / 2
+            destTop - getDecoratedTop(centerView)
+        } else {
+            0
+        }
+
+        smoothOffsetChildren(distance)
+    }
+
+    private fun smoothOffsetChildren(amount: Int) {
+        logDebug("amount -- $amount")
+        var lastValue = amount
+        val animator = ValueAnimator.ofInt(amount, 0).apply {
+            interpolator = LinearInterpolator()
+            duration = 500
+        }
+        animator.addUpdateListener {
+            val value = it.animatedValue as Int
+            logDebug("animatedValue -- $value")
+            offsetChildren(lastValue - value)
+            lastValue = value
+        }
+        animator.start()
+    }
+
+    private fun offsetChildren(amount: Int) {
+        if (orientation == VERTICAL) {
+            offsetChildrenVertical(amount)
+        } else {
+            offsetChildrenHorizontal(amount)
+        }
+    }
+
+    private fun getVerticallySpace() = height - paddingTop - paddingBottom
+
+    private fun getHorizontalSpace() = width - paddingLeft - paddingRight
+
     override fun onAdapterChanged(
         oldAdapter: RecyclerView.Adapter<*>?,
         newAdapter: RecyclerView.Adapter<*>?
     ) {
         removeAllViews()
+    }
+
+    fun addOnSelectedItemListener(listener: OnSelectedItemListener) {
+        mSelectedItemListener.add(listener)
+    }
+
+    fun removeOnSelectedItemListener(listener: OnSelectedItemListener) {
+        mSelectedItemListener.remove(listener)
+    }
+
+    interface OnSelectedItemListener {
+        fun onSelected(position: Int, centerView: View?)
     }
 
     override fun onSaveInstanceState(): Parcelable? {

@@ -1,14 +1,14 @@
 package me.simple.picker_recyclerview
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 
 class PickerRecyclerView : RecyclerView {
-
-    private val mLinearSnapHelper = LinearSnapHelper()
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -18,28 +18,24 @@ class PickerRecyclerView : RecyclerView {
         defStyleAttr
     )
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-//        mLinearSnapHelper.attachToRecyclerView(this)
+    private val mPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.RED
+        style = Paint.Style.FILL
     }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-//        mLinearSnapHelper.attachToRecyclerView(null)
+    override fun dispatchDraw(canvas: Canvas) {
+        super.dispatchDraw(canvas)
+
+        drawCenterLine(canvas)
     }
 
-    override fun onScrollStateChanged(state: Int) {
-        super.onScrollStateChanged(state)
-        logDebug("onScrollStateChanged -- $state")
-        if (state == SCROLL_STATE_IDLE) {
-            val itemView = mLinearSnapHelper.findSnapView(layoutManager) ?: return
-            val position = getChildAdapterPosition(itemView)
-            logDebug("selected position == $position")
-        }
+    private fun drawCenterLine(canvas: Canvas) {
+        if (!PickerLayoutManager.DEBUG) return
+        canvas.drawLine(0f, height / 2f - 1f, width.toFloat(), height / 2f + 2f, mPaint)
     }
 
     private fun logDebug(msg: String) {
-        if (!BuildConfig.DEBUG) return
+        if (!PickerLayoutManager.DEBUG) return
         Log.d("PickerRecyclerView", msg)
     }
 }

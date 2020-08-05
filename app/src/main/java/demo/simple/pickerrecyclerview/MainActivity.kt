@@ -25,8 +25,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val pickerLayoutManager = PickerLayoutManager()
+        setListener(pickerLayoutManager)
         pickerRecyclerView.run {
-            layoutManager = PickerLayoutManager()
+            layoutManager = pickerLayoutManager
 //            layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = mAdapter
         }
@@ -43,10 +45,20 @@ class MainActivity : AppCompatActivity() {
         mAdapter.notifyDataSetChanged()
     }
 
+    private fun setListener(pickerLayoutManager: PickerLayoutManager) {
+        pickerLayoutManager.addOnSelectedItemListener(object :
+            PickerLayoutManager.OnSelectedItemListener {
+            override fun onSelected(position: Int, centerView: View?) {
+                toast(position.toString())
+            }
+        })
+    }
+
     fun reLayout(view: View) {
         val isLoop = checkBoxIsLoop.isChecked
         val visibleCount = etVisibleCount.text.toString().toInt()
         val lm = PickerLayoutManager(PickerLayoutManager.VERTICAL, visibleCount, isLoop)
+        setListener(lm)
         pickerRecyclerView.layoutManager = lm
     }
 
