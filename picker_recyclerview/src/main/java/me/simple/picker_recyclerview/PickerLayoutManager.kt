@@ -24,7 +24,7 @@ import kotlin.math.min
 class PickerLayoutManager(
     private val orientation: Int = VERTICAL,
     private val visibleCount: Int = 3,
-    private val isLoop: Boolean = true
+    private val isLoop: Boolean = false
 ) : RecyclerView.LayoutManager(),
     RecyclerView.SmoothScroller.ScrollVectorProvider {
 
@@ -413,20 +413,21 @@ class PickerLayoutManager(
         if (childCount == 0) return
         checkPosition(position)
 
-        var toPosition = position
-        if (!isLoop && position > itemCount - 1) {
-            toPosition = itemCount - 1
-        }
-
+        val toPosition = fixSmoothToPosition(position)
         val linearSmoothScroller = LinearSmoothScroller(recyclerView.context)
         linearSmoothScroller.targetPosition = toPosition
         startSmoothScroll(linearSmoothScroller)
     }
 
+    private fun fixSmoothToPosition(toPosition: Int): Int {
+        val centerPosition = getPosition(mSnapHelper.findSnapView(this)!!)
+        return if (centerPosition < toPosition) toPosition + 1 else toPosition - 1
+    }
+
     override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {
         if (childCount == 0) return null
 
-        val firstChildPos = getPosition(getChildAt(0)!!)
+        val firstChildPos = getPosition(mSnapHelper.findSnapView(this)!!)
         val direction = if (targetPosition < firstChildPos) -1 else 1
         return if (orientation == LinearLayoutManager.HORIZONTAL) {
             PointF(direction.toFloat(), 0f)
