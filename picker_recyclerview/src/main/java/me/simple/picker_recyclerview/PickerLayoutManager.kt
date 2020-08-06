@@ -24,7 +24,7 @@ import kotlin.math.min
 class PickerLayoutManager(
     private val orientation: Int = VERTICAL,
     private val visibleCount: Int = 3,
-    private val isLoop: Boolean = false
+    private val isLoop: Boolean = true
 ) : RecyclerView.LayoutManager(),
     RecyclerView.SmoothScroller.ScrollVectorProvider {
 
@@ -392,16 +392,17 @@ class PickerLayoutManager(
 
     override fun scrollToPosition(position: Int) {
         if (childCount == 0) return
+        checkPosition(position)
 
         mStartPosition = position
-//        if (!isLoop && position > itemCount - 1) {
-//            mStartPosition = itemCount - 1
-//        }
-
-//        removeAllViews()
         requestLayout()
 
-//        dispatchListener(mStartPosition)
+        dispatchListener(mStartPosition)
+    }
+
+    private fun checkPosition(position: Int) {
+        if (position < 0 || position > itemCount - 1)
+            throw IllegalArgumentException("position is $position,must be >= 0 and < itemCount,")
     }
 
     override fun smoothScrollToPosition(
@@ -410,6 +411,7 @@ class PickerLayoutManager(
         position: Int
     ) {
         if (childCount == 0) return
+        checkPosition(position)
 
         var toPosition = position
         if (!isLoop && position > itemCount - 1) {
