@@ -30,12 +30,6 @@ class MainActivity : AppCompatActivity() {
             adapter = mAdapter
         }
         pickerRecyclerView.addItemDecoration(PickerItemDecoration())
-//        pickerRecyclerView.addItemDecoration(
-//            DividerItemDecoration(
-//                this,
-//                DividerItemDecoration.VERTICAL
-//            )
-//        )
 
         for (i in 0..100) {
             mItems.add(i.toString())

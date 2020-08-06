@@ -18,31 +18,11 @@ class PickerRecyclerView : RecyclerView {
         defStyleAttr
     )
 
-    init {
-//        addItemDecoration(CenterHelperLineItemDecoration())
-    }
-
     private val mPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.RED
         style = Paint.Style.FILL
     }
 
-    override fun dispatchDraw(canvas: Canvas) {
-        super.dispatchDraw(canvas)
-
-//        drawDivider(canvas)
-//
-//        drawCenterLine(canvas)
-    }
-
-    private fun drawDivider(canvas: Canvas) {
-
-    }
-
-    private fun drawCenterLine(canvas: Canvas) {
-        if (!PickerLayoutManager.DEBUG) return
-        canvas.drawLine(0f, height / 2f - 1f, width.toFloat(), height / 2f + 2f, mPaint)
-    }
 
     private fun logDebug(msg: String) {
         if (!PickerLayoutManager.DEBUG) return
