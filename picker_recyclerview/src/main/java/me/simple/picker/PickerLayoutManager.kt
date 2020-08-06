@@ -28,8 +28,6 @@ class PickerLayoutManager(
 ) : RecyclerView.LayoutManager(),
     RecyclerView.SmoothScroller.ScrollVectorProvider {
 
-    private var mRecyclerView: RecyclerView? = null
-
     private var mStartPosition = 0
     private var mItemWidth = 0
     private var mItemHeight = 0
@@ -535,13 +533,9 @@ class PickerLayoutManager(
         super.onRestoreInstanceState(state)
     }
 
-    override fun onAttachedToWindow(view: RecyclerView?) {
-        super.onAttachedToWindow(view)
-        mRecyclerView = view
-    }
-
-    override fun onDetachedFromWindow(view: RecyclerView?, recycler: RecyclerView.Recycler?) {
-        super.onDetachedFromWindow(view, recycler)
-        mRecyclerView == null
+    fun getSelectedItem(): Int {
+        if (childCount == 0) return RecyclerView.NO_POSITION
+        val centerView = mSnapHelper.findSnapView(this) ?: return RecyclerView.NO_POSITION
+        return getPosition(centerView)
     }
 }
