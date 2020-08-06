@@ -217,12 +217,20 @@ class PickerLayoutManager(
         }
     }
 
+    private fun getFixCount() = (visibleCount - 1) / 2
+
     private fun getStartPosition(position: Int): Int {
+        //如果是无限循环模式且开始position=0
         if (isLoop && position == 0) {
-            return itemCount - 1
+            return itemCount - getFixCount()
         }
+        //如果不是无限循环模式且开始position=0
+        if (!isLoop && position == 0) {
+            return 0
+        }
+        //只要position != 0，就是scrollTo调用过来的
         if (position != 0) {
-            return position - 1
+            return position - getFixCount()
         }
 
         return position
@@ -420,8 +428,9 @@ class PickerLayoutManager(
     }
 
     private fun fixSmoothToPosition(toPosition: Int): Int {
+        val fixCount = (visibleCount - 1) / 2
         val centerPosition = getPosition(mSnapHelper.findSnapView(this)!!)
-        return if (centerPosition < toPosition) toPosition + 1 else toPosition - 1
+        return if (centerPosition < toPosition) toPosition + fixCount else toPosition - fixCount
     }
 
     override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {
