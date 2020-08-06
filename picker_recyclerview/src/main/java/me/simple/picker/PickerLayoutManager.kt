@@ -428,7 +428,7 @@ class PickerLayoutManager(
     }
 
     private fun fixSmoothToPosition(toPosition: Int): Int {
-        val fixCount = (visibleCount - 1) / 2
+        val fixCount = getFixCount()
         val centerPosition = getPosition(mSnapHelper.findSnapView(this)!!)
         return if (centerPosition < toPosition) toPosition + fixCount else toPosition - fixCount
     }
