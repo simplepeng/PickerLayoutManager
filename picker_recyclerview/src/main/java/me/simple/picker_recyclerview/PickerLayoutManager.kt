@@ -28,7 +28,7 @@ class PickerLayoutManager(
 ) : RecyclerView.LayoutManager(),
     RecyclerView.SmoothScroller.ScrollVectorProvider {
 
-
+    private var mRecyclerView: RecyclerView? = null
 
     private var mStartPosition = 0
     private var mItemWidth = 0
@@ -136,6 +136,10 @@ class PickerLayoutManager(
             return
         }
         if (state.isPreLayout) return
+        if (childCount != 0) {
+            removeAndRecycleAllViews(recycler)
+        }
+
         detachAndScrapAttachedViews(recycler)
         fill(recycler)
     }
@@ -200,9 +204,9 @@ class PickerLayoutManager(
     }
 
     private fun initFillVertically(recycler: RecyclerView.Recycler) {
-        val startPosition = getStartPosition()
+        val startPosition = getStartPosition(mStartPosition)
 
-        var top = getTopOffset()
+        var top = getVerticallyTopOffset()
         for (i in 0 until visibleCount) {
             val child = getViewForPosition(recycler, startPosition + i)
             addView(child)
@@ -213,17 +217,27 @@ class PickerLayoutManager(
         }
     }
 
-    private fun getStartPosition(): Int {
-        if (isLoop) {
+    private fun getStartPosition(position: Int): Int {
+        if (isLoop && position == 0) {
             return itemCount - 1
         }
-        return mStartPosition
+        if (position != 0) {
+            return position - 1
+        }
+
+        return position
     }
 
     //3-1,5-2,7-3,9-4
-    private fun getTopOffset(): Int {
-        if (isLoop) return 0
-        return (visibleCount - 1) / 2 * mItemHeight
+    private fun getVerticallyTopOffset(): Int {
+        val offset = (visibleCount - 1) / 2 * mItemHeight
+        if (!isLoop && mStartPosition == 0) return offset
+        return 0
+    }
+
+    private fun getVerticallyScrollOffset(): Int {
+        val offset = (visibleCount - 1) / 2 * mItemHeight
+        return if (isLoop) 0 else offset
     }
 
     //dy<0
@@ -237,7 +251,10 @@ class PickerLayoutManager(
 
         val prePosition = getPrePosition(firstView)
         //如果不是无限循环模式且已经填充了position=0的item，就返回大的偏移量
-        if (!isLoop && prePosition < 0) return max(dy, getDecoratedTop(firstView) - getTopOffset())
+        if (!isLoop && prePosition < 0) return max(
+            dy,
+            getDecoratedTop(firstView) - getVerticallyScrollOffset()
+        )
 
         var bottom = getDecoratedTop(firstView)
         var top: Int
@@ -271,7 +288,7 @@ class PickerLayoutManager(
         val nextPosition = getNextPosition(lastView)
         //如果不是无限循环模式且已经是最后一个itemView，就返回
         if (!isLoop && nextPosition > itemCount - 1) {
-            return min(dy, lastBottom - height + getTopOffset())
+            return min(dy, lastBottom - height + getVerticallyScrollOffset())
         }
 
         var top = lastBottom
@@ -377,13 +394,14 @@ class PickerLayoutManager(
         if (childCount == 0) return
 
         mStartPosition = position
-        if (!isLoop && position > itemCount - 1) {
-            mStartPosition = itemCount - 1
-        }
+//        if (!isLoop && position > itemCount - 1) {
+//            mStartPosition = itemCount - 1
+//        }
 
-        removeAllViews()
+//        removeAllViews()
         requestLayout()
 
+//        dispatchListener(mStartPosition)
     }
 
     override fun smoothScrollToPosition(
@@ -421,19 +439,19 @@ class PickerLayoutManager(
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
             val centerView = mSnapHelper.findSnapView(this)
             if (centerView == null) {
-                dispatchListener(RecyclerView.NO_POSITION, null)
+                dispatchListener(RecyclerView.NO_POSITION)
                 return
             }
             val position = getPosition(centerView)
-            dispatchListener(position, centerView)
+            dispatchListener(position)
             logDebug("selected position == $position")
             scrollToCenter(centerView)
         }
     }
 
-    private fun dispatchListener(position: Int, centerView: View?) {
+    private fun dispatchListener(position: Int) {
         for (listener in mSelectedItemListener) {
-            listener.onSelected(position, centerView)
+            listener.onSelected(position)
         }
     }
 
@@ -492,7 +510,7 @@ class PickerLayoutManager(
     }
 
     interface OnSelectedItemListener {
-        fun onSelected(position: Int, centerView: View?)
+        fun onSelected(position: Int)
     }
 
     override fun onSaveInstanceState(): Parcelable? {
@@ -505,5 +523,13 @@ class PickerLayoutManager(
         super.onRestoreInstanceState(state)
     }
 
+    override fun onAttachedToWindow(view: RecyclerView?) {
+        super.onAttachedToWindow(view)
+        mRecyclerView = view
+    }
 
+    override fun onDetachedFromWindow(view: RecyclerView?, recycler: RecyclerView.Recycler?) {
+        super.onDetachedFromWindow(view, recycler)
+        mRecyclerView == null
+    }
 }

@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
     private fun setListener(pickerLayoutManager: PickerLayoutManager) {
         pickerLayoutManager.addOnSelectedItemListener(object :
             PickerLayoutManager.OnSelectedItemListener {
-            override fun onSelected(position: Int, centerView: View?) {
+            override fun onSelected(position: Int) {
                 toast(position.toString())
             }
         })
