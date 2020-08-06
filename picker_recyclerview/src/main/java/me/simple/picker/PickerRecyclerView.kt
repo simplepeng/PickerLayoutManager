@@ -1,4 +1,4 @@
-package me.simple.picker_recyclerview
+package me.simple.picker
 
 import android.content.Context
 import android.graphics.Canvas
@@ -18,6 +18,10 @@ class PickerRecyclerView : RecyclerView {
         defStyleAttr
     )
 
+    init {
+//        addItemDecoration(CenterHelperLineItemDecoration())
+    }
+
     private val mPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.RED
         style = Paint.Style.FILL
@@ -26,9 +30,9 @@ class PickerRecyclerView : RecyclerView {
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
 
-        drawDivider(canvas)
-
-        drawCenterLine(canvas)
+//        drawDivider(canvas)
+//
+//        drawCenterLine(canvas)
     }
 
     private fun drawDivider(canvas: Canvas) {

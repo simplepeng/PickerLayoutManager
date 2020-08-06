@@ -7,13 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.item_picker.*
-import me.simple.picker_recyclerview.PickerLayoutManager
+import me.simple.picker.PickerItemDecoration
+import me.simple.picker.PickerLayoutManager
 import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
@@ -32,12 +29,13 @@ class MainActivity : AppCompatActivity() {
 //            layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = mAdapter
         }
-        pickerRecyclerView.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                DividerItemDecoration.VERTICAL
-            )
-        )
+        pickerRecyclerView.addItemDecoration(PickerItemDecoration())
+//        pickerRecyclerView.addItemDecoration(
+//            DividerItemDecoration(
+//                this,
+//                DividerItemDecoration.VERTICAL
+//            )
+//        )
 
         for (i in 0..100) {
             mItems.add(i.toString())

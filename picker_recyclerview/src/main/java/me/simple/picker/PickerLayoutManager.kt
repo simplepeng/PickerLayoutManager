@@ -1,4 +1,4 @@
-package me.simple.picker_recyclerview
+package me.simple.picker
 
 import android.animation.ValueAnimator
 import android.graphics.PointF
@@ -22,9 +22,9 @@ import kotlin.math.min
  * @param isLoop 是否支持无线滚动
  */
 class PickerLayoutManager(
-    private val orientation: Int = VERTICAL,
-    private val visibleCount: Int = 3,
-    private val isLoop: Boolean = false
+    val orientation: Int = VERTICAL,
+    val visibleCount: Int = 3,
+    val isLoop: Boolean = false
 ) : RecyclerView.LayoutManager(),
     RecyclerView.SmoothScroller.ScrollVectorProvider {
 

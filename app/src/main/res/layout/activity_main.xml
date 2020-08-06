@@ -7,7 +7,7 @@
     android:padding="10dp"
     tools:context=".MainActivity">
 
-    <me.simple.picker_recyclerview.PickerRecyclerView
+    <me.simple.picker.PickerRecyclerView
         android:id="@+id/pickerRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
