@@ -17,25 +17,42 @@ import java.lang.Exception
 class MainActivity : AppCompatActivity() {
 
     private val mItems = mutableListOf<String>()
-    private val mAdapter = PickerAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        for (i in 0..100) {
+            mItems.add(i.toString())
+        }
+
+        initLinearPicker()
+
+        initHorizontalPicker()
+
+    }
+
+    private fun initLinearPicker() {
         val pickerLayoutManager = PickerLayoutManager()
         setListener(pickerLayoutManager)
         pickerRecyclerView.run {
             layoutManager = pickerLayoutManager
-//            layoutManager = LogLinearLayoutManager(this@MainActivity)
-            adapter = mAdapter
+            //            layoutManager = LogLinearLayoutManager(this@MainActivity)
+            adapter = PickerAdapter(PickerLayoutManager.VERTICAL)
         }
         pickerRecyclerView.addItemDecoration(PickerItemDecoration())
+    }
 
-        for (i in 0..100) {
-            mItems.add(i.toString())
+    private fun initHorizontalPicker() {
+        val pickerLayoutManager = PickerLayoutManager(PickerLayoutManager.HORIZONTAL)
+        setListener(pickerLayoutManager)
+        pickerRecyclerView2.run {
+            layoutManager = pickerLayoutManager
+//            layoutManager =
+//                LogLinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+            adapter = PickerAdapter(PickerLayoutManager.HORIZONTAL)
         }
-        mAdapter.notifyDataSetChanged()
+        pickerRecyclerView.addItemDecoration(PickerItemDecoration())
     }
 
     private fun setListener(pickerLayoutManager: PickerLayoutManager) {
@@ -86,11 +103,16 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
-    inner class PickerAdapter : RecyclerView.Adapter<PickerViewHolder>() {
+    inner class PickerAdapter(private val orientation: Int) : RecyclerView.Adapter<PickerViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickerViewHolder {
+            val layoutId = if (orientation == PickerLayoutManager.HORIZONTAL) {
+                R.layout.item_horizontal_picker
+            } else {
+                R.layout.item_picker
+            }
             return PickerViewHolder(
                 LayoutInflater.from(this@MainActivity)
-                    .inflate(R.layout.item_picker, parent, false)
+                    .inflate(layoutId, parent, false)
             )
         }
 

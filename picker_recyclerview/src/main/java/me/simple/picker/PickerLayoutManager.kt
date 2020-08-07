@@ -180,7 +180,7 @@ class PickerLayoutManager(
         if (orientation == VERTICAL) {
             fillVertically(recycler, 0)
         } else {
-
+            fillHorizontal(recycler, 0)
         }
     }
 
@@ -201,7 +201,6 @@ class PickerLayoutManager(
 
     private fun initFillVertically(recycler: RecyclerView.Recycler) {
         val startPosition = getStartPosition(mStartPosition)
-//        logDebug("startPosition == $startPosition")
 
         var top = getVerticallyTopOffset()
         for (i in 0 until visibleCount) {
@@ -212,37 +211,6 @@ class PickerLayoutManager(
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
             top = bottom
         }
-    }
-
-    private fun getFixCount() = (visibleCount - 1) / 2
-
-    private fun getStartPosition(position: Int): Int {
-        //如果是无限循环模式且开始position=0
-        if (isLoop && position == 0) {
-            return itemCount - getFixCount()
-        }
-        //如果不是无限循环模式且开始position=0
-        if (!isLoop && position == 0) {
-            return 0
-        }
-        //只要position != 0，就是scrollTo调用过来的或者软键盘影响重新onLayout来的
-        if (position != 0) {
-            return position - getFixCount()
-        }
-
-        return position
-    }
-
-    //3-1,5-2,7-3,9-4
-    private fun getVerticallyTopOffset(): Int {
-        val offset = (visibleCount - 1) / 2 * mItemHeight
-        if (!isLoop && mStartPosition == 0) return offset
-        return 0
-    }
-
-    private fun getVerticallyScrollOffset(): Int {
-        val offset = (visibleCount - 1) / 2 * mItemHeight
-        return if (isLoop) 0 else offset
     }
 
     //dy<0
@@ -363,12 +331,72 @@ class PickerLayoutManager(
         }
     }
 
+    private fun fillHorizontal(recycler: RecyclerView.Recycler, dx: Int): Int {
+        when {
+            dx == 0 -> {
+                initFillHorizontal(recycler)
+            }
+            dx > 0 -> {
+                return fillHorizontalEnd(recycler, dx)
+            }
+            dx < 0 -> {
+                return fillHorizontalStart(recycler, dx)
+            }
+        }
+        return dx
+    }
+
+    private fun initFillHorizontal(recycler: RecyclerView.Recycler) {
+
+    }
+
+    private fun fillHorizontalEnd(recycler: RecyclerView.Recycler, dx: Int): Int {
+
+        return dx
+    }
+
+    private fun fillHorizontalStart(recycler: RecyclerView.Recycler, dx: Int): Int {
+
+        return dx
+    }
+
     private fun recycleCachedView(recycler: RecyclerView.Recycler) {
         for (view in mCachedViews) {
             logDebug("position == ${getPosition(view)}")
             removeAndRecycleView(view, recycler)
         }
         mCachedViews.clear()
+    }
+
+    private fun getFixCount() = (visibleCount - 1) / 2
+
+    private fun getStartPosition(position: Int): Int {
+        //如果是无限循环模式且开始position=0
+        if (isLoop && position == 0) {
+            return itemCount - getFixCount()
+        }
+        //如果不是无限循环模式且开始position=0
+        if (!isLoop && position == 0) {
+            return 0
+        }
+        //只要position != 0，就是scrollTo调用过来的或者软键盘影响重新onLayout来的
+        if (position != 0) {
+            return position - getFixCount()
+        }
+
+        return position
+    }
+
+    //3-1,5-2,7-3,9-4
+    private fun getVerticallyTopOffset(): Int {
+        val offset = (visibleCount - 1) / 2 * mItemHeight
+        if (!isLoop && mStartPosition == 0) return offset
+        return 0
+    }
+
+    private fun getVerticallyScrollOffset(): Int {
+        val offset = (visibleCount - 1) / 2 * mItemHeight
+        return if (isLoop) 0 else offset
     }
 
     private fun getNextPosition(view: View): Int {
