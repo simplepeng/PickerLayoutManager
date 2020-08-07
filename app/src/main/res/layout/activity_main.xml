@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:padding="10dp"
     tools:context=".MainActivity">
 
@@ -11,6 +12,7 @@
         android:id="@+id/pickerRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -62,11 +64,11 @@
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:hint="scrollTo"
-        android:text="90"
         android:inputType="number"
-        android:textSize="13dp"
         android:maxLines="1"
         android:singleLine="true"
+        android:text="90"
+        android:textSize="13dp"
         app:layout_constraintStart_toStartOf="@+id/checkBoxIsLoop"
         app:layout_constraintTop_toBottomOf="@+id/btnOk" />
 
@@ -77,9 +79,9 @@
         android:layout_marginLeft="10dp"
         android:backgroundTint="@color/colorPrimary"
         android:onClick="scrollTo"
-        android:textSize="13dp"
         android:text="确定"
         android:textColor="@android:color/white"
+        android:textSize="13dp"
         app:layout_constraintLeft_toRightOf="@id/etScrollTo"
         app:layout_constraintTop_toTopOf="@+id/etScrollTo"
         tools:layout_editor_absoluteX="10dp" />
@@ -93,9 +95,9 @@
         android:hint="smoothScrollTo"
         android:inputType="number"
         android:maxLines="1"
+        android:singleLine="true"
         android:text="80"
         android:textSize="13dp"
-        android:singleLine="true"
         app:layout_constraintLeft_toRightOf="@id/btnScrollTo"
         app:layout_constraintStart_toStartOf="@+id/etScrollTo"
         app:layout_constraintTop_toBottomOf="@+id/etScrollTo" />
@@ -105,11 +107,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:textSize="13dp"
         android:backgroundTint="@color/colorPrimary"
         android:onClick="smoothScrollTo"
         android:text="确定"
         android:textColor="@android:color/white"
+        android:textSize="13dp"
         app:layout_constraintLeft_toRightOf="@id/etSmoothScrollTo"
         app:layout_constraintTop_toTopOf="@+id/etSmoothScrollTo" />
 
@@ -122,9 +124,9 @@
         android:hint="smoothScrollTo"
         android:inputType="number"
         android:maxLines="1"
+        android:singleLine="true"
         android:text="10"
         android:textSize="13dp"
-        android:singleLine="true"
         app:layout_constraintLeft_toRightOf="@id/btnScrollTo"
         app:layout_constraintStart_toStartOf="@+id/etScrollTo"
         app:layout_constraintTop_toBottomOf="@+id/etSmoothScrollTo" />
@@ -134,11 +136,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:textSize="13dp"
         android:backgroundTint="@color/colorPrimary"
         android:onClick="smoothScrollTo2"
         android:text="确定"
         android:textColor="@android:color/white"
+        android:textSize="13dp"
         app:layout_constraintLeft_toRightOf="@id/etSmoothScrollTo"
         app:layout_constraintTop_toTopOf="@+id/etSmoothScrollTo2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

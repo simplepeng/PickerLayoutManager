@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import me.simple.picker.PickerItemDecoration
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         setListener(pickerLayoutManager)
         pickerRecyclerView.run {
             layoutManager = pickerLayoutManager
-//            layoutManager = LinearLayoutManager(this@MainActivity)
+//            layoutManager = LogLinearLayoutManager(this@MainActivity)
             adapter = mAdapter
         }
         pickerRecyclerView.addItemDecoration(PickerItemDecoration())

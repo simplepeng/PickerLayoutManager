@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import java.lang.IllegalArgumentException
-import java.lang.StringBuilder
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -31,6 +29,8 @@ class PickerLayoutManager(
     private var mStartPosition = 0
     private var mItemWidth = 0
     private var mItemHeight = 0
+
+    private val scale = 0.1f
 
     //增加一个偏移量减少误差
     private var mItemOffset = 0
@@ -128,18 +128,21 @@ class PickerLayoutManager(
         }
     }
 
+    // 软件盘的弹出和收起都会再次调用这个方法，自己要记录好偏移量
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         if (itemCount == 0) {
             removeAndRecycleAllViews(recycler)
             return
         }
         if (state.isPreLayout) return
-        if (childCount != 0) {
-            removeAndRecycleAllViews(recycler)
-        }
+//        if (childCount != 0) {
+//            removeAndRecycleAllViews(recycler)
+//        }
 
         detachAndScrapAttachedViews(recycler)
         fill(recycler)
+
+        scaleVerticallyChildren()
     }
 
     override fun canScrollHorizontally(): Boolean {
@@ -173,8 +176,10 @@ class PickerLayoutManager(
         offsetChildrenVertical(-consumed)
         recyclerVertically(recycler, consumed)
 
-        logChildCount(recycler)
-        logChildrenPosition()
+//        logChildCount(recycler)
+//        logChildrenPosition()
+
+        scaleVerticallyChildren()
         return dy
     }
 
@@ -523,6 +528,26 @@ class PickerLayoutManager(
         fun onSelected(position: Int)
     }
 
+    fun getSelectedItem(): Int {
+        if (childCount == 0) return RecyclerView.NO_POSITION
+        val centerView = mSnapHelper.findSnapView(this) ?: return RecyclerView.NO_POSITION
+        return getPosition(centerView)
+    }
+
+    private fun scaleVerticallyChildren() {
+        val mid = height / 2.0f
+        if (childCount == 0) return
+        for (i in 0 until childCount) {
+            val child = getChildAt(i) ?: continue
+            val childMid = (getDecoratedTop(child) + getDecoratedBottom(child)) / 2.0f
+            val scale: Float = 1.0f + -1 * (1 - scale) * Math.min(
+                mid,
+                Math.abs(mid - childMid)
+            ) / mid
+            child.scaleY = scale
+        }
+    }
+
     override fun onSaveInstanceState(): Parcelable? {
         logDebug("onSaveInstanceState")
         return super.onSaveInstanceState()
@@ -533,9 +558,5 @@ class PickerLayoutManager(
         super.onRestoreInstanceState(state)
     }
 
-    fun getSelectedItem(): Int {
-        if (childCount == 0) return RecyclerView.NO_POSITION
-        val centerView = mSnapHelper.findSnapView(this) ?: return RecyclerView.NO_POSITION
-        return getPosition(centerView)
-    }
+
 }
