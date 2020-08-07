@@ -24,7 +24,9 @@ class PickerLayoutManager(
     val visibleCount: Int = 3,
     val isLoop: Boolean = false,
     @FloatRange(from = 0.0, to = 1.0)
-    val scale: Float = 0.75f
+    val scale: Float = 0.75f,
+    @FloatRange(from = 0.0, to = 1.0)
+    val alpha: Float = 1.0f
 ) : RecyclerView.LayoutManager(),
     RecyclerView.SmoothScroller.ScrollVectorProvider {
 
@@ -531,11 +533,15 @@ class PickerLayoutManager(
             if (position == centerPosition) {
                 child.scaleY = 1f
                 child.scaleX = 1f
+                child.alpha = 1.0f
             } else {
-                //1-0.5, 2-0.25
                 val scale = this.scale / abs(centerPosition - position)
-                child.scaleY = scale
-                child.scaleX = scale
+                if (orientation == HORIZONTAL) {
+                    child.scaleX = scale
+                } else {
+                    child.scaleY = scale
+                }
+                child.alpha = this.alpha
             }
         }
     }

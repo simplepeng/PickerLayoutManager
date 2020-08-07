@@ -19,7 +19,7 @@
 
         <me.simple.picker.PickerRecyclerView
             android:id="@+id/pickerRecyclerView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             tools:layout_height="200dp"
@@ -28,7 +28,7 @@
         <me.simple.picker.PickerRecyclerView
             android:id="@+id/pickerRecyclerView2"
             android:layout_width="0dp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             tools:layout_height="200dp"
