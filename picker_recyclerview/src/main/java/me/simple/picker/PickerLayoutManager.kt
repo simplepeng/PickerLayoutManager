@@ -2,10 +2,10 @@ package me.simple.picker
 
 import android.animation.ValueAnimator
 import android.graphics.PointF
-import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
+import androidx.annotation.FloatRange
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -22,15 +22,15 @@ import kotlin.math.min
 class PickerLayoutManager(
     val orientation: Int = VERTICAL,
     val visibleCount: Int = 3,
-    val isLoop: Boolean = false
+    val isLoop: Boolean = false,
+    @FloatRange(from = 0.0, to = 1.0)
+    val scale: Float = 0.75f
 ) : RecyclerView.LayoutManager(),
     RecyclerView.SmoothScroller.ScrollVectorProvider {
 
     private var mStartPosition = 0
     private var mItemWidth = 0
     private var mItemHeight = 0
-
-    private val scale = 0.1f
 
     //增加一个偏移量减少误差
     private var mItemOffset = 0
@@ -142,7 +142,7 @@ class PickerLayoutManager(
         detachAndScrapAttachedViews(recycler)
         fill(recycler)
 
-        scaleVerticallyChildren()
+        scaleChildren()
     }
 
     override fun canScrollHorizontally(): Boolean {
@@ -179,7 +179,7 @@ class PickerLayoutManager(
 //        logChildCount(recycler)
 //        logChildrenPosition()
 
-        scaleVerticallyChildren()
+        scaleChildren()
         return dy
     }
 
@@ -534,28 +534,24 @@ class PickerLayoutManager(
         return getPosition(centerView)
     }
 
-    private fun scaleVerticallyChildren() {
-        val mid = height / 2.0f
+    private fun scaleChildren() {
+        val centerView = mSnapHelper.findSnapView(this) ?: return
+        val centerPosition = getPosition(centerView)
+
         if (childCount == 0) return
         for (i in 0 until childCount) {
-            val child = getChildAt(i) ?: continue
-            val childMid = (getDecoratedTop(child) + getDecoratedBottom(child)) / 2.0f
-            val scale: Float = 1.0f + -1 * (1 - scale) * Math.min(
-                mid,
-                Math.abs(mid - childMid)
-            ) / mid
-            child.scaleY = scale
+            val child = getChildAt(i)!!
+            val position = getPosition(child)
+            if (position == centerPosition) {
+                child.scaleY = 1f
+                child.scaleX = 1f
+            } else {
+                //1-0.5, 2-0.25
+                val scale = this.scale / abs(centerPosition - position)
+                child.scaleY = scale
+                child.scaleX = scale
+            }
         }
-    }
-
-    override fun onSaveInstanceState(): Parcelable? {
-        logDebug("onSaveInstanceState")
-        return super.onSaveInstanceState()
-    }
-
-    override fun onRestoreInstanceState(state: Parcelable?) {
-        logDebug("onRestoreInstanceState")
-        super.onRestoreInstanceState(state)
     }
 
 
