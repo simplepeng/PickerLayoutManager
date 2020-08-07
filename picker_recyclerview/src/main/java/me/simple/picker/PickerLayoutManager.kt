@@ -78,17 +78,10 @@ class PickerLayoutManager(
     }
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
-        return if (orientation == VERTICAL) {
-            RecyclerView.LayoutParams(
-                RecyclerView.LayoutParams.MATCH_PARENT,
-                RecyclerView.LayoutParams.WRAP_CONTENT
-            )
-        } else {
-            RecyclerView.LayoutParams(
-                RecyclerView.LayoutParams.WRAP_CONTENT,
-                RecyclerView.LayoutParams.MATCH_PARENT
-            )
-        }
+        return RecyclerView.LayoutParams(
+            RecyclerView.LayoutParams.WRAP_CONTENT,
+            RecyclerView.LayoutParams.WRAP_CONTENT
+        )
     }
 
     private fun getInnerItemCount() = if (isLoop) Int.MAX_VALUE else super.getItemCount()
@@ -113,12 +106,14 @@ class PickerLayoutManager(
 
         val itemView = recycler.getViewForPosition(0)
         addView(itemView)
-        measureChildWithMargins(itemView, 0, 0)
+//        measureChildWithMargins(itemView, 0, 0)
+        itemView.measure(widthSpec, heightSpec)
 
         mItemWidth = getDecoratedMeasuredWidth(itemView)
         mItemHeight = getDecoratedMeasuredHeight(itemView)
-        mItemOffset = if (orientation == VERTICAL) mItemHeight / 2 else mItemWidth / 2
-        logDebug("itemWidth = $mItemWidth -- itemHeight = $mItemHeight -- mItemOffset == $mItemOffset")
+
+        logDebug("mItemWidth == $mItemWidth -- mItemHeight == $mItemHeight")
+
         detachAndScrapView(itemView, recycler)
 
         if (orientation == HORIZONTAL) {
@@ -128,20 +123,16 @@ class PickerLayoutManager(
         }
     }
 
-    // 软件盘的弹出和收起都会再次调用这个方法，自己要记录好偏移量
+    // 软键盘的弹出和收起都会再次调用这个方法，自己要记录好偏移量
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         if (itemCount == 0) {
             removeAndRecycleAllViews(recycler)
             return
         }
         if (state.isPreLayout) return
-//        if (childCount != 0) {
-//            removeAndRecycleAllViews(recycler)
-//        }
 
         detachAndScrapAttachedViews(recycler)
         fill(recycler)
-
         scaleChildren()
     }
 
@@ -208,6 +199,7 @@ class PickerLayoutManager(
 
     private fun initFillVertically(recycler: RecyclerView.Recycler) {
         val startPosition = getStartPosition(mStartPosition)
+//        logDebug("startPosition == $startPosition")
 
         var top = getVerticallyTopOffset()
         for (i in 0 until visibleCount) {
@@ -231,7 +223,7 @@ class PickerLayoutManager(
         if (!isLoop && position == 0) {
             return 0
         }
-        //只要position != 0，就是scrollTo调用过来的
+        //只要position != 0，就是scrollTo调用过来的或者软键盘影响重新onLayout来的
         if (position != 0) {
             return position - getFixCount()
         }
@@ -452,14 +444,10 @@ class PickerLayoutManager(
         super.onScrollStateChanged(state)
         if (childCount == 0) return
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
-            val centerView = mSnapHelper.findSnapView(this)
-            if (centerView == null) {
-                dispatchListener(RecyclerView.NO_POSITION)
-                return
-            }
-            val position = getPosition(centerView)
-            dispatchListener(position)
-            logDebug("selected position == $position")
+            val centerView = mSnapHelper.findSnapView(this) ?: return
+            val centerPosition = getPosition(centerView)
+            mStartPosition = centerPosition
+            dispatchListener(centerPosition)
             scrollToCenter(centerView)
         }
     }
@@ -482,7 +470,6 @@ class PickerLayoutManager(
     }
 
     private fun smoothOffsetChildren(amount: Int) {
-        logDebug("amount -- $amount")
         var lastValue = amount
         val animator = ValueAnimator.ofInt(amount, 0).apply {
             interpolator = LinearInterpolator()
@@ -490,7 +477,6 @@ class PickerLayoutManager(
         }
         animator.addUpdateListener {
             val value = it.animatedValue as Int
-            logDebug("animatedValue -- $value")
             offsetChildren(lastValue - value)
             lastValue = value
         }
@@ -553,6 +539,5 @@ class PickerLayoutManager(
             }
         }
     }
-
 
 }

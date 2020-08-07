@@ -8,17 +8,33 @@
     android:padding="10dp"
     tools:context=".MainActivity">
 
-    <me.simple.picker.PickerRecyclerView
-        android:id="@+id/pickerRecyclerView"
+    <LinearLayout
+        android:id="@+id/rvGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:background="@color/colorPrimary"
-        tools:layout_height="200dp"
-        tools:layout_width="match_parent" />
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <me.simple.picker.PickerRecyclerView
+            android:id="@+id/pickerRecyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:layout_height="200dp"
+            tools:background="@color/colorPrimary" />
+
+        <me.simple.picker.PickerRecyclerView
+            android:id="@+id/pickerRecyclerView2"
+            android:layout_width="0dp"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:layout_height="200dp"
+            tools:background="@color/colorAccent" />
+    </LinearLayout>
+
 
     <CheckBox
         android:id="@+id/checkBoxIsLoop"
@@ -26,8 +42,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="无限循环"
-        app:layout_constraintStart_toStartOf="@+id/pickerRecyclerView"
-        app:layout_constraintTop_toBottomOf="@+id/pickerRecyclerView" />
+        app:layout_constraintStart_toStartOf="@+id/rvGroup"
+        app:layout_constraintTop_toBottomOf="@+id/rvGroup" />
 
     <EditText
         android:id="@+id/etVisibleCount"
