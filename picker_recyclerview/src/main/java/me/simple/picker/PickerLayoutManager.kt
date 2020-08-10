@@ -19,13 +19,13 @@ import kotlin.math.min
  * @param visibleCount 显示多少个子View
  * @param isLoop 是否支持无线滚动
  */
-class PickerLayoutManager(
+open class PickerLayoutManager(
 
     val orientation: Int = VERTICAL,
 
     val visibleCount: Int = 5,
 
-    val isLoop: Boolean = true,
+    val isLoop: Boolean = false,
 
     @FloatRange(from = 0.0, to = 1.0)
     val scaleX: Float = 1.0f,
@@ -702,7 +702,7 @@ class PickerLayoutManager(
         return getPosition(centerView)
     }
 
-    private fun transformChildren() {
+    open fun transformChildren() {
         if (childCount == 0) return
 
         val centerView = mSnapHelper.findSnapView(this) ?: return
@@ -717,13 +717,18 @@ class PickerLayoutManager(
                 child.scaleY = 1f
                 child.alpha = 1.0f
             } else {
-                val scaleX = this.scaleX / getIntervalCount(centerPosition, position)
-                val scaleY = this.scaleY / getIntervalCount(centerPosition, position)
-//                child.scaleX = scaleX
-//                child.scaleY = scaleY
+                val scaleX = transformScale(this.scaleX, getIntervalCount(centerPosition, position))
+                val scaleY = transformScale(this.scaleY, getIntervalCount(centerPosition, position))
+                child.scaleX = scaleX
+                child.scaleY = scaleY
                 child.alpha = this.alpha
             }
         }
+    }
+
+    private fun transformScale(scale: Float, intervalCount: Int): Float {
+        if (scale == 1.0f) return scale
+        return scale / intervalCount
     }
 
     /**
@@ -764,13 +769,13 @@ class PickerLayoutManager(
         }
     }
 
-    fun onSelectedItemLayout(child: View, position: Int) {
+    open fun onSelectedItemLayout(child: View, position: Int) {
         for (listener in mOnItemLayoutListener) {
             listener.onSelectedItemLayout(child, position)
         }
     }
 
-    fun onUnSelectedItemLayout(child: View, position: Int) {
+    open fun onUnSelectedItemLayout(child: View, position: Int) {
         for (listener in mOnItemLayoutListener) {
             listener.onUnSelectedItemLayout(child, position)
         }

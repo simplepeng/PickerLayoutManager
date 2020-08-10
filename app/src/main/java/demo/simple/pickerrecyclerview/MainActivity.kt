@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initLinearPicker() {
-        val pickerLayoutManager = PickerLayoutManager(PickerLayoutManager.VERTICAL)
+        val pickerLayoutManager = PickerLayoutManager(PickerLayoutManager.VERTICAL, scaleY = 0.8f)
         setListener(pickerLayoutManager)
         pickerRecyclerView.run {
             layoutManager = pickerLayoutManager
