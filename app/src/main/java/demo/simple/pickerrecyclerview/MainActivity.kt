@@ -1,10 +1,9 @@
 package demo.simple.pickerrecyclerview
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -129,5 +128,21 @@ class MainActivity : AppCompatActivity() {
 
     inner class PickerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvItem = itemView.findViewById<TextView>(R.id.tv_item)!!
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_date_picker -> {
+                startActivity(Intent(this, DatePickerActivity::class.java))
+            }
+            else -> {
+            }
+        }
+        return true
     }
 }

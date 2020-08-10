@@ -91,17 +91,22 @@ open class PickerLayoutManager(
     }
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
-        return if (orientation == HORIZONTAL) {
-            RecyclerView.LayoutParams(
-                RecyclerView.LayoutParams.WRAP_CONTENT,
-                RecyclerView.LayoutParams.MATCH_PARENT
-            )
-        } else {
-            RecyclerView.LayoutParams(
-                RecyclerView.LayoutParams.MATCH_PARENT,
-                RecyclerView.LayoutParams.WRAP_CONTENT
-            )
-        }
+//        return if (orientation == HORIZONTAL) {
+//            RecyclerView.LayoutParams(
+//                RecyclerView.LayoutParams.WRAP_CONTENT,
+//                RecyclerView.LayoutParams.MATCH_PARENT
+//            )
+//        } else {
+//            RecyclerView.LayoutParams(
+//                RecyclerView.LayoutParams.MATCH_PARENT,
+//                RecyclerView.LayoutParams.WRAP_CONTENT
+//            )
+//        }
+
+        return RecyclerView.LayoutParams(
+            RecyclerView.LayoutParams.WRAP_CONTENT,
+            RecyclerView.LayoutParams.WRAP_CONTENT
+        )
     }
 
     private fun getInnerItemCount() = if (isLoop) Int.MAX_VALUE else super.getItemCount()
@@ -127,6 +132,12 @@ open class PickerLayoutManager(
         val itemView = recycler.getViewForPosition(0)
         addView(itemView)
 //        measureChildWithMargins(itemView, 0, 0)
+
+        val widthSize = View.MeasureSpec.getSize(widthSpec)
+        val widthMode = View.MeasureSpec.getMode(widthSpec)
+        logDebug("widthSize == $widthSize")
+        logDebug("widthMode == $widthMode")
+
         itemView.measure(widthSpec, heightSpec)
 
         mItemWidth = getDecoratedMeasuredWidth(itemView)
