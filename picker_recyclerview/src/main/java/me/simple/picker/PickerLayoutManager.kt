@@ -177,7 +177,7 @@ class PickerLayoutManager(
 //        logDebug("consumed == $consumed")
 
         offsetChildrenHorizontal(-consumed)
-        recyclerVertically(recycler, consumed)
+        recyclerHorizontal(recycler, consumed)
 
 //        logChildCount(recycler)
 //        logChildrenPosition()
@@ -417,7 +417,7 @@ class PickerLayoutManager(
             val child = getViewForPosition(recycler, i)
             addView(child)
             measureChildWithMargins(child, 0, 0)
-            val right = left + getDecoratedMeasuredHeight(child)
+            val right = left + getDecoratedMeasuredWidth(child)
             layoutDecorated(child, left, 0, right, getDecoratedMeasuredHeight(child))
             offsetWidth += getDecoratedMeasuredHeight(child)
             logDebug("fillHorizontalEnd -- $i")
@@ -458,6 +458,50 @@ class PickerLayoutManager(
             right = left
         }
         return dx
+    }
+
+    private fun recyclerHorizontal(
+        recycler: RecyclerView.Recycler,
+        dx: Int
+    ) {
+        if (childCount == 0) return
+
+        if (dx > 0) {
+            recycleHorizontalStart(recycler)
+        } else {
+            recycleHorizontalEnd(recycler)
+        }
+    }
+
+    //dx>0
+    private fun recycleHorizontalStart(
+        recycler: RecyclerView.Recycler
+    ) {
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)!!
+            //stop here
+            val right = getDecoratedRight(child)
+            if (right > 0) {
+                recycleCachedView(recycler)
+                break
+            }
+            mCachedViews.add(child)
+        }
+    }
+
+    //dx<0
+    private fun recycleHorizontalEnd(
+        recycler: RecyclerView.Recycler
+    ) {
+        for (i in childCount - 1 downTo 0) {
+            val child = getChildAt(i)!!
+            val left = getDecoratedLeft(child)
+            if (left < width) {
+                recycleCachedView(recycler)
+                break
+            }
+            mCachedViews.add(child)
+        }
     }
 
     private fun recycleCachedView(recycler: RecyclerView.Recycler) {
@@ -604,7 +648,8 @@ class PickerLayoutManager(
             val destTop = getVerticallySpace() / 2 - getDecoratedMeasuredHeight(centerView) / 2
             destTop - getDecoratedTop(centerView)
         } else {
-            0
+            val destLeft = getHorizontalSpace() / 2 - getDecoratedMeasuredWidth(centerView) / 2
+            destLeft - getDecoratedLeft(centerView)
         }
 
         smoothOffsetChildren(distance)
