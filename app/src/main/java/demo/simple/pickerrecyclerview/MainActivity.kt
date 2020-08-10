@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initLinearPicker() {
-        val pickerLayoutManager = PickerLayoutManager()
+        val pickerLayoutManager = PickerLayoutManager(PickerLayoutManager.VERTICAL)
         setListener(pickerLayoutManager)
         pickerRecyclerView.run {
             layoutManager = pickerLayoutManager
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 //                LogLinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = PickerAdapter(PickerLayoutManager.HORIZONTAL)
         }
-//        pickerRecyclerView.addItemDecoration(PickerItemDecoration())
+        pickerRecyclerView2.addItemDecoration(PickerItemDecoration())
     }
 
     private fun setListener(pickerLayoutManager: PickerLayoutManager) {
