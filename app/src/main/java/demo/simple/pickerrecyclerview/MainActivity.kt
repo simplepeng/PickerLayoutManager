@@ -52,16 +52,13 @@ class MainActivity : AppCompatActivity() {
 //                LogLinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = PickerAdapter(PickerLayoutManager.HORIZONTAL)
         }
-        pickerRecyclerView.addItemDecoration(PickerItemDecoration())
+//        pickerRecyclerView.addItemDecoration(PickerItemDecoration())
     }
 
     private fun setListener(pickerLayoutManager: PickerLayoutManager) {
-        pickerLayoutManager.addOnSelectedItemListener(object :
-            PickerLayoutManager.OnSelectedItemListener {
-            override fun onSelected(position: Int) {
-                toast(position.toString())
-            }
-        })
+        pickerLayoutManager.addOnSelectedItemListener { position ->
+            toast(position.toString())
+        }
     }
 
     fun reLayout(view: View) {
@@ -103,7 +100,8 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
-    inner class PickerAdapter(private val orientation: Int) : RecyclerView.Adapter<PickerViewHolder>() {
+    inner class PickerAdapter(private val orientation: Int) :
+        RecyclerView.Adapter<PickerViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickerViewHolder {
             val layoutId = if (orientation == PickerLayoutManager.HORIZONTAL) {
                 R.layout.item_horizontal_picker
@@ -127,6 +125,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     inner class PickerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
+        val tvItem = itemView.findViewById<TextView>(R.id.tv_item)!!
     }
 }

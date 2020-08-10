@@ -20,13 +20,21 @@ import kotlin.math.min
  * @param isLoop 是否支持无线滚动
  */
 class PickerLayoutManager(
+
     val orientation: Int = VERTICAL,
+
     val visibleCount: Int = 3,
+
     val isLoop: Boolean = false,
+
     @FloatRange(from = 0.0, to = 1.0)
-    val scale: Float = 0.75f,
+    val scaleX: Float = 0.75f,
+    @FloatRange(from = 0.0, to = 1.0)
+    val scaleY: Float = 0.75f,
+
     @FloatRange(from = 0.0, to = 1.0)
     val alpha: Float = 1.0f
+
 ) : RecyclerView.LayoutManager(),
     RecyclerView.SmoothScroller.ScrollVectorProvider {
 
@@ -44,7 +52,10 @@ class PickerLayoutManager(
     private val mSnapHelper = LinearSnapHelper()
 
     //
-    private val mSelectedItemListener = mutableListOf<OnSelectedItemListener>()
+    private val mSelectedItemListener = mutableListOf<(position: Int) -> Unit>()
+
+    //
+    private val mOnItemLayoutListener = mutableListOf<OnItemLayoutListener>()
 
     companion object {
         const val HORIZONTAL = RecyclerView.HORIZONTAL
@@ -80,10 +91,22 @@ class PickerLayoutManager(
     }
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
-        return RecyclerView.LayoutParams(
-            RecyclerView.LayoutParams.WRAP_CONTENT,
-            RecyclerView.LayoutParams.WRAP_CONTENT
-        )
+        return if (orientation == HORIZONTAL) {
+            RecyclerView.LayoutParams(
+                RecyclerView.LayoutParams.WRAP_CONTENT,
+                RecyclerView.LayoutParams.MATCH_PARENT
+            )
+        } else {
+            RecyclerView.LayoutParams(
+                RecyclerView.LayoutParams.MATCH_PARENT,
+                RecyclerView.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+//        return RecyclerView.LayoutParams(
+//            RecyclerView.LayoutParams.WRAP_CONTENT,
+//            RecyclerView.LayoutParams.WRAP_CONTENT
+//        )
     }
 
     private fun getInnerItemCount() = if (isLoop) Int.MAX_VALUE else super.getItemCount()
@@ -110,6 +133,11 @@ class PickerLayoutManager(
         addView(itemView)
 //        measureChildWithMargins(itemView, 0, 0)
         itemView.measure(widthSpec, heightSpec)
+//        val newWidthSpec = View.MeasureSpec.makeMeasureSpec(
+//            View.MeasureSpec.getSize(widthSpec),
+//            View.MeasureSpec.EXACTLY
+//        )
+//        itemView.measure(newWidthSpec, heightSpec)
 
         mItemWidth = getDecoratedMeasuredWidth(itemView)
         mItemHeight = getDecoratedMeasuredHeight(itemView)
@@ -135,7 +163,9 @@ class PickerLayoutManager(
 
         detachAndScrapAttachedViews(recycler)
         fill(recycler)
-        scaleChildren()
+
+        dispatchLayout()
+        transformChildren()
     }
 
     override fun canScrollHorizontally(): Boolean {
@@ -151,7 +181,21 @@ class PickerLayoutManager(
         recycler: RecyclerView.Recycler,
         state: RecyclerView.State
     ): Int {
-        return dx
+
+        val realDx = fillHorizontal(recycler, dx)
+        val consumed = if (isLoop) dx else realDx
+        logDebug("consumed == $consumed")
+
+        offsetChildrenHorizontal(-consumed)
+        recyclerVertically(recycler, consumed)
+
+//        logChildCount(recycler)
+//        logChildrenPosition()
+
+        dispatchLayout()
+        transformChildren()
+
+        return consumed
     }
 
     override fun scrollVerticallyBy(
@@ -172,15 +216,16 @@ class PickerLayoutManager(
 //        logChildCount(recycler)
 //        logChildrenPosition()
 
-        scaleChildren()
-        return dy
+        dispatchLayout()
+        transformChildren()
+        return consumed
     }
 
     private fun fill(recycler: RecyclerView.Recycler) {
-        if (orientation == VERTICAL) {
-            fillVertically(recycler, 0)
-        } else {
+        if (orientation == HORIZONTAL) {
             fillHorizontal(recycler, 0)
+        } else {
+            fillVertically(recycler, 0)
         }
     }
 
@@ -347,10 +392,50 @@ class PickerLayoutManager(
     }
 
     private fun initFillHorizontal(recycler: RecyclerView.Recycler) {
+        val startPosition = getStartPosition(mStartPosition)
 
+        var left = getHorizontalScrollOffset()
+        for (i in 0 until visibleCount) {
+            val child = getViewForPosition(recycler, startPosition + i)
+            addView(child)
+            measureChildWithMargins(child, 0, 0)
+            val right = left + getDecoratedMeasuredWidth(child)
+            layoutDecorated(child, left, 0, right, getDecoratedMeasuredHeight(child))
+            left = right
+        }
     }
 
     private fun fillHorizontalEnd(recycler: RecyclerView.Recycler, dx: Int): Int {
+        if (childCount == 0) return 0
+
+        val lastView = getChildAt(childCount - 1) ?: return 0
+        val lastBottom = getDecoratedBottom(lastView)
+
+        //如果当前最后一个child的bottom加上偏移量还是大于rv的height，就不用填充itemView，直接返回dy
+        if (lastBottom - dx > height) return dx
+
+        val nextPosition = getNextPosition(lastView)
+        //如果不是无限循环模式且已经是最后一个itemView，就返回
+        if (!isLoop && nextPosition > itemCount - 1) {
+            return min(dx, lastBottom - height + getVerticallyScrollOffset())
+        }
+
+        var top = lastBottom
+        var offsetHeight = 0
+        for (i in nextPosition until getInnerItemCount()) {
+            val child = getViewForPosition(recycler, i)
+            addView(child)
+            measureChildWithMargins(child, 0, 0)
+            val bottom = top + getDecoratedMeasuredHeight(child)
+            layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
+            offsetHeight += getDecoratedMeasuredHeight(child)
+            logDebug("fillVerticallyEnd -- $i")
+
+            //这里判断修改，修改为：dy还剩余多少就还可以摆放多少个itemView
+//            if (bottom > height) break
+            if (offsetHeight >= dx) break
+            top = bottom
+        }
 
         return dx
     }
@@ -394,8 +479,19 @@ class PickerLayoutManager(
         return 0
     }
 
+    private fun getHorizontalStartOffset(): Int {
+        val offset = (visibleCount - 1) / 2 * mItemWidth
+        if (!isLoop && mStartPosition == 0) return offset
+        return 0
+    }
+
     private fun getVerticallyScrollOffset(): Int {
         val offset = (visibleCount - 1) / 2 * mItemHeight
+        return if (isLoop) 0 else offset
+    }
+
+    private fun getHorizontalScrollOffset(): Int {
+        val offset = (visibleCount - 1) / 2 * mItemWidth
         return if (isLoop) 0 else offset
     }
 
@@ -484,7 +580,7 @@ class PickerLayoutManager(
 
     private fun dispatchListener(position: Int) {
         for (listener in mSelectedItemListener) {
-            listener.onSelected(position)
+            listener.invoke(position)
         }
     }
 
@@ -532,11 +628,11 @@ class PickerLayoutManager(
         removeAllViews()
     }
 
-    fun addOnSelectedItemListener(listener: OnSelectedItemListener) {
+    fun addOnSelectedItemListener(listener: (position: Int) -> Unit) {
         mSelectedItemListener.add(listener)
     }
 
-    fun removeOnSelectedItemListener(listener: OnSelectedItemListener) {
+    fun removeOnSelectedItemListener(listener: (position: Int) -> Unit) {
         mSelectedItemListener.remove(listener)
     }
 
@@ -550,7 +646,9 @@ class PickerLayoutManager(
         return getPosition(centerView)
     }
 
-    private fun scaleChildren() {
+    private fun transformChildren() {
+        if (childCount == 0) return
+
         val centerView = mSnapHelper.findSnapView(this) ?: return
         val centerPosition = getPosition(centerView)
 
@@ -559,19 +657,59 @@ class PickerLayoutManager(
             val child = getChildAt(i)!!
             val position = getPosition(child)
             if (position == centerPosition) {
-                child.scaleY = 1f
                 child.scaleX = 1f
+                child.scaleY = 1f
                 child.alpha = 1.0f
             } else {
-                val scale = this.scale / abs(centerPosition - position)
-                if (orientation == HORIZONTAL) {
-                    child.scaleX = scale
-                } else {
-                    child.scaleY = scale
-                }
+                val scaleX = this.scaleX / abs(centerPosition - position)
+                val scaleY = this.scaleY / abs(centerPosition - position)
+                child.scaleX = scaleX
+                child.scaleY = scaleY
                 child.alpha = this.alpha
             }
         }
     }
 
+    private fun dispatchLayout() {
+        if (childCount == 0) return
+
+        val centerView = mSnapHelper.findSnapView(this) ?: return
+        val centerPosition = getPosition(centerView)
+
+        for (i in 0 until childCount) {
+            val child = getChildAt(i) ?: continue
+            val position = getPosition(child)
+
+            if (position == centerPosition) {
+                onSelectedItemLayout(child, position)
+            } else {
+                onUnSelectedItemLayout(child, position)
+            }
+        }
+    }
+
+    fun onSelectedItemLayout(child: View, position: Int) {
+        for (listener in mOnItemLayoutListener) {
+            listener.onSelectedItemLayout(child, position)
+        }
+    }
+
+    fun onUnSelectedItemLayout(child: View, position: Int) {
+        for (listener in mOnItemLayoutListener) {
+            listener.onUnSelectedItemLayout(child, position)
+        }
+    }
+
+    interface OnItemLayoutListener {
+        fun onSelectedItemLayout(child: View, position: Int)
+        fun onUnSelectedItemLayout(child: View, position: Int)
+    }
+
+    fun addOnItemLayoutListener(listener: OnItemLayoutListener) {
+        mOnItemLayoutListener.add(listener)
+    }
+
+    fun removeOnItemLayoutListener(listener: OnItemLayoutListener) {
+        mOnItemLayoutListener.remove(listener)
+    }
 }
