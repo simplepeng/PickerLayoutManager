@@ -25,7 +25,7 @@ open class PickerLayoutManager(
 
     val visibleCount: Int = 5,
 
-    val isLoop: Boolean = false,
+    val isLoop: Boolean = true,
 
     @FloatRange(from = 0.0, to = 1.0)
     val scaleX: Float = 1.0f,
@@ -719,6 +719,7 @@ open class PickerLayoutManager(
             } else {
                 val scaleX = transformScale(this.scaleX, getIntervalCount(centerPosition, position))
                 val scaleY = transformScale(this.scaleY, getIntervalCount(centerPosition, position))
+                logDebug("scaleY == $scaleY")
                 child.scaleX = scaleX
                 child.scaleY = scaleY
                 child.alpha = this.alpha
@@ -741,14 +742,15 @@ open class PickerLayoutManager(
         if (!isLoop)
             return abs(centerPosition - position)
 
-        if (position < centerPosition)
-            return centerPosition - position
-
-        //这种情况就是无限循环模式下会遇到的
+        //例如：position=100,centerPosition=0这种情况
         if (position > centerPosition && position - centerPosition > visibleCount)
             return itemCount - position
 
-        return position - centerPosition
+        //例如：position=0,centerPosition=100这种情况
+        if (position < centerPosition && centerPosition - position > visibleCount)
+            return position + 1
+
+        return abs(position - centerPosition)
     }
 
     private fun dispatchLayout() {
@@ -792,5 +794,40 @@ open class PickerLayoutManager(
 
     fun removeOnItemLayoutListener(listener: OnItemLayoutListener) {
         mOnItemLayoutListener.remove(listener)
+    }
+
+    class Builder {
+        private var orientation = VERTICAL
+        private var visibleCount = 3
+        private var isLoop = false
+        private var scaleX = 1.0f
+        private var scaleY = 1.0f
+        private var alpha = 1.0f
+
+        fun setOrientation(orientation: Int) {
+            this.orientation = orientation
+        }
+
+        fun setVisibleCount(visibleCount: Int) {
+            this.visibleCount = visibleCount
+        }
+
+        fun setIsLoop(isLoop: Boolean) {
+            this.isLoop = isLoop
+        }
+
+        fun setScaleX(@FloatRange(from = 0.0, to = 1.0) scaleX: Float) {
+            this.scaleX = scaleX
+        }
+
+        fun setScaleY(@FloatRange(from = 0.0, to = 1.0) scaleY: Float) {
+            this.scaleY = scaleY
+        }
+
+        fun setAlpha(@FloatRange(from = 0.0, to = 1.0) alpha: Float) {
+            this.alpha = alpha
+        }
+
+        fun build() = PickerLayoutManager(orientation, visibleCount, isLoop, scaleX, scaleY, alpha)
     }
 }

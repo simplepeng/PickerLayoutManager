@@ -69,6 +69,9 @@ class MainActivity : AppCompatActivity() {
         pickerRecyclerView.layoutManager = lm
     }
 
+    fun createLayoutManager() = PickerLayoutManager.Builder()
+        .build()
+
     fun scrollTo(view: View) {
         try {
             val position = etScrollTo.text.toString().toInt()

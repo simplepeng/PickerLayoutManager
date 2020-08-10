@@ -18,14 +18,4 @@ class PickerRecyclerView : RecyclerView {
         defStyleAttr
     )
 
-    private val mPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.RED
-        style = Paint.Style.FILL
-    }
-
-
-    private fun logDebug(msg: String) {
-        if (!PickerLayoutManager.DEBUG) return
-        Log.d("PickerRecyclerView", msg)
-    }
 }
