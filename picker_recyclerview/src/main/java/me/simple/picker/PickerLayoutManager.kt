@@ -179,7 +179,7 @@ class PickerLayoutManager(
         offsetChildrenHorizontal(-consumed)
         recyclerHorizontal(recycler, consumed)
 
-//        logChildCount(recycler)
+        logChildCount(recycler)
 //        logChildrenPosition()
 
         dispatchLayout()
@@ -393,7 +393,7 @@ class PickerLayoutManager(
             layoutDecorated(child, left, 0, right, getDecoratedMeasuredHeight(child))
             left = right
 
-            logDebug("initFillHorizontal -- $i")
+//            logDebug("initFillHorizontal -- ${getPosition(child)}")
         }
     }
 
@@ -723,8 +723,8 @@ class PickerLayoutManager(
             } else {
                 val scaleX = this.scaleX / getIntervalCount(centerPosition, position)
                 val scaleY = this.scaleY / getIntervalCount(centerPosition, position)
-                child.scaleX = scaleX
-                child.scaleY = scaleY
+//                child.scaleX = scaleX
+//                child.scaleY = scaleY
                 child.alpha = this.alpha
             }
         }
