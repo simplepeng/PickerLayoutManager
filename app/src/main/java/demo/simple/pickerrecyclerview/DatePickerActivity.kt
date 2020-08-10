@@ -16,6 +16,6 @@ class DatePickerActivity : AppCompatActivity() {
             mItems.add(i.toString())
         }
 
-        textPickerView.setItems(mItems)
+        textPickerView.setYearInterval()
     }
 }

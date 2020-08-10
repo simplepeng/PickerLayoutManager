@@ -8,14 +8,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TextPickerView @JvmOverloads constructor(
+open class TextPickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : PickerRecyclerView(context, attrs, defStyleAttr) {
 
-    private val mItems = mutableListOf<String>()
-    private val mAdapter = TextPickerAdapter()
+    val mItems = mutableListOf<String>()
+    val mAdapter = TextPickerAdapter()
 
     fun setItems(items: MutableList<String>) {
         mItems.clear()

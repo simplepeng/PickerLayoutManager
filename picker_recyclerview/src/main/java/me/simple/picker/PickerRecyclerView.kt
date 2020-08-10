@@ -15,7 +15,7 @@ open class PickerRecyclerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : RecyclerView(context, attrs, defStyleAttr) {
 
-    private var mLayoutManager: PickerLayoutManager
+    var mLayoutManager: PickerLayoutManager
 
     init {
         val typeA = context.obtainStyledAttributes(attrs, R.styleable.PickerRecyclerView)
