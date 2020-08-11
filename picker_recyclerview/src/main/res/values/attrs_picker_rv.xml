@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="visibleCount" format="integer" />
+    <attr name="isLoop" format="boolean" />
+    <attr name="scaleX" format="float" />
+    <attr name="scaleY" format="float" />
+    <attr name="alpha" format="float" />
+    <attr name="dividerColor" format="dimension" />
+    <attr name="dividerSize" format="dimension" />
+    <attr name="dividerPadding" format="dimension" />
+
+    <declare-styleable name="PickerRecyclerView">
+        <attr name="orientation" format="enum">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+        <attr name="visibleCount" />
+        <attr name="isLoop" />
+        <attr name="scaleX" />
+        <attr name="scaleY" />
+        <attr name="alpha" />
+    </declare-styleable>
+
+    <declare-styleable name="PickerLinearLayout">
+        <attr name="visibleCount" />
+        <attr name="isLoop" />
+        <attr name="scaleX" />
+        <attr name="scaleY" />
+        <attr name="alpha" />
+        <attr name="dividerColor" />
+        <attr name="dividerSize" />
+        <attr name="dividerPadding" />
+    </declare-styleable>
+</resources>

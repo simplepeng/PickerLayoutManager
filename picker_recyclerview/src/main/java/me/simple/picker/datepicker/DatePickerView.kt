@@ -3,13 +3,14 @@ package me.simple.picker.datepicker
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
+import me.simple.picker.PickerLinearLayout
 import java.util.*
 
 class DatePickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+) : PickerLinearLayout(context, attrs, defStyleAttr) {
 
     private val mYearPickerView = YearPickerView(context).apply {
         layoutParams = generateChildLayoutParams()
@@ -41,6 +42,11 @@ class DatePickerView @JvmOverloads constructor(
         addView(mDayPickerView)
 
         initDate()
+    }
+
+    override fun initAttrs(attrs: AttributeSet?) {
+        super.initAttrs(attrs)
+
     }
 
     private fun initDate() {

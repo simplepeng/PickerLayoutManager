@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class PickerItemDecoration(
     private val color: Int = Color.LTGRAY,
-    private val size: Int = 1,
+    private val size: Float = 1.0f,
     private val padding: Float = 0f
 ) : RecyclerView.ItemDecoration() {
 

@@ -33,6 +33,11 @@ open class PickerRecyclerView @JvmOverloads constructor(
         layoutManager = lm
     }
 
+    fun resetLayoutManager() {
+        layoutManager = PickerLayoutManager.Builder()
+            .build()
+    }
+
     override fun getLayoutManager(): PickerLayoutManager {
         return super.getLayoutManager() as PickerLayoutManager
     }

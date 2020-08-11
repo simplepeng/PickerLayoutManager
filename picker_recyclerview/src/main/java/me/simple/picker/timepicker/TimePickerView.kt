@@ -2,13 +2,16 @@ package me.simple.picker.timepicker
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.LinearLayout
+import me.simple.picker.PickerItemDecoration
+import me.simple.picker.PickerLinearLayout
+import me.simple.picker.PickerRecyclerView
+import me.simple.picker.R
 
 class TimePickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+) : PickerLinearLayout(context, attrs, defStyleAttr) {
 
     private val mHourPickerView = HourPickerView(context).apply {
         layoutParams = generateChildLayoutParams()
@@ -27,6 +30,26 @@ class TimePickerView @JvmOverloads constructor(
         addView(mHourPickerView)
         addView(mMinutePickerView)
         addView(mSecondPickerView)
+
+        initAttrs(attrs)
+    }
+
+    override fun initAttrs(attrs: AttributeSet?) {
+        super.initAttrs(attrs)
+
+//        setDivider(mHourPickerView)
+//        setDivider(mMinutePickerView)
+//        setDivider(mSecondPickerView)
+    }
+
+    private fun setDivider(pickerView: PickerRecyclerView) {
+        pickerView.addItemDecoration(
+            PickerItemDecoration(
+                mDividerColor,
+                mDividerSize,
+                mDividerPadding
+            )
+        )
     }
 
     private fun generateChildLayoutParams(): LayoutParams {
