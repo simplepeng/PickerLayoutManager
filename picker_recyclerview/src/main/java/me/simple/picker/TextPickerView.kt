@@ -14,13 +14,12 @@ open class TextPickerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : PickerRecyclerView(context, attrs, defStyleAttr) {
 
-    val mItems = mutableListOf<String>()
-    val mAdapter = TextPickerAdapter(mItems)
+    protected open val mItems = mutableListOf<String>()
+    protected open val mAdapter = TextPickerAdapter(mItems)
 
     init {
         overScrollMode = View.OVER_SCROLL_NEVER
         adapter = mAdapter
-        addItemDecoration(PickerItemDecoration())
     }
 
     fun setItems(items: MutableList<String>) {

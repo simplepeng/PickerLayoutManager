@@ -25,5 +25,5 @@ class DayPickerView @JvmOverloads constructor(
         setDayCountInMonth(PickerUtils.getDayCountInMonth(year, month))
     }
 
-    fun getDay() = mDayItems[mLayoutManager.getSelectedItem()]
+    fun getDay() = mDayItems[layoutManager.getSelectedItem()]
 }

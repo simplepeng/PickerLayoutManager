@@ -15,7 +15,6 @@ open class PickerRecyclerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : RecyclerView(context, attrs, defStyleAttr) {
 
-    var mLayoutManager: PickerLayoutManager
 
     init {
         val typeA = context.obtainStyledAttributes(attrs, R.styleable.PickerRecyclerView)
@@ -27,14 +26,18 @@ open class PickerRecyclerView @JvmOverloads constructor(
         val scaleY = typeA.getFloat(R.styleable.PickerRecyclerView_scaleY, 1.0f)
         val alpha = typeA.getFloat(R.styleable.PickerRecyclerView_alpha, 1.0f)
 
-        mLayoutManager =
+        val lm =
             PickerLayoutManager(orientation, visibleCount, isLoop, scaleX, scaleY, alpha)
         typeA.recycle()
 
-        layoutManager = mLayoutManager
+        layoutManager = lm
+    }
+
+    override fun getLayoutManager(): PickerLayoutManager {
+        return super.getLayoutManager() as PickerLayoutManager
     }
 
     fun addOnSelectedItemListener(listener: (position: Int) -> Unit) {
-        mLayoutManager.addOnSelectedItemListener(listener)
+        layoutManager.addOnSelectedItemListener(listener)
     }
 }

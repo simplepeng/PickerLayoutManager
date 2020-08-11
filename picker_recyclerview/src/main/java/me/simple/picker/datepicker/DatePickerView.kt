@@ -68,6 +68,8 @@ class DatePickerView @JvmOverloads constructor(
     private fun resetDate() {
         val year = mYearPickerView.getYear().toInt()
         val month = mMonthPickerView.getMonth().toInt()
+//        mYearPickerView.setYearInterval(1950)
+//        mMonthPickerView.setMonthInterval(2,10)
         mDayPickerView.setYearAndMonth(year, month)
     }
 

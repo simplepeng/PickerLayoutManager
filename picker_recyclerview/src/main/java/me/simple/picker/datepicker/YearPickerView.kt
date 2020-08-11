@@ -22,7 +22,6 @@ class YearPickerView @JvmOverloads constructor(
     }
 
     fun getYear(): String {
-        val position = mLayoutManager.getSelectedItem()
-        return mYearItems[position]
+        return mYearItems[layoutManager.getSelectedItem()]
     }
 }

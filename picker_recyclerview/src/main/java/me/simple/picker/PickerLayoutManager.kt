@@ -651,7 +651,7 @@ open class PickerLayoutManager(
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
             val centerView = mSnapHelper.findSnapView(this) ?: return
             val centerPosition = getPosition(centerView)
-            mStartPosition = centerPosition
+//            mStartPosition = centerPosition
 //            dispatchListener(centerPosition)
             scrollToCenter(centerView, centerPosition)
         }
@@ -691,6 +691,7 @@ open class PickerLayoutManager(
             }
 
             override fun onAnimationEnd(animation: Animator?) {
+                mStartPosition = centerPosition
                 dispatchListener(centerPosition)
             }
 

@@ -29,5 +29,5 @@ class MonthPickerView @JvmOverloads constructor(
         setItems(mMonthItems)
     }
 
-    fun getMonth() = mMonthItems[mLayoutManager.getSelectedItem()]
+    fun getMonth() = mMonthItems[layoutManager.getSelectedItem()]
 }
