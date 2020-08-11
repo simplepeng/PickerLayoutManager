@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import me.simple.picker.PickerUtils
 import me.simple.picker.TextPickerView
+import java.util.*
 
 class MonthPickerView @JvmOverloads constructor(
     context: Context,
@@ -17,7 +18,10 @@ class MonthPickerView @JvmOverloads constructor(
         setMonthInterval()
     }
 
-    fun setMonthInterval(start: Int = 1, end: Int = 12) {
+    fun setMonthInterval(
+        start: Int = 1,
+        end: Int = 12
+    ) {
         mMonthItems.clear()
         for (day in start..end) {
             mMonthItems.add(PickerUtils.formatTwoChars(day))

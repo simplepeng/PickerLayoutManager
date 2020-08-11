@@ -1,5 +1,6 @@
 package me.simple.picker
 
+import android.animation.Animator
 import android.animation.ValueAnimator
 import android.graphics.PointF
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
+import kotlin.math.log
 import kotlin.math.max
 import kotlin.math.min
 
@@ -247,9 +249,11 @@ open class PickerLayoutManager(
 
     private fun initFillVertically(recycler: RecyclerView.Recycler) {
         val startPosition = getStartPosition(mStartPosition)
+        logDebug("startPosition == $startPosition")
 
         var top = getVerticallyTopOffset()
         for (i in 0 until visibleCount) {
+            logDebug("initFillVertically -- $i")
             val child = getViewForPosition(recycler, startPosition + i)
             addView(child)
             measureChildWithMargins(child, 0, 0)
@@ -257,6 +261,11 @@ open class PickerLayoutManager(
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
             top = bottom
         }
+    }
+
+    override fun onItemsChanged(recyclerView: RecyclerView) {
+        super.onItemsChanged(recyclerView)
+        mStartPosition = 0
     }
 
     //dy<0
@@ -643,8 +652,8 @@ open class PickerLayoutManager(
             val centerView = mSnapHelper.findSnapView(this) ?: return
             val centerPosition = getPosition(centerView)
             mStartPosition = centerPosition
-            dispatchListener(centerPosition)
-            scrollToCenter(centerView)
+//            dispatchListener(centerPosition)
+            scrollToCenter(centerView, centerPosition)
         }
     }
 
@@ -654,7 +663,7 @@ open class PickerLayoutManager(
         }
     }
 
-    private fun scrollToCenter(centerView: View) {
+    private fun scrollToCenter(centerView: View, centerPosition: Int) {
         val distance = if (orientation == VERTICAL) {
             val destTop = getVerticallySpace() / 2 - getDecoratedMeasuredHeight(centerView) / 2
             destTop - getDecoratedTop(centerView)
@@ -663,10 +672,10 @@ open class PickerLayoutManager(
             destLeft - getDecoratedLeft(centerView)
         }
 
-        smoothOffsetChildren(distance)
+        smoothOffsetChildren(distance, centerPosition)
     }
 
-    private fun smoothOffsetChildren(amount: Int) {
+    private fun smoothOffsetChildren(amount: Int, centerPosition: Int) {
         var lastValue = amount
         val animator = ValueAnimator.ofInt(amount, 0).apply {
             interpolator = LinearInterpolator()
@@ -677,6 +686,20 @@ open class PickerLayoutManager(
             offsetChildren(lastValue - value)
             lastValue = value
         }
+        animator.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationRepeat(animation: Animator?) {
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                dispatchListener(centerPosition)
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+            }
+
+            override fun onAnimationStart(animation: Animator?) {
+            }
+        })
         animator.start()
     }
 
@@ -692,12 +715,12 @@ open class PickerLayoutManager(
 
     private fun getHorizontalSpace() = width - paddingLeft - paddingRight
 
-    override fun onAdapterChanged(
-        oldAdapter: RecyclerView.Adapter<*>?,
-        newAdapter: RecyclerView.Adapter<*>?
-    ) {
-        removeAllViews()
-    }
+//    override fun onAdapterChanged(
+//        oldAdapter: RecyclerView.Adapter<*>?,
+//        newAdapter: RecyclerView.Adapter<*>?
+//    ) {
+//        removeAllViews()
+//    }
 
     fun addOnSelectedItemListener(listener: (position: Int) -> Unit) {
         mSelectedItemListener.add(listener)

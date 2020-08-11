@@ -1,5 +1,7 @@
 package me.simple.picker
 
+import java.util.*
+
 object PickerUtils {
 
     fun formatTwoChars(text: Int) = String.format("%02d", text)
@@ -15,4 +17,6 @@ object PickerUtils {
 
         return 30
     }
+
+    fun getTodayCalendar() = Calendar.getInstance()
 }

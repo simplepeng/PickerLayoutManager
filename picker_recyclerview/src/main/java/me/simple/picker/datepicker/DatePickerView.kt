@@ -61,6 +61,10 @@ class DatePickerView @JvmOverloads constructor(
         }
     }
 
+    fun setDateInterval(start: Calendar, end: Calendar = Calendar.getInstance()) {
+
+    }
+
     private fun resetDate() {
         val year = mYearPickerView.getYear().toInt()
         val month = mMonthPickerView.getMonth().toInt()

@@ -15,20 +15,22 @@ open class TextPickerView @JvmOverloads constructor(
 ) : PickerRecyclerView(context, attrs, defStyleAttr) {
 
     val mItems = mutableListOf<String>()
-    val mAdapter = TextPickerAdapter()
+    val mAdapter = TextPickerAdapter(mItems)
 
     init {
         overScrollMode = View.OVER_SCROLL_NEVER
+        adapter = mAdapter
         addItemDecoration(PickerItemDecoration())
     }
 
     fun setItems(items: MutableList<String>) {
         mItems.clear()
         mItems.addAll(items)
-        adapter = mAdapter
+        mAdapter.notifyDataSetChanged()
     }
 
-    inner class TextPickerAdapter : RecyclerView.Adapter<TextPickerViewHolder>() {
+    inner class TextPickerAdapter(private val items: MutableList<String>) :
+        RecyclerView.Adapter<TextPickerViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
                 : TextPickerViewHolder {
             val inflater = LayoutInflater.from(parent.context)
@@ -36,7 +38,7 @@ open class TextPickerView @JvmOverloads constructor(
         }
 
         override fun getItemCount(): Int {
-            return mItems.size
+            return items.size
         }
 
         override fun onBindViewHolder(holder: TextPickerViewHolder, position: Int) {
@@ -45,6 +47,7 @@ open class TextPickerView @JvmOverloads constructor(
     }
 
     inner class TextPickerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         private val textView = itemView as TextView
 
         fun bindItem(position: Int) {
