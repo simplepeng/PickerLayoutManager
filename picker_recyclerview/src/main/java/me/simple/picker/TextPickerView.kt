@@ -14,8 +14,8 @@ open class TextPickerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : PickerRecyclerView(context, attrs, defStyleAttr) {
 
-    protected open val mItems = mutableListOf<String>()
-    protected open val mAdapter = TextPickerAdapter(mItems)
+    val mItems = mutableListOf<String>()
+    val mAdapter = TextPickerAdapter(mItems)
 
     init {
         overScrollMode = View.OVER_SCROLL_NEVER

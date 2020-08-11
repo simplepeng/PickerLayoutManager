@@ -5,9 +5,17 @@
     android:layout_height="match_parent">
 
     <me.simple.picker.datepicker.DatePickerView
-        android:id="@+id/textPickerView"
+        android:id="@+id/datePickerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <me.simple.picker.timepicker.TimePickerView
+        android:id="@+id/timePickerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/datePickerView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
