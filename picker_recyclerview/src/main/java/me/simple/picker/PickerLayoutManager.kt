@@ -670,7 +670,7 @@ open class PickerLayoutManager(
         var lastValue = amount
         val animator = ValueAnimator.ofInt(amount, 0).apply {
             interpolator = LinearInterpolator()
-            duration = 500
+            duration = 300
         }
         animator.addUpdateListener {
             val value = it.animatedValue as Int

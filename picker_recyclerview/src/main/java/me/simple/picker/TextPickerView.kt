@@ -17,6 +17,11 @@ open class TextPickerView @JvmOverloads constructor(
     val mItems = mutableListOf<String>()
     val mAdapter = TextPickerAdapter()
 
+    init {
+        overScrollMode = View.OVER_SCROLL_NEVER
+        addItemDecoration(PickerItemDecoration())
+    }
+
     fun setItems(items: MutableList<String>) {
         mItems.clear()
         mItems.addAll(items)

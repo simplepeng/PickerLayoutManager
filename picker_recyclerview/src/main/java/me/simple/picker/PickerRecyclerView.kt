@@ -33,4 +33,8 @@ open class PickerRecyclerView @JvmOverloads constructor(
 
         layoutManager = mLayoutManager
     }
+
+    fun addOnSelectedItemListener(listener: (position: Int) -> Unit) {
+        mLayoutManager.addOnSelectedItemListener(listener)
+    }
 }
