@@ -17,16 +17,13 @@ class MonthPickerView @JvmOverloads constructor(
         setMonthInterval()
     }
 
-    fun setMonthInterval(
-        start: Int = 1,
-        end: Int = 12
-    ) {
+    fun setMonthInterval(endMonth: Int = 12) {
         mMonthItems.clear()
-        for (day in start..end) {
-            mMonthItems.add(PickerUtils.formatTwoChars(day))
+        for (month in 1..endMonth) {
+            mMonthItems.add(PickerUtils.formatTwoChars(month))
         }
         setItems(mMonthItems)
     }
 
-    fun getMonth() = mMonthItems[layoutManager.getSelectedPosition()]
+    fun getMonth() = getSelectedItem()
 }

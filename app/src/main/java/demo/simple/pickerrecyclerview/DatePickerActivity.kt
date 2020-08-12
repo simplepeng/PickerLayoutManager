@@ -18,18 +18,20 @@ class DatePickerActivity : BaseActivity() {
         }
 
         btnGetDate.setOnClickListener {
-            val dateArr = datePickerView.getYearMonthDay()
-            val timeArr = timePickerView.getHourMinuteSecond()
+            datePickerView.scrollToEnd()
 
-            val year = dateArr[0]
-            val month = dateArr[1]
-            val day = dateArr[2]
-
-            val hour = timeArr[0]
-            val minute = timeArr[1]
-            val second = timeArr[2]
-
-            tvDate.text = "$year-$month-$day $hour:$minute:$second"
+//            val dateArr = datePickerView.getYearMonthDay()
+//            val timeArr = timePickerView.getHourMinuteSecond()
+//
+//            val year = dateArr[0]
+//            val month = dateArr[1]
+//            val day = dateArr[2]
+//
+//            val hour = timeArr[0]
+//            val minute = timeArr[1]
+//            val second = timeArr[2]
+//
+//            tvDate.text = "$year-$month-$day $hour:$minute:$second"
         }
 
     }

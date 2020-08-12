@@ -2,8 +2,8 @@ package me.simple.picker.datepicker
 
 import android.content.Context
 import android.util.AttributeSet
+import me.simple.picker.PickerUtils
 import me.simple.picker.TextPickerView
-import java.util.*
 
 class YearPickerView @JvmOverloads constructor(
     context: Context,
@@ -13,15 +13,18 @@ class YearPickerView @JvmOverloads constructor(
 
     private val mYearItems = mutableListOf<String>()
 
-    fun setYearInterval(start: Int = 1949, end: Int = Calendar.getInstance().get(Calendar.YEAR)) {
+    fun setYearInterval(
+        startYear: Int = 1949,
+        endYear: Int = PickerUtils.getEndYear()
+    ) {
         mYearItems.clear()
-        for (year in start..end) {
+        for (year in startYear..endYear) {
             mYearItems.add(year.toString())
         }
         setItems(mYearItems)
     }
 
-    fun getYear(): String {
-        return mYearItems[layoutManager.getSelectedPosition()]
+    fun getYear(): String? {
+        return getSelectedItem()
     }
 }

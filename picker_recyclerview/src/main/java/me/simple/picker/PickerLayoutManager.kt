@@ -152,7 +152,7 @@ open class PickerLayoutManager(
 
     // 软键盘的弹出和收起都会再次调用这个方法，自己要记录好偏移量
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
-        if (itemCount == 0) {
+        if (state.itemCount == 0) {
             removeAndRecycleAllViews(recycler)
             return
         }
@@ -215,7 +215,7 @@ open class PickerLayoutManager(
 
         dispatchLayout()
         transformChildren()
-        return consumed
+        return dy
     }
 
     private fun fill(recycler: RecyclerView.Recycler) {
@@ -543,10 +543,6 @@ open class PickerLayoutManager(
         }
 
         return position
-    }
-
-    private fun getEndPosition(start: Int): Int {
-        return start
     }
 
     //3-1,5-2,7-3,9-4

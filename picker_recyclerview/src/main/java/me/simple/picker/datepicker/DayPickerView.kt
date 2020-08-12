@@ -13,17 +13,17 @@ class DayPickerView @JvmOverloads constructor(
 
     private val mDayItems = mutableListOf<String>()
 
-    fun setDayCountInMonth(dayCount: Int = 31) {
+    fun setDayInterval(endDay: Int = 31) {
         mDayItems.clear()
-        for (day in 1..dayCount) {
+        for (day in 1..endDay) {
             mDayItems.add(PickerUtils.formatTwoChars(day))
         }
         setItems(mDayItems)
     }
 
     fun setYearAndMonth(year: Int, month: Int) {
-        setDayCountInMonth(PickerUtils.getDayCountInMonth(year, month))
+        setDayInterval(PickerUtils.getDayCountInMonth(year, month))
     }
 
-    fun getDay() = mDayItems[layoutManager.getSelectedPosition()]
+    fun getDay() = getSelectedItem()
 }

@@ -48,10 +48,15 @@ class TimePickerView @JvmOverloads constructor(
         }
     }
 
+    private fun setTimeInterval() {
+
+    }
+
     private fun dispatchOnSelectedItem() {
         val hour = mHourPickerView.getHour()
         val minute = mMinutePickerView.getMinute()
         val second = mSecondPickerView.getSecond()
+        if (hour.isNullOrEmpty() || minute.isNullOrEmpty() || second.isNullOrEmpty()) return
         mOnSelected?.invoke(hour, minute, second)
     }
 

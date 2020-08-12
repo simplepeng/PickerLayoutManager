@@ -19,4 +19,8 @@ object PickerUtils {
     }
 
     fun getTodayCalendar() = Calendar.getInstance()
+
+    fun getEndYear() = getTodayCalendar().get(Calendar.YEAR)
+    fun getEndMonth() = getTodayCalendar().get(Calendar.MONTH) + 1
+    fun getEndDay() = getTodayCalendar().get(Calendar.DATE)
 }

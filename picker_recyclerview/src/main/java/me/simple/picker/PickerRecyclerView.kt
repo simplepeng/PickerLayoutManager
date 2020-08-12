@@ -11,7 +11,6 @@ open class PickerRecyclerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : RecyclerView(context, attrs, defStyleAttr) {
 
-
     init {
         val typeA = context.obtainStyledAttributes(attrs, R.styleable.PickerRecyclerView)
         val orientation =
@@ -44,4 +43,9 @@ open class PickerRecyclerView @JvmOverloads constructor(
         layoutManager.addOnSelectedItemListener(listener)
     }
 
+    fun scrollToEnd() {
+        if (adapter == null) return
+//        this.scrollToPosition(adapter!!.itemCount - 1)
+        this.smoothScrollToPosition(adapter!!.itemCount - 1)
+    }
 }
