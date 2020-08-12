@@ -6,6 +6,7 @@ import android.widget.LinearLayout
 import me.simple.picker.PickerLinearLayout
 import java.util.*
 
+@SuppressWarnings("")
 class DatePickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -39,11 +40,6 @@ class DatePickerView @JvmOverloads constructor(
         setDivider(mDayPickerView)
     }
 
-    override fun initAttrs(attrs: AttributeSet?) {
-        super.initAttrs(attrs)
-
-    }
-
     private fun initDate() {
         mYearPickerView.setYearInterval()
         mMonthPickerView.setMonthInterval()
@@ -51,14 +47,14 @@ class DatePickerView @JvmOverloads constructor(
 
         mYearPickerView.addOnSelectedItemListener {
             resetDate()
-//            dispatchOnSelected()
+            dispatchOnSelected()
         }
         mMonthPickerView.addOnSelectedItemListener {
             resetDate()
-//            dispatchOnSelected()
+            dispatchOnSelected()
         }
         mDayPickerView.addOnSelectedItemListener {
-//            dispatchOnSelected()
+            dispatchOnSelected()
         }
     }
 
@@ -71,7 +67,7 @@ class DatePickerView @JvmOverloads constructor(
         val month = mMonthPickerView.getMonth().toInt()
 //        mYearPickerView.setYearInterval(1950)
 //        mMonthPickerView.setMonthInterval(2,10)
-        mDayPickerView.setYearAndMonth(year, month)
+//        mDayPickerView.setYearAndMonth(year, month)
     }
 
     private fun dispatchOnSelected() {
