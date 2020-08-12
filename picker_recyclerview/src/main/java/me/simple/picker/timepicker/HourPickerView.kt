@@ -23,5 +23,5 @@ class HourPickerView @JvmOverloads constructor(
         mAdapter.notifyDataSetChanged()
     }
 
-    fun getHour() = mItems[layoutManager.getSelectedItem()]
+    fun getHour() = getSelectedItem()
 }

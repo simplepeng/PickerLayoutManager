@@ -23,4 +23,5 @@ class SecondPickerView @JvmOverloads constructor(
         mAdapter.notifyDataSetChanged()
     }
 
+    fun getSecond() = getSelectedItem()
 }

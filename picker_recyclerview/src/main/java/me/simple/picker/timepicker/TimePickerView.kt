@@ -23,6 +23,8 @@ class TimePickerView @JvmOverloads constructor(
         layoutParams = generateChildLayoutParams()
     }
 
+    private var mOnSelected: ((hour: String, minute: String, second: String) -> Unit)? = null
+
     init {
         orientation = HORIZONTAL
         weightSum = 3f
@@ -31,33 +33,35 @@ class TimePickerView @JvmOverloads constructor(
         addView(mMinutePickerView)
         addView(mSecondPickerView)
 
-        initAttrs(attrs)
+        setDivider(mHourPickerView)
+        setDivider(mMinutePickerView)
+        setDivider(mSecondPickerView)
+
+        mHourPickerView.addOnSelectedItemListener {
+            dispatchOnSelectedItem()
+        }
+        mMinutePickerView.addOnSelectedItemListener {
+            dispatchOnSelectedItem()
+        }
+        mSecondPickerView.addOnSelectedItemListener {
+            dispatchOnSelectedItem()
+        }
     }
 
-    override fun initAttrs(attrs: AttributeSet?) {
-        super.initAttrs(attrs)
-
-//        setDivider(mHourPickerView)
-//        setDivider(mMinutePickerView)
-//        setDivider(mSecondPickerView)
+    private fun dispatchOnSelectedItem() {
+        val hour = mHourPickerView.getHour()
+        val minute = mMinutePickerView.getMinute()
+        val second = mSecondPickerView.getSecond()
+        mOnSelected?.invoke(hour, minute, second)
     }
 
-    private fun setDivider(pickerView: PickerRecyclerView) {
-        pickerView.addItemDecoration(
-            PickerItemDecoration(
-                mDividerColor,
-                mDividerSize,
-                mDividerPadding
-            )
-        )
-    }
+    fun getHourMinuteSecond() = arrayOf(
+        mHourPickerView.getHour(),
+        mMinutePickerView.getMinute(),
+        mSecondPickerView.getSecond()
+    )
 
-    private fun generateChildLayoutParams(): LayoutParams {
-        val lp = LayoutParams(
-            0,
-            LayoutParams.WRAP_CONTENT
-        )
-        lp.weight = 1f
-        return lp
+    fun setOnTimeSelectedListener(onSelected: (hour: String, minute: String, second: String) -> Unit) {
+        this.mOnSelected = onSelected
     }
 }

@@ -20,6 +20,9 @@
         <attr name="scaleX" />
         <attr name="scaleY" />
         <attr name="alpha" />
+        <attr name="dividerColor" />
+        <attr name="dividerSize" />
+        <attr name="dividerPadding" />
     </declare-styleable>
 
     <declare-styleable name="PickerLinearLayout">

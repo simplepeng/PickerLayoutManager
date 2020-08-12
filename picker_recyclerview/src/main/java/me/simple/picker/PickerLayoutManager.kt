@@ -731,7 +731,7 @@ open class PickerLayoutManager(
         mSelectedItemListener.remove(listener)
     }
 
-    fun getSelectedItem(): Int {
+    fun getSelectedPosition(): Int {
         if (childCount == 0) return RecyclerView.NO_POSITION
         val centerView = mSnapHelper.findSnapView(this) ?: return RecyclerView.NO_POSITION
         return getPosition(centerView)

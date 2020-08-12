@@ -13,7 +13,7 @@ import me.simple.picker.PickerItemDecoration
 import me.simple.picker.PickerLayoutManager
 import java.lang.Exception
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private val mItems = mutableListOf<String>()
 
@@ -98,9 +98,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun toast(msg: String?) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-    }
 
     inner class PickerAdapter(private val orientation: Int) :
         RecyclerView.Adapter<PickerViewHolder>() {

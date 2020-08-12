@@ -38,4 +38,23 @@ open class PickerLinearLayout @JvmOverloads constructor(
 
         typeA.recycle()
     }
+
+    fun setDivider(pickerView: PickerRecyclerView) {
+        pickerView.addItemDecoration(
+            PickerItemDecoration(
+                mDividerColor,
+                mDividerSize,
+                mDividerPadding
+            )
+        )
+    }
+
+    fun generateChildLayoutParams(): LayoutParams {
+        val lp = LayoutParams(
+            0,
+            LayoutParams.WRAP_CONTENT
+        )
+        lp.weight = 1f
+        return lp
+    }
 }

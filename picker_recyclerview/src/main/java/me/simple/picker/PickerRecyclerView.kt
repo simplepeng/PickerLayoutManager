@@ -1,11 +1,7 @@
 package me.simple.picker
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -38,6 +34,8 @@ open class PickerRecyclerView @JvmOverloads constructor(
             .build()
     }
 
+    fun getSelectedPosition() = layoutManager.getSelectedPosition()
+
     override fun getLayoutManager(): PickerLayoutManager {
         return super.getLayoutManager() as PickerLayoutManager
     }
@@ -45,4 +43,5 @@ open class PickerRecyclerView @JvmOverloads constructor(
     fun addOnSelectedItemListener(listener: (position: Int) -> Unit) {
         layoutManager.addOnSelectedItemListener(listener)
     }
+
 }

@@ -24,15 +24,6 @@ class DatePickerView @JvmOverloads constructor(
 
     private var mOnSelected: ((year: String, month: String, day: String) -> Unit)? = null
 
-    private fun generateChildLayoutParams(): LayoutParams {
-        val lp = LayoutParams(
-            0,
-            LayoutParams.WRAP_CONTENT
-        )
-        lp.weight = 1f
-        return lp
-    }
-
     init {
         orientation = HORIZONTAL
         weightSum = 3f
@@ -42,6 +33,10 @@ class DatePickerView @JvmOverloads constructor(
         addView(mDayPickerView)
 
         initDate()
+
+        setDivider(mYearPickerView)
+        setDivider(mMonthPickerView)
+        setDivider(mDayPickerView)
     }
 
     override fun initAttrs(attrs: AttributeSet?) {
@@ -100,4 +95,10 @@ class DatePickerView @JvmOverloads constructor(
     }
 
     fun getDate() = getCalendar().time
+
+    fun getYearMonthDay() = arrayOf(
+        mYearPickerView.getYear(),
+        mMonthPickerView.getMonth(),
+        mDayPickerView.getDay()
+    )
 }

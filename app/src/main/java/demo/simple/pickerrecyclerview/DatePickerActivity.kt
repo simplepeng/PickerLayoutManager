@@ -1,19 +1,35 @@
 package demo.simple.pickerrecyclerview
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_date_picker.*
 
-class DatePickerActivity : AppCompatActivity() {
-
-    private val mItems = mutableListOf<String>()
+class DatePickerActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_date_picker)
 
-        for (i in 0 .. 100){
-            mItems.add(i.toString())
+        datePickerView.setOnDateSelectedListener { year, month, day ->
+            toast("$year-$month-$day")
+        }
+
+        timePickerView.setOnTimeSelectedListener { hour, minute, second ->
+            toast("$hour:$minute:$second")
+        }
+
+        btnGetDate.setOnClickListener {
+            val dateArr = datePickerView.getYearMonthDay()
+            val timeArr = timePickerView.getHourMinuteSecond()
+
+            val year = dateArr[0]
+            val month = dateArr[1]
+            val day = dateArr[2]
+
+            val hour = timeArr[0]
+            val minute = timeArr[1]
+            val second = timeArr[2]
+
+            tvDate.text = "$year-$month-$day $hour:$minute:$second"
         }
 
     }

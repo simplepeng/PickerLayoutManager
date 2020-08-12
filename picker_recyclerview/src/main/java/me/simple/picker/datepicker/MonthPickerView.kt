@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import me.simple.picker.PickerUtils
 import me.simple.picker.TextPickerView
-import java.util.*
 
 class MonthPickerView @JvmOverloads constructor(
     context: Context,
@@ -29,5 +28,5 @@ class MonthPickerView @JvmOverloads constructor(
         setItems(mMonthItems)
     }
 
-    fun getMonth() = mMonthItems[layoutManager.getSelectedItem()]
+    fun getMonth() = mMonthItems[layoutManager.getSelectedPosition()]
 }

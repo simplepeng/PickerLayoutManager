@@ -23,4 +23,5 @@ class MinutePickerView @JvmOverloads constructor(
         mAdapter.notifyDataSetChanged()
     }
 
+    fun getMinute() = getSelectedItem()
 }

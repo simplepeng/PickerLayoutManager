@@ -28,6 +28,8 @@ open class TextPickerView @JvmOverloads constructor(
         mAdapter.notifyDataSetChanged()
     }
 
+    fun getSelectedItem()  = mItems[getSelectedPosition()]
+
     inner class TextPickerAdapter(private val items: MutableList<String>) :
         RecyclerView.Adapter<TextPickerViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
