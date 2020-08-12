@@ -27,7 +27,7 @@ open class PickerLayoutManager(
 
     val visibleCount: Int = 5,
 
-    val isLoop: Boolean = true,
+    val isLoop: Boolean = false,
 
     @FloatRange(from = 0.0, to = 1.0)
     val scaleX: Float = 1.0f,
@@ -134,12 +134,6 @@ open class PickerLayoutManager(
         val itemView = recycler.getViewForPosition(0)
         addView(itemView)
 //        measureChildWithMargins(itemView, 0, 0)
-
-        val widthSize = View.MeasureSpec.getSize(widthSpec)
-        val widthMode = View.MeasureSpec.getMode(widthSpec)
-        logDebug("widthSize == $widthSize")
-        logDebug("widthMode == $widthMode")
-
         itemView.measure(widthSpec, heightSpec)
 
         mItemWidth = getDecoratedMeasuredWidth(itemView)
@@ -207,11 +201,11 @@ open class PickerLayoutManager(
         state: RecyclerView.State
     ): Int {
         if (dy == 0 || childCount == 0) return 0
-        logDebug("dy == $dy")
+//        logDebug("dy == $dy")
 
         val realDy = fillVertically(recycler, dy)
         val consumed = if (isLoop) dy else realDy
-        logDebug("consumed == $consumed")
+//        logDebug("consumed == $consumed")
 
         offsetChildrenVertical(-consumed)
         recyclerVertically(recycler, consumed)
@@ -249,12 +243,12 @@ open class PickerLayoutManager(
 
     private fun initFillVertically(recycler: RecyclerView.Recycler) {
         val startPosition = getStartPosition(mStartPosition)
-        logDebug("startPosition == $startPosition")
+        logDebug("${this.hashCode()} -- startPosition == $startPosition")
 
         var top = getVerticallyTopOffset()
         for (i in 0 until visibleCount) {
             logDebug("initFillVertically -- $i")
-            val child = getViewForPosition(recycler, startPosition + i)
+            val child = getViewForPosition(recycler, startPosition + i)?:continue
             addView(child)
             measureChildWithMargins(child, 0, 0)
             val bottom = top + getDecoratedMeasuredHeight(child)
@@ -288,7 +282,7 @@ open class PickerLayoutManager(
         var top: Int
         var offsetHeight: Int = 0
         for (i in prePosition downTo 0) {
-            val child = getViewForPosition(recycler, i)
+            val child = getViewForPosition(recycler, i)?:continue
             addView(child, 0)
             measureChildWithMargins(child, 0, 0)
             top = bottom - getDecoratedMeasuredHeight(child)
@@ -322,7 +316,7 @@ open class PickerLayoutManager(
         var top = lastBottom
         var offsetHeight = 0
         for (i in nextPosition until getInnerItemCount()) {
-            val child = getViewForPosition(recycler, i)
+            val child = getViewForPosition(recycler, i)?:continue
             addView(child)
             measureChildWithMargins(child, 0, 0)
             val bottom = top + getDecoratedMeasuredHeight(child)
@@ -406,7 +400,7 @@ open class PickerLayoutManager(
 
         var left = getHorizontalStartOffset()
         for (i in 0 until visibleCount) {
-            val child = getViewForPosition(recycler, startPosition + i)
+            val child = getViewForPosition(recycler, startPosition + i)?:continue
             addView(child)
             measureChildWithMargins(child, 0, 0)
             val right = left + getDecoratedMeasuredWidth(child)
@@ -434,7 +428,7 @@ open class PickerLayoutManager(
         var left = lastRight
         var offsetWidth = 0
         for (i in nextPosition until getInnerItemCount()) {
-            val child = getViewForPosition(recycler, i)
+            val child = getViewForPosition(recycler, i)?:continue
             addView(child)
             measureChildWithMargins(child, 0, 0)
             val right = left + getDecoratedMeasuredWidth(child)
@@ -466,7 +460,7 @@ open class PickerLayoutManager(
         var left: Int
         var offsetWidth: Int = 0
         for (i in prePosition downTo 0) {
-            val child = getViewForPosition(recycler, i)
+            val child = getViewForPosition(recycler, i)?:continue
             addView(child, 0)
             measureChildWithMargins(child, 0, 0)
             left = right - getDecoratedMeasuredWidth(child)
@@ -551,6 +545,10 @@ open class PickerLayoutManager(
         return position
     }
 
+    private fun getEndPosition(start: Int): Int {
+        return start
+    }
+
     //3-1,5-2,7-3,9-4
     private fun getVerticallyTopOffset(): Int {
         val offset = (visibleCount - 1) / 2 * mItemHeight
@@ -591,10 +589,14 @@ open class PickerLayoutManager(
     private fun getViewForPosition(
         recycler: RecyclerView.Recycler,
         position: Int
-    ): View {
+    ): View? {
         if (isLoop && position > itemCount - 1) {
             return recycler.getViewForPosition(position % itemCount)
         }
+        if (position > itemCount - 1) {
+            return null
+        }
+
         return recycler.getViewForPosition(position)
     }
 
@@ -716,12 +718,13 @@ open class PickerLayoutManager(
 
     private fun getHorizontalSpace() = width - paddingLeft - paddingRight
 
-//    override fun onAdapterChanged(
-//        oldAdapter: RecyclerView.Adapter<*>?,
-//        newAdapter: RecyclerView.Adapter<*>?
-//    ) {
-//        removeAllViews()
-//    }
+    override fun onAdapterChanged(
+        oldAdapter: RecyclerView.Adapter<*>?,
+        newAdapter: RecyclerView.Adapter<*>?
+    ) {
+        removeAllViews()
+        mStartPosition = 0
+    }
 
     fun addOnSelectedItemListener(listener: (position: Int) -> Unit) {
         mSelectedItemListener.add(listener)
@@ -754,7 +757,7 @@ open class PickerLayoutManager(
             } else {
                 val scaleX = transformScale(this.scaleX, getIntervalCount(centerPosition, position))
                 val scaleY = transformScale(this.scaleY, getIntervalCount(centerPosition, position))
-                logDebug("scaleY == $scaleY")
+//                logDebug("scaleY == $scaleY")
                 child.scaleX = scaleX
                 child.scaleY = scaleY
                 child.alpha = this.alpha

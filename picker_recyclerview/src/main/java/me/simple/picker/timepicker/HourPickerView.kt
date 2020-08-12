@@ -20,7 +20,7 @@ class HourPickerView @JvmOverloads constructor(
         for (hour in start until end) {
             mItems.add(PickerUtils.formatTwoChars(hour))
         }
-        mAdapter.notifyDataSetChanged()
+        adapter?.notifyDataSetChanged()
     }
 
     fun getHour() = getSelectedItem()

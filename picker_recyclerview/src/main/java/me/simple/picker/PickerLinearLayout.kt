@@ -57,4 +57,5 @@ open class PickerLinearLayout @JvmOverloads constructor(
         lp.weight = 1f
         return lp
     }
+
 }

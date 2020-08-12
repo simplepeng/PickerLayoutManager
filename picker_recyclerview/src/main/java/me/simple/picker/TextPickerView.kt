@@ -15,17 +15,16 @@ open class TextPickerView @JvmOverloads constructor(
 ) : PickerRecyclerView(context, attrs, defStyleAttr) {
 
     val mItems = mutableListOf<String>()
-    val mAdapter = TextPickerAdapter(mItems)
 
     init {
         overScrollMode = View.OVER_SCROLL_NEVER
-        adapter = mAdapter
+        adapter = TextPickerAdapter(mItems)
     }
 
     fun setItems(items: MutableList<String>) {
         mItems.clear()
         mItems.addAll(items)
-        mAdapter.notifyDataSetChanged()
+        adapter?.notifyDataSetChanged()
     }
 
     fun getSelectedItem()  = mItems[getSelectedPosition()]

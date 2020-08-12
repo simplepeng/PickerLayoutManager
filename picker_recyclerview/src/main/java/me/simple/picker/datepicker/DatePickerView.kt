@@ -6,6 +6,7 @@ import android.widget.LinearLayout
 import me.simple.picker.PickerLinearLayout
 import java.util.*
 
+//274306954
 @SuppressWarnings("")
 class DatePickerView @JvmOverloads constructor(
     context: Context,
@@ -65,6 +66,8 @@ class DatePickerView @JvmOverloads constructor(
     private fun resetDate() {
         val year = mYearPickerView.getYear().toInt()
         val month = mMonthPickerView.getMonth().toInt()
+//        mMonthPickerView.mAdapter.notifyDataSetChanged()
+        mDayPickerView.adapter!!.notifyDataSetChanged()
 //        mYearPickerView.setYearInterval(1950)
 //        mMonthPickerView.setMonthInterval(2,10)
 //        mDayPickerView.setYearAndMonth(year, month)

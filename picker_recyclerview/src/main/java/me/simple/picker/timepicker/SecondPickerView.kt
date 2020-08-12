@@ -20,7 +20,7 @@ class SecondPickerView @JvmOverloads constructor(
         for (minute in start until end) {
             mItems.add(PickerUtils.formatTwoChars(minute))
         }
-        mAdapter.notifyDataSetChanged()
+        adapter?.notifyDataSetChanged()
     }
 
     fun getSecond() = getSelectedItem()
