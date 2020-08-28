@@ -21,24 +21,17 @@ import kotlin.math.min
  * @param visibleCount 显示多少个子View
  * @param isLoop 是否支持无线滚动
  */
-open class PickerLayoutManager(
-
+open class PickerLayoutManager @JvmOverloads constructor(
     val orientation: Int = VERTICAL,
-
     val visibleCount: Int = 5,
-
     val isLoop: Boolean = false,
-
     @FloatRange(from = 0.0, to = 1.0)
     val scaleX: Float = 1.0f,
     @FloatRange(from = 0.0, to = 1.0)
     val scaleY: Float = 1.0f,
-
     @FloatRange(from = 0.0, to = 1.0)
     val alpha: Float = 1.0f
-
-) : RecyclerView.LayoutManager(),
-    RecyclerView.SmoothScroller.ScrollVectorProvider {
+) : RecyclerView.LayoutManager(), RecyclerView.SmoothScroller.ScrollVectorProvider {
 
     private var mStartPosition = 0
     private var mItemWidth = 0
@@ -248,7 +241,7 @@ open class PickerLayoutManager(
         var top = getVerticallyTopOffset()
         for (i in 0 until visibleCount) {
             logDebug("initFillVertically -- $i")
-            val child = getViewForPosition(recycler, startPosition + i)?:continue
+            val child = getViewForPosition(recycler, startPosition + i) ?: continue
             addView(child)
             measureChildWithMargins(child, 0, 0)
             val bottom = top + getDecoratedMeasuredHeight(child)
@@ -282,7 +275,7 @@ open class PickerLayoutManager(
         var top: Int
         var offsetHeight: Int = 0
         for (i in prePosition downTo 0) {
-            val child = getViewForPosition(recycler, i)?:continue
+            val child = getViewForPosition(recycler, i) ?: continue
             addView(child, 0)
             measureChildWithMargins(child, 0, 0)
             top = bottom - getDecoratedMeasuredHeight(child)
@@ -316,7 +309,7 @@ open class PickerLayoutManager(
         var top = lastBottom
         var offsetHeight = 0
         for (i in nextPosition until getInnerItemCount()) {
-            val child = getViewForPosition(recycler, i)?:continue
+            val child = getViewForPosition(recycler, i) ?: continue
             addView(child)
             measureChildWithMargins(child, 0, 0)
             val bottom = top + getDecoratedMeasuredHeight(child)
@@ -400,7 +393,7 @@ open class PickerLayoutManager(
 
         var left = getHorizontalStartOffset()
         for (i in 0 until visibleCount) {
-            val child = getViewForPosition(recycler, startPosition + i)?:continue
+            val child = getViewForPosition(recycler, startPosition + i) ?: continue
             addView(child)
             measureChildWithMargins(child, 0, 0)
             val right = left + getDecoratedMeasuredWidth(child)
@@ -428,7 +421,7 @@ open class PickerLayoutManager(
         var left = lastRight
         var offsetWidth = 0
         for (i in nextPosition until getInnerItemCount()) {
-            val child = getViewForPosition(recycler, i)?:continue
+            val child = getViewForPosition(recycler, i) ?: continue
             addView(child)
             measureChildWithMargins(child, 0, 0)
             val right = left + getDecoratedMeasuredWidth(child)
@@ -460,7 +453,7 @@ open class PickerLayoutManager(
         var left: Int
         var offsetWidth: Int = 0
         for (i in prePosition downTo 0) {
-            val child = getViewForPosition(recycler, i)?:continue
+            val child = getViewForPosition(recycler, i) ?: continue
             addView(child, 0)
             measureChildWithMargins(child, 0, 0)
             left = right - getDecoratedMeasuredWidth(child)

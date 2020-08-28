@@ -1,4 +1,4 @@
-package demo.simple.pickerrecyclerview
+package demo.simple.picker
 
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_date_picker.*

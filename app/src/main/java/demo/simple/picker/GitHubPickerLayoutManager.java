@@ -1,7 +1,6 @@
-package demo.simple.pickerrecyclerview;
+package demo.simple.picker;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;

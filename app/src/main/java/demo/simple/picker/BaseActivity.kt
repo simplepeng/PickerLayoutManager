@@ -1,4 +1,4 @@
-package demo.simple.pickerrecyclerview
+package demo.simple.picker
 
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
