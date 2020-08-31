@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <EditText
+        android:id="@+id/etToPosition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:inputType="number"
+        android:maxLines="1"
+        android:text="20"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnToPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="ToPosition"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="@+id/etToPosition"
+        app:layout_constraintTop_toBottomOf="@+id/etToPosition" />
+
+    <Button
+        android:id="@+id/btnSmoothToPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="SmoothToPosition"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="@+id/etToPosition"
+        app:layout_constraintTop_toBottomOf="@+id/btnToPosition" />
+</androidx.constraintlayout.widget.ConstraintLayout>

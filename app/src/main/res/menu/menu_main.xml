@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_setting"
+        android:title="Setting" />
+
+    <item
+        android:id="@+id/menu_scroll_to"
+        android:title="ScrollTo" />
+
     <item
         android:id="@+id/menu_date_picker"
         android:title="DatePicker" />

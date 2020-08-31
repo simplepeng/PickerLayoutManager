@@ -3,7 +3,9 @@ package demo.simple.picker
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import me.simple.picker.PickerItemDecoration
@@ -13,6 +15,7 @@ import java.lang.Exception
 class MainActivity : BaseActivity() {
 
     private val mItems = mutableListOf<String>()
+    private val mRecyclerViews = hashSetOf<RecyclerView>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +24,9 @@ class MainActivity : BaseActivity() {
         for (i in 0..30) {
             mItems.add(i.toString())
         }
+
+        mRecyclerViews.add(pickerRecyclerView)
+        mRecyclerViews.add(pickerRecyclerView2)
 
         initLinearPicker()
 
@@ -139,6 +145,12 @@ class MainActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_setting -> {
+
+            }
+            R.id.menu_scroll_to -> {
+                showToPositionDialog()
+            }
             R.id.menu_date_picker -> {
                 startActivity(Intent(this, DatePickerActivity::class.java))
             }
@@ -146,5 +158,31 @@ class MainActivity : BaseActivity() {
             }
         }
         return true
+    }
+
+    private fun showSettingDialog() {
+
+    }
+
+    private fun showToPositionDialog() {
+        val dialog = AlertDialog.Builder(this)
+            .setView(R.layout.dialog_to_position)
+            .show()
+        val etPosition = dialog.findViewById<EditText>(R.id.etToPosition)!!
+
+        dialog.findViewById<View>(R.id.btnToPosition)!!.setOnClickListener {
+            dialog.dismiss()
+            val position = etPosition.text.toString().toInt()
+            for (view in mRecyclerViews) {
+                view.scrollToPosition(position)
+            }
+        }
+        dialog.findViewById<View>(R.id.btnSmoothToPosition)!!.setOnClickListener {
+            dialog.dismiss()
+            val position = etPosition.text.toString().toInt()
+            for (view in mRecyclerViews) {
+                view.smoothScrollToPosition(position)
+            }
+        }
     }
 }
