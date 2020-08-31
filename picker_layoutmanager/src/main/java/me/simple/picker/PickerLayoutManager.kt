@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
-import kotlin.math.log
 import kotlin.math.max
 import kotlin.math.min
 
@@ -20,7 +19,12 @@ import kotlin.math.min
  * @param orientation 摆放子View的方向
  * @param visibleCount 显示多少个子View
  * @param isLoop 是否支持无线滚动
+ * @param scaleX x轴缩放的比例
+ * @param scaleY y轴缩放的比例
+ * @param alpha 未选中item的透明度
  */
+typealias OnSelectedItemListener = (position: Int) -> Unit
+
 open class PickerLayoutManager @JvmOverloads constructor(
     val orientation: Int = VERTICAL,
     val visibleCount: Int = 5,
@@ -37,17 +41,14 @@ open class PickerLayoutManager @JvmOverloads constructor(
     private var mItemWidth = 0
     private var mItemHeight = 0
 
-    //增加一个偏移量减少误差
-    private var mItemOffset = 0
-
     //要回收的View先缓存起来
-    private val mCachedViews = mutableListOf<View>()
+    private val mCachedViews = hashSetOf<View>()
 
     //
     private val mSnapHelper = LinearSnapHelper()
 
     //
-    private val mSelectedItemListener = mutableListOf<(position: Int) -> Unit>()
+    private val mOnSelectedItemListener = mutableListOf<OnSelectedItemListener>()
 
     //
     private val mOnItemLayoutListener = mutableListOf<OnItemLayoutListener>()
@@ -64,46 +65,23 @@ open class PickerLayoutManager @JvmOverloads constructor(
             throw IllegalArgumentException("visibleCount == $visibleCount 不能是偶数")
     }
 
-    private fun logDebug(msg: String) {
-        if (!BuildConfig.DEBUG) return
-        Log.d(TAG, msg)
-    }
-
-    private fun logChildCount(recycler: RecyclerView.Recycler) {
-        if (!BuildConfig.DEBUG) return
-        Log.d(TAG, "childCount == $childCount -- scrapSize == ${recycler.scrapList.size}")
-    }
-
-    private fun logChildrenPosition() {
-        if (!BuildConfig.DEBUG) return
-        val builder = StringBuilder()
-        for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            builder.append(getPosition(child!!))
-            builder.append(",")
-        }
-        logDebug("children == $builder")
-    }
-
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
-//        return if (orientation == HORIZONTAL) {
-//            RecyclerView.LayoutParams(
-//                RecyclerView.LayoutParams.WRAP_CONTENT,
-//                RecyclerView.LayoutParams.MATCH_PARENT
-//            )
-//        } else {
-//            RecyclerView.LayoutParams(
-//                RecyclerView.LayoutParams.MATCH_PARENT,
-//                RecyclerView.LayoutParams.WRAP_CONTENT
-//            )
-//        }
-
-        return RecyclerView.LayoutParams(
-            RecyclerView.LayoutParams.WRAP_CONTENT,
-            RecyclerView.LayoutParams.WRAP_CONTENT
-        )
+        return if (orientation == HORIZONTAL) {
+            RecyclerView.LayoutParams(
+                RecyclerView.LayoutParams.WRAP_CONTENT,
+                RecyclerView.LayoutParams.MATCH_PARENT
+            )
+        } else {
+            RecyclerView.LayoutParams(
+                RecyclerView.LayoutParams.MATCH_PARENT,
+                RecyclerView.LayoutParams.WRAP_CONTENT
+            )
+        }
     }
 
+    /**
+     * 获取itemCount，无限模式就是无限大
+     */
     private fun getInnerItemCount() = if (isLoop) Int.MAX_VALUE else super.getItemCount()
 
     override fun isAutoMeasureEnabled(): Boolean {
@@ -179,8 +157,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
         offsetChildrenHorizontal(-consumed)
         recyclerHorizontal(recycler, consumed)
 
-        logChildCount(recycler)
-//        logChildrenPosition()
 
         dispatchLayout()
         transformChildren()
@@ -194,17 +170,12 @@ open class PickerLayoutManager @JvmOverloads constructor(
         state: RecyclerView.State
     ): Int {
         if (dy == 0 || childCount == 0) return 0
-//        logDebug("dy == $dy")
 
         val realDy = fillVertically(recycler, dy)
         val consumed = if (isLoop) dy else realDy
-//        logDebug("consumed == $consumed")
 
         offsetChildrenVertical(-consumed)
         recyclerVertically(recycler, consumed)
-
-//        logChildCount(recycler)
-//        logChildrenPosition()
 
         dispatchLayout()
         transformChildren()
@@ -248,11 +219,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
             layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
             top = bottom
         }
-    }
-
-    override fun onItemsChanged(recyclerView: RecyclerView) {
-        super.onItemsChanged(recyclerView)
-        mStartPosition = 0
     }
 
     //dy<0
@@ -642,18 +608,22 @@ open class PickerLayoutManager @JvmOverloads constructor(
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
             val centerView = mSnapHelper.findSnapView(this) ?: return
             val centerPosition = getPosition(centerView)
-//            mStartPosition = centerPosition
-//            dispatchListener(centerPosition)
             scrollToCenter(centerView, centerPosition)
         }
     }
 
+    /**
+     * 分发回调OnSelectedItemListener
+     */
     private fun dispatchListener(position: Int) {
-        for (listener in mSelectedItemListener) {
+        for (listener in mOnSelectedItemListener) {
             listener.invoke(position)
         }
     }
 
+    /**
+     * 滚动到中间的item
+     */
     private fun scrollToCenter(centerView: View, centerPosition: Int) {
         val distance = if (orientation == VERTICAL) {
             val destTop = getVerticallySpace() / 2 - getDecoratedMeasuredHeight(centerView) / 2
@@ -707,20 +677,12 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
     private fun getHorizontalSpace() = width - paddingLeft - paddingRight
 
-    override fun onAdapterChanged(
-        oldAdapter: RecyclerView.Adapter<*>?,
-        newAdapter: RecyclerView.Adapter<*>?
-    ) {
-        removeAllViews()
-        mStartPosition = 0
+    fun addOnSelectedItemListener(listener: OnSelectedItemListener) {
+        mOnSelectedItemListener.add(listener)
     }
 
-    fun addOnSelectedItemListener(listener: (position: Int) -> Unit) {
-        mSelectedItemListener.add(listener)
-    }
-
-    fun removeOnSelectedItemListener(listener: (position: Int) -> Unit) {
-        mSelectedItemListener.remove(listener)
+    fun removeOnSelectedItemListener(listener: OnSelectedItemListener) {
+        mOnSelectedItemListener.remove(listener)
     }
 
     fun getSelectedPosition(): Int {
@@ -823,6 +785,9 @@ open class PickerLayoutManager @JvmOverloads constructor(
         mOnItemLayoutListener.remove(listener)
     }
 
+    /**
+     * 搞个Builder模式，构造函数难得写就用这个
+     */
     class Builder {
         private var orientation = VERTICAL
         private var visibleCount = 3
@@ -856,5 +821,29 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
 
         fun build() = PickerLayoutManager(orientation, visibleCount, isLoop, scaleX, scaleY, alpha)
+    }
+
+    /**
+     * 用来测试的方法
+     */
+    private fun logDebug(msg: String) {
+        if (!BuildConfig.DEBUG) return
+        Log.d(TAG, msg)
+    }
+
+    private fun logChildCount(recycler: RecyclerView.Recycler) {
+        if (!BuildConfig.DEBUG) return
+        Log.d(TAG, "childCount == $childCount -- scrapSize == ${recycler.scrapList.size}")
+    }
+
+    private fun logChildrenPosition() {
+        if (!BuildConfig.DEBUG) return
+        val builder = StringBuilder()
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)
+            builder.append(getPosition(child!!))
+            builder.append(",")
+        }
+        logDebug("children == $builder")
     }
 }
