@@ -9,8 +9,6 @@ import android.view.animation.LinearInterpolator
 import androidx.annotation.FloatRange
 import androidx.recyclerview.widget.*
 import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 
 typealias OnSelectedItemListener = (position: Int) -> Unit
 
@@ -51,6 +49,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     //将要填充的view的position
     private var mPendingFillPosition: Int = RecyclerView.NO_POSITION
 
+    //保存下item的width和height‘’
     private var mItemWidth: Int = 0
     private var mItemHeight: Int = 0
 
@@ -58,12 +57,12 @@ open class PickerLayoutManager @JvmOverloads constructor(
     private var mPendingScrollPosition: Int = RecyclerView.NO_POSITION
 
     //要回收的View先缓存起来
-    private val mCachedViews = hashSetOf<View>()
+    private val mRecycleViews = hashSetOf<View>()
 
     //直接搞个SnapHelper来findCenterView
     private val mSnapHelper = LinearSnapHelper()
 
-    //
+    //选中中间item的监听器
     private val mOnSelectedItemListener = mutableListOf<OnSelectedItemListener>()
 
     //
@@ -135,7 +134,8 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
     }
 
-    // 软键盘的弹出和收起都会再次调用这个方法，自己要记录好偏移量
+    // 软键盘的弹出和收起，scrollToPosition
+    // 都会再次调用这个方法，自己要记录好偏移量
     override fun onLayoutChildren(
         recycler: RecyclerView.Recycler,
         state: RecyclerView.State
@@ -153,7 +153,9 @@ open class PickerLayoutManager @JvmOverloads constructor(
         detachAndScrapAttachedViews(recycler)
         fillLayout(recycler)
 
+        //
         logDebug("width == $width -- height == $height")
+        logChildCount(recycler)
     }
 
     override fun onLayoutCompleted(state: RecyclerView.State?) {
@@ -189,6 +191,51 @@ open class PickerLayoutManager @JvmOverloads constructor(
         return scrollBy(dy, recycler, state)
     }
 
+    override fun scrollToPosition(position: Int) {
+        if (childCount == 0) return
+        checkToPosition(position)
+
+        mPendingScrollPosition = position
+        requestLayout()
+    }
+
+    override fun smoothScrollToPosition(
+        recyclerView: RecyclerView,
+        state: RecyclerView.State,
+        position: Int
+    ) {
+        if (childCount == 0) return
+        checkToPosition(position)
+
+        val toPosition = fixSmoothToPosition(position)
+        val linearSmoothScroller = LinearSmoothScroller(recyclerView.context)
+        linearSmoothScroller.targetPosition = toPosition
+        startSmoothScroll(linearSmoothScroller)
+    }
+
+    override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {
+        if (childCount == 0) return null
+
+        val firstChildPos = getPosition(mSnapHelper.findSnapView(this)!!)
+        val direction = if (targetPosition < firstChildPos) -1 else 1
+        return if (orientation == LinearLayoutManager.HORIZONTAL) {
+            PointF(direction.toFloat(), 0f)
+        } else {
+            PointF(0f, direction.toFloat())
+        }
+    }
+
+    override fun onScrollStateChanged(state: Int) {
+        super.onScrollStateChanged(state)
+        if (childCount == 0) return
+
+//        if (state == RecyclerView.SCROLL_STATE_IDLE) {
+//            val centerView = mSnapHelper.findSnapView(this) ?: return
+//            val centerPosition = getPosition(centerView)
+//            scrollToCenter(centerView, centerPosition)
+//        }
+    }
+
     //------------------------------------------------------------------
 
     /**
@@ -196,12 +243,15 @@ open class PickerLayoutManager @JvmOverloads constructor(
      */
     private fun getInnerItemCount() = if (isLoop) Int.MAX_VALUE else super.getItemCount()
 
+    /**
+     * 初始化摆放view
+     */
     private fun fillLayout(
         recycler: RecyclerView.Recycler
     ) {
         val startPosition = getStartPosition()
         var anchor = getOffsetSpace()
-        for (i in 0 until visibleCount) {
+        for (i in 0 until getFixVisibleCount()) {
             val child = getViewForPosition(recycler, startPosition + i)
             addView(child)
             measureChildWithMargins(child, 0, 0)
@@ -210,6 +260,17 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
     }
 
+    /**
+     *
+     */
+    private fun getFixVisibleCount(): Int {
+        if (isLoop) return visibleCount
+        return visibleCount / 2 + 1
+    }
+
+    /**
+     * 摆放item view
+     */
     private fun layoutChunk(
         child: View,
         anchor: Int,
@@ -250,11 +311,14 @@ open class PickerLayoutManager @JvmOverloads constructor(
         recycler: RecyclerView.Recycler,
         state: RecyclerView.State
     ): Int {
+        if (childCount == 0 || delta == 0) return 0
 
         val consume = fillScroll(delta, recycler, state)
         mOrientationHelper.offsetChildren(-consume)
         recycleChildren(delta, recycler)
 
+        //
+        logChildCount(recycler)
         return delta
     }
 
@@ -268,9 +332,10 @@ open class PickerLayoutManager @JvmOverloads constructor(
         recycler: RecyclerView.Recycler,
         state: RecyclerView.State
     ): Int {
-        if (childCount == 0 || delta == 0) return 0
 
         var remainSpace = abs(delta)
+        logDebug("remainSpace == $remainSpace")
+
         val fillDirection = if (delta > 0) FILL_END else FILL_START
 
         //检查滚动距离是否可以填充下一个view
@@ -307,8 +372,13 @@ open class PickerLayoutManager @JvmOverloads constructor(
      */
     private fun canFillScroll(fillDirection: Int, delta: Int): Boolean {
         val anchorView = getAnchorView(fillDirection)
-
-        return true
+        return if (fillDirection == FILL_START) {
+            val start = mOrientationHelper.getDecoratedStart(anchorView)
+            start + delta >= mOrientationHelper.startAfterPadding
+        } else {
+            val end = mOrientationHelper.getDecoratedEnd(anchorView)
+            end - delta <= mOrientationHelper.endAfterPadding
+        }
     }
 
     private fun checkScrollToEdge(
@@ -365,7 +435,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     }
 
     private fun getPendingFillPosition(fillDirection: Int): Int {
-        return getPosition(getAnchorView(fillDirection)) + fillDirection
+        return getAnchorPosition(fillDirection) + fillDirection
     }
 
     private fun nextView(
@@ -389,315 +459,32 @@ open class PickerLayoutManager @JvmOverloads constructor(
         } else {
             recycleEnd(recycler)
         }
+        for (view in mRecycleViews) {
+            removeAndRecycleView(view, recycler)
+        }
+        mRecycleViews.clear()
     }
 
     private fun recycleStart(recycler: RecyclerView.Recycler) {
-
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)!!
+            val end = mOrientationHelper.getDecoratedEnd(child)
+            if (end > mOrientationHelper.startAfterPadding) {
+                break
+            }
+            mRecycleViews.add(child)
+        }
     }
 
     private fun recycleEnd(recycler: RecyclerView.Recycler) {
-
-    }
-
-    private fun fill(recycler: RecyclerView.Recycler) {
-        if (orientation == HORIZONTAL) {
-            fillHorizontal(recycler, 0)
-        } else {
-            fillVertically(recycler, 0)
-        }
-    }
-
-    private fun fillVertically(recycler: RecyclerView.Recycler, dy: Int): Int {
-        when {
-            dy == 0 -> {
-                initFillVertically(recycler)
-            }
-            dy > 0 -> {
-                return fillVerticallyEnd(recycler, dy)
-            }
-            dy < 0 -> {
-                return fillVerticallyStart(recycler, dy)
-            }
-        }
-        return dy
-    }
-
-    private fun initFillVertically(recycler: RecyclerView.Recycler) {
-//        val startPosition = getStartPosition(mCurrentPosition)
-//        logDebug("${this.hashCode()} -- startPosition == $startPosition")
-//
-//        var top = getVerticallyTopOffset()
-//        for (i in 0 until visibleCount) {
-//            val child = getViewForPosition(recycler, startPosition + i) ?: continue
-//            addView(child)
-//            measureChildWithMargins(child, 0, 0)
-//            val bottom = top + getDecoratedMeasuredHeight(child)
-//            layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
-//            top = bottom
-//        }
-    }
-
-    //dy<0
-    private fun fillVerticallyStart(recycler: RecyclerView.Recycler, dy: Int): Int {
-        if (childCount == 0) return 0
-
-        val firstView = getChildAt(0) ?: return 0
-        val firstBottom = getDecoratedBottom(firstView)
-        //如果第一个itemView的bottom+y的偏移量还是<0就不填充item
-        if (firstBottom - dy < 0) return dy
-
-        val prePosition = getPrePosition(firstView)
-        //如果不是无限循环模式且已经填充了position=0的item，就返回大的偏移量
-        if (!isLoop && prePosition < 0) return max(
-            dy,
-            getDecoratedTop(firstView) - getVerticallyScrollOffset()
-        )
-
-        var bottom = getDecoratedTop(firstView)
-        var top: Int
-        var offsetHeight: Int = 0
-        for (i in prePosition downTo 0) {
-            val child = getViewForPosition(recycler, i) ?: continue
-            addView(child, 0)
-            measureChildWithMargins(child, 0, 0)
-            top = bottom - getDecoratedMeasuredHeight(child)
-            layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
-            offsetHeight += getDecoratedMeasuredHeight(child)
-            logDebug("fillVerticallyStart -- $i")
-
-            if (offsetHeight >= abs(dy)) break
-            bottom = top
-        }
-
-        return dy
-    }
-
-    //dy>0
-    private fun fillVerticallyEnd(recycler: RecyclerView.Recycler, dy: Int): Int {
-        if (childCount == 0) return 0
-
-        val lastView = getChildAt(childCount - 1) ?: return 0
-        val lastBottom = getDecoratedBottom(lastView)
-
-        //如果当前最后一个child的bottom加上偏移量还是大于rv的height，就不用填充itemView，直接返回dy
-        if (lastBottom - dy > height) return dy
-
-        val nextPosition = getNextPosition(lastView)
-        //如果不是无限循环模式且已经是最后一个itemView，就返回
-        if (!isLoop && nextPosition > itemCount - 1) {
-            return min(dy, lastBottom - height + getVerticallyScrollOffset())
-        }
-
-        var top = lastBottom
-        var offsetHeight = 0
-        for (i in nextPosition until getInnerItemCount()) {
-            val child = getViewForPosition(recycler, i) ?: continue
-            addView(child)
-            measureChildWithMargins(child, 0, 0)
-            val bottom = top + getDecoratedMeasuredHeight(child)
-            layoutDecorated(child, 0, top, getDecoratedMeasuredWidth(child), bottom)
-            offsetHeight += getDecoratedMeasuredHeight(child)
-            logDebug("fillVerticallyEnd -- $i")
-
-            //这里判断修改，修改为：dy还剩余多少就还可以摆放多少个itemView
-//            if (bottom > height) break
-            if (offsetHeight >= dy) break
-            top = bottom
-        }
-
-        return dy
-    }
-
-    private fun recyclerVertically(
-        recycler: RecyclerView.Recycler,
-        dy: Int
-    ) {
-        if (childCount == 0) return
-
-        if (dy > 0) {
-            recycleVerticallyStart(recycler)
-        } else {
-            recycleVerticallyEnd(recycler)
-        }
-    }
-
-    //dy>0
-    private fun recycleVerticallyStart(
-        recycler: RecyclerView.Recycler
-    ) {
-        for (i in 0 until childCount) {
+        for (i in (childCount - 1) downTo 0) {
             val child = getChildAt(i)!!
-            //stop here
-            val bottom = getDecoratedBottom(child)
-            if (bottom > 0) {
-                recycleCachedView(recycler)
+            val start = mOrientationHelper.getDecoratedStart(child)
+            if (start < mOrientationHelper.endAfterPadding) {
                 break
             }
-            mCachedViews.add(child)
-            logDebug("bottom == $bottom -- position == ${getPosition(child)}")
+            mRecycleViews.add(child)
         }
-    }
-
-    //dy<0
-    private fun recycleVerticallyEnd(
-        recycler: RecyclerView.Recycler
-    ) {
-        for (i in childCount - 1 downTo 0) {
-            val child = getChildAt(i)!!
-            val top = getDecoratedTop(child)
-            //stop here，-dy = +abs(dy)
-            if (top < height) {
-//                recycleChildren(recycler, childCount - 1, i)
-                recycleCachedView(recycler)
-                break
-            }
-            mCachedViews.add(child)
-        }
-    }
-
-    private fun fillHorizontal(recycler: RecyclerView.Recycler, dx: Int): Int {
-        when {
-            dx == 0 -> {
-                initFillHorizontal(recycler)
-            }
-            dx > 0 -> {
-                return fillHorizontalEnd(recycler, dx)
-            }
-            dx < 0 -> {
-                return fillHorizontalStart(recycler, dx)
-            }
-        }
-        return dx
-    }
-
-    private fun initFillHorizontal(recycler: RecyclerView.Recycler) {
-//        val startPosition = getStartPosition(mCurrentPosition)
-//
-//        var left = getHorizontalStartOffset()
-//        for (i in 0 until visibleCount) {
-//            val child = getViewForPosition(recycler, startPosition + i) ?: continue
-//            addView(child)
-//            measureChildWithMargins(child, 0, 0)
-//            val right = left + getDecoratedMeasuredWidth(child)
-//            layoutDecorated(child, left, 0, right, getDecoratedMeasuredHeight(child))
-//            left = right
-//
-////            logDebug("initFillHorizontal -- ${getPosition(child)}")
-//        }
-    }
-
-    private fun fillHorizontalEnd(recycler: RecyclerView.Recycler, dx: Int): Int {
-        if (childCount == 0) return 0
-
-        val lastView = getChildAt(childCount - 1) ?: return 0
-        val lastRight = getDecoratedRight(lastView)
-
-        if (lastRight - dx > width) return dx
-
-        val nextPosition = getNextPosition(lastView)
-        //如果不是无限循环模式且已经是最后一个itemView，就返回
-        if (!isLoop && nextPosition > itemCount - 1) {
-            return min(dx, lastRight - width + getHorizontalScrollOffset())
-        }
-
-        var left = lastRight
-        var offsetWidth = 0
-        for (i in nextPosition until getInnerItemCount()) {
-            val child = getViewForPosition(recycler, i) ?: continue
-            addView(child)
-            measureChildWithMargins(child, 0, 0)
-            val right = left + getDecoratedMeasuredWidth(child)
-            layoutDecorated(child, left, 0, right, getDecoratedMeasuredHeight(child))
-            offsetWidth += getDecoratedMeasuredHeight(child)
-            logDebug("fillHorizontalEnd -- $i")
-
-            if (offsetWidth >= dx) break
-            left = right
-        }
-
-        return dx
-    }
-
-    private fun fillHorizontalStart(recycler: RecyclerView.Recycler, dx: Int): Int {
-        if (childCount == 0) return 0
-
-        val firstView = getChildAt(0) ?: return 0
-        val firstRight = getDecoratedRight(firstView)
-
-        if (firstRight - dx < 0) return dx
-
-        val prePosition = getPrePosition(firstView)
-
-        if (!isLoop && prePosition < 0)
-            return max(dx, getDecoratedLeft(firstView) - getHorizontalScrollOffset())
-
-        var right = getDecoratedLeft(firstView)
-        var left: Int
-        var offsetWidth: Int = 0
-        for (i in prePosition downTo 0) {
-            val child = getViewForPosition(recycler, i) ?: continue
-            addView(child, 0)
-            measureChildWithMargins(child, 0, 0)
-            left = right - getDecoratedMeasuredWidth(child)
-            layoutDecorated(child, left, 0, right, getDecoratedMeasuredHeight(child))
-            offsetWidth += getDecoratedMeasuredHeight(child)
-            logDebug("fillHorizontalStart -- $i")
-
-            if (offsetWidth >= abs(dx)) break
-            right = left
-        }
-        return dx
-    }
-
-    private fun recyclerHorizontal(
-        recycler: RecyclerView.Recycler,
-        dx: Int
-    ) {
-        if (childCount == 0) return
-
-        if (dx > 0) {
-            recycleHorizontalStart(recycler)
-        } else {
-            recycleHorizontalEnd(recycler)
-        }
-    }
-
-    //dx>0
-    private fun recycleHorizontalStart(
-        recycler: RecyclerView.Recycler
-    ) {
-        for (i in 0 until childCount) {
-            val child = getChildAt(i)!!
-            //stop here
-            val right = getDecoratedRight(child)
-            if (right > 0) {
-                recycleCachedView(recycler)
-                break
-            }
-            mCachedViews.add(child)
-        }
-    }
-
-    //dx<0
-    private fun recycleHorizontalEnd(
-        recycler: RecyclerView.Recycler
-    ) {
-        for (i in childCount - 1 downTo 0) {
-            val child = getChildAt(i)!!
-            val left = getDecoratedLeft(child)
-            if (left < width) {
-                recycleCachedView(recycler)
-                break
-            }
-            mCachedViews.add(child)
-        }
-    }
-
-    private fun recycleCachedView(recycler: RecyclerView.Recycler) {
-        for (view in mCachedViews) {
-            removeAndRecycleView(view, recycler)
-        }
-        mCachedViews.clear()
     }
 
     /**
@@ -753,6 +540,11 @@ open class PickerLayoutManager @JvmOverloads constructor(
     }
 
     /**
+     * 增加一个偏移量让滚动顺滑点
+     */
+    private fun getItemOffset() = getItemSpace() / 2
+
+    /**
      * 获取开始item距离开始位置的偏移量
      * 或者结束item距离尾端的偏移量
      */
@@ -760,44 +552,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
         val offset = getOffsetCount() * getItemSpace()
         if (!isLoop) return offset
         return 0
-    }
-
-    private fun getHorizontalStartOffset(): Int {
-        val offset = (visibleCount - 1) / 2 * mItemWidth
-        if (!isLoop && mCurrentPosition == 0) return offset
-        return 0
-    }
-
-    //3-1,5-2,7-3,9-4
-    private fun getVerticallyTopOffset(): Int {
-        val offset = (visibleCount - 1) / 2 * mItemHeight
-        if (!isLoop && mCurrentPosition == 0) return offset
-        return 0
-    }
-
-
-    private fun getVerticallyScrollOffset(): Int {
-        val offset = (visibleCount - 1) / 2 * mItemHeight
-        return if (isLoop) 0 else offset
-    }
-
-    private fun getHorizontalScrollOffset(): Int {
-        val offset = (visibleCount - 1) / 2 * mItemWidth
-        return if (isLoop) 0 else offset
-    }
-
-    private fun getNextPosition(view: View): Int {
-        val position = getPosition(view)
-        if (isLoop && position == itemCount - 1) return 0
-
-        return position + 1
-    }
-
-    private fun getPrePosition(view: View): Int {
-        val position = getPosition(view)
-        if (isLoop && position == 0) return itemCount - 1
-
-        return position - 1
     }
 
     /**
@@ -818,60 +572,19 @@ open class PickerLayoutManager @JvmOverloads constructor(
         return recycler.getViewForPosition(position)
     }
 
-    private fun checkPosition(position: Int) {
+    /**
+     * 检查toPosition是否合法
+     */
+    private fun checkToPosition(position: Int) {
         if (position < 0 || position > itemCount - 1)
             throw IllegalArgumentException("position is $position,must be >= 0 and < itemCount,")
     }
 
-    override fun scrollToPosition(position: Int) {
-        if (childCount == 0) return
-        checkPosition(position)
-
-        mPendingScrollPosition = position
-        requestLayout()
-    }
-
-    override fun smoothScrollToPosition(
-        recyclerView: RecyclerView,
-        state: RecyclerView.State,
-        position: Int
-    ) {
-        if (childCount == 0) return
-        checkPosition(position)
-
-        val toPosition = fixSmoothToPosition(position)
-        val linearSmoothScroller = LinearSmoothScroller(recyclerView.context)
-        linearSmoothScroller.targetPosition = toPosition
-        startSmoothScroll(linearSmoothScroller)
-    }
 
     private fun fixSmoothToPosition(toPosition: Int): Int {
         val fixCount = getOffsetCount()
         val centerPosition = getPosition(mSnapHelper.findSnapView(this)!!)
         return if (centerPosition < toPosition) toPosition + fixCount else toPosition - fixCount
-    }
-
-    override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {
-        if (childCount == 0) return null
-
-        val firstChildPos = getPosition(mSnapHelper.findSnapView(this)!!)
-        val direction = if (targetPosition < firstChildPos) -1 else 1
-        return if (orientation == LinearLayoutManager.HORIZONTAL) {
-            PointF(direction.toFloat(), 0f)
-        } else {
-            PointF(0f, direction.toFloat())
-        }
-    }
-
-    override fun onScrollStateChanged(state: Int) {
-        super.onScrollStateChanged(state)
-        if (childCount == 0) return
-
-//        if (state == RecyclerView.SCROLL_STATE_IDLE) {
-//            val centerView = mSnapHelper.findSnapView(this) ?: return
-//            val centerPosition = getPosition(centerView)
-//            scrollToCenter(centerView, centerPosition)
-//        }
     }
 
     /**
@@ -1034,6 +747,9 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
     }
 
+    /**
+     *
+     */
     interface OnItemLayoutListener {
         fun onSelectedItemLayout(child: View, position: Int)
         fun onUnSelectedItemLayout(child: View, position: Int)
@@ -1085,17 +801,18 @@ open class PickerLayoutManager @JvmOverloads constructor(
         fun build() = PickerLayoutManager(orientation, visibleCount, isLoop, scaleX, scaleY, alpha)
     }
 
-    /**
-     * 用来测试的方法
-     */
+
+// 用来测试的方法--------------------------------------------------
+
     private fun logDebug(msg: String) {
-        if (!BuildConfig.DEBUG) return
+        if (!DEBUG) return
         Log.d(TAG, msg)
     }
 
     private fun logChildCount(recycler: RecyclerView.Recycler) {
         if (!BuildConfig.DEBUG) return
-        Log.d(TAG, "childCount == $childCount -- scrapSize == ${recycler.scrapList.size}")
+        logDebug("childCount == $childCount -- scrapSize == ${recycler.scrapList.size}")
+        logChildrenPosition()
     }
 
     private fun logChildrenPosition() {
