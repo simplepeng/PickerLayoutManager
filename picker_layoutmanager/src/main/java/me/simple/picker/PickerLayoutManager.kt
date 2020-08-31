@@ -34,6 +34,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     val alpha: Float = 1.0f
 ) : RecyclerView.LayoutManager(), RecyclerView.SmoothScroller.ScrollVectorProvider {
 
+    //当前居中item的position
     private var mCurrentPosition: Int = 0
 
     private var mItemWidth: Int = 0
@@ -144,6 +145,8 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
         detachAndScrapAttachedViews(recycler)
         fillLayout(recycler, state)
+
+        logDebug("width == $width -- height == $height")
     }
 
     override fun onLayoutCompleted(state: RecyclerView.State?) {
@@ -208,10 +211,10 @@ open class PickerLayoutManager @JvmOverloads constructor(
         var bottom: Int = 0
         if (orientation == HORIZONTAL) {
             top = paddingTop
-            bottom = paddingTop + mOrientationHelper.getDecoratedMeasurementInOther(child)
-            -paddingBottom
+            bottom =
+                paddingTop + mOrientationHelper.getDecoratedMeasurementInOther(child) - paddingBottom
             left = anchor
-            right = mOrientationHelper.getDecoratedMeasurement(child)
+            right = left + mOrientationHelper.getDecoratedMeasurement(child)
         } else {
             left = paddingLeft
             right = mOrientationHelper.getDecoratedMeasurementInOther(child) - paddingRight
@@ -572,8 +575,11 @@ open class PickerLayoutManager @JvmOverloads constructor(
      * 获取开始fill layout的position
      */
     private fun getStartPosition(): Int {
-        //如果是无限循环模式且开始position=0
         val position = mCurrentPosition
+
+        //如果是无限循环模式且开始position=0
+        //例如：currentPosition == 0，visibleCount = 3，那么startPosition
+        //就应该是100
         if (isLoop && position == 0) {
             return itemCount - getOffsetCount()
         }
@@ -606,7 +612,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
     private fun getStartOffset(): Int {
         val offset = getOffsetCount() * getItemSpace()
         if (!isLoop) return offset
-
         return 0
     }
 
