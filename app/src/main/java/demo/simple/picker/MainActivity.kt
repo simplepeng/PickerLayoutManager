@@ -18,7 +18,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        for (i in 0..100) {
+        for (i in 0..30) {
             mItems.add(i.toString())
         }
 

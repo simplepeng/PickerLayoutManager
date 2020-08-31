@@ -48,7 +48,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     //当前居中item的position
     private var mCurrentPosition: Int = 0
 
-    //
+    //将要填充的view的position
     private var mPendingFillPosition: Int = RecyclerView.NO_POSITION
 
     private var mItemWidth: Int = 0
@@ -200,7 +200,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         recycler: RecyclerView.Recycler
     ) {
         val startPosition = getStartPosition()
-        var anchor = getStartOffset()
+        var anchor = getOffsetSpace()
         for (i in 0 until visibleCount) {
             val child = getViewForPosition(recycler, startPosition + i)
             addView(child)
@@ -270,10 +270,19 @@ open class PickerLayoutManager @JvmOverloads constructor(
     ): Int {
         if (childCount == 0 || delta == 0) return 0
 
-        val available = abs(delta)
-        var remainSpace = available
-
+        var remainSpace = abs(delta)
         val fillDirection = if (delta > 0) FILL_END else FILL_START
+
+        //检查滚动距离是否可以填充下一个view
+        if (!canFillScroll(fillDirection, delta)) {
+            return delta
+        }
+
+        //检查是否滚动到了顶部或者底部
+        if (checkScrollToEdge(fillDirection, state)) {
+            return getFixLastScroll(fillDirection)
+        }
+
         mPendingFillPosition = getPendingFillPosition(fillDirection)
 
         while (remainSpace > 0 && hasMore(state)) {
@@ -292,12 +301,47 @@ open class PickerLayoutManager @JvmOverloads constructor(
         return delta
     }
 
+    /**
+     * 如果anchorView的(start或end)+delta还是没出现在屏幕内，
+     * 就继续滚动，不填充view
+     */
+    private fun canFillScroll(fillDirection: Int, delta: Int): Boolean {
+        val anchorView = getAnchorView(fillDirection)
+
+        return true
+    }
+
+    private fun checkScrollToEdge(
+        fillDirection: Int,
+        state: RecyclerView.State
+    ): Boolean {
+        if (isLoop) return false
+        val anchorPosition = getAnchorPosition(fillDirection)
+        return anchorPosition == 0 || anchorPosition == (state.itemCount - 1)
+    }
+
+    private fun getFixLastScroll(fillDirection: Int): Int {
+        val anchorView = getAnchorView(fillDirection)
+        return if (fillDirection == FILL_START) {
+            mOrientationHelper.getDecoratedStart(anchorView) - mOrientationHelper.startAfterPadding - getOffsetSpace()
+        } else {
+            mOrientationHelper.getDecoratedEnd(anchorView) - mOrientationHelper.endAfterPadding + getOffsetSpace()
+        }
+    }
+
+    /**
+     * 如果不是循环模式，将要填充的view的position不在合理范围内
+     * 就返回false
+     */
     private fun hasMore(state: RecyclerView.State): Boolean {
         if (isLoop) return true
 
         return mPendingFillPosition >= 0 && mPendingFillPosition < state.itemCount
     }
 
+    /**
+     * 获取锚点view，fill_end是最后一个，fill_start是第一个
+     */
     private fun getAnchorView(fillDirection: Int): View {
         return if (fillDirection == FILL_START) {
             getChildAt(0)!!
@@ -305,6 +349,9 @@ open class PickerLayoutManager @JvmOverloads constructor(
             getChildAt(childCount - 1)!!
         }
     }
+
+    private fun getAnchorPosition(fillDirection: Int) =
+        getPosition(getAnchorView(fillDirection))
 
     private fun getAnchorByScroll(
         fillDirection: Int
@@ -707,8 +754,9 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
     /**
      * 获取开始item距离开始位置的偏移量
+     * 或者结束item距离尾端的偏移量
      */
-    private fun getStartOffset(): Int {
+    private fun getOffsetSpace(): Int {
         val offset = getOffsetCount() * getItemSpace()
         if (!isLoop) return offset
         return 0
