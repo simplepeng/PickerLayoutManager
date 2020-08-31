@@ -29,7 +29,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initLinearPicker() {
-        val pickerLayoutManager = PickerLayoutManager(PickerLayoutManager.VERTICAL, scaleY = 0.8f)
+        val pickerLayoutManager = PickerLayoutManager(
+            orientation = PickerLayoutManager.VERTICAL,
+            visibleCount = 3,
+            isLoop = false
+        )
         setListener(pickerLayoutManager)
         pickerRecyclerView.run {
             layoutManager = pickerLayoutManager
@@ -40,7 +44,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initHorizontalPicker() {
-        val pickerLayoutManager = PickerLayoutManager(PickerLayoutManager.HORIZONTAL)
+        val pickerLayoutManager = PickerLayoutManager(
+            orientation = PickerLayoutManager.HORIZONTAL,
+            visibleCount = 3,
+            isLoop = false
+        )
         setListener(pickerLayoutManager)
         pickerRecyclerView2.run {
             layoutManager = pickerLayoutManager
@@ -58,42 +66,42 @@ class MainActivity : BaseActivity() {
     }
 
     fun reLayout(view: View) {
-        val isLoop = checkBoxIsLoop.isChecked
-        val visibleCount = etVisibleCount.text.toString().toInt()
-        val lm = PickerLayoutManager(PickerLayoutManager.VERTICAL, visibleCount, isLoop)
-        setListener(lm)
-        pickerRecyclerView.layoutManager = lm
+//        val isLoop = checkBoxIsLoop.isChecked
+//        val visibleCount = etVisibleCount.text.toString().toInt()
+//        val lm = PickerLayoutManager(PickerLayoutManager.VERTICAL, visibleCount, isLoop)
+//        setListener(lm)
+//        pickerRecyclerView.layoutManager = lm
     }
 
     fun createLayoutManager() = PickerLayoutManager.Builder()
         .build()
 
-    fun scrollTo(view: View) {
-        try {
-            val position = etScrollTo.text.toString().toInt()
-            pickerRecyclerView.scrollToPosition(position)
-        } catch (e: Exception) {
-            toast(e.message)
-        }
-    }
+//    fun scrollTo(view: View) {
+//        try {
+//            val position = etScrollTo.text.toString().toInt()
+//            pickerRecyclerView.scrollToPosition(position)
+//        } catch (e: Exception) {
+//            toast(e.message)
+//        }
+//    }
 
-    fun smoothScrollTo(view: View) {
-        try {
-            val position = etSmoothScrollTo.text.toString().toInt()
-            pickerRecyclerView.smoothScrollToPosition(position)
-        } catch (e: Exception) {
-            toast(e.message)
-        }
-    }
+//    fun smoothScrollTo(view: View) {
+//        try {
+//            val position = etSmoothScrollTo.text.toString().toInt()
+//            pickerRecyclerView.smoothScrollToPosition(position)
+//        } catch (e: Exception) {
+//            toast(e.message)
+//        }
+//    }
 
-    fun smoothScrollTo2(view: View) {
-        try {
-            val position = etSmoothScrollTo2.text.toString().toInt()
-            pickerRecyclerView.smoothScrollToPosition(position)
-        } catch (e: Exception) {
-            toast(e.message)
-        }
-    }
+//    fun smoothScrollTo2(view: View) {
+//        try {
+//            val position = etSmoothScrollTo2.text.toString().toInt()
+//            pickerRecyclerView.smoothScrollToPosition(position)
+//        } catch (e: Exception) {
+//            toast(e.message)
+//        }
+//    }
 
 
     inner class PickerAdapter(private val orientation: Int) :

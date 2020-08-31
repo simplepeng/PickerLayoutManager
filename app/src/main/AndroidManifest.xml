@@ -11,14 +11,16 @@
         android:theme="@style/AppTheme">
 
         <activity android:name="demo.simple.picker.DatePickerActivity">
+
+        </activity>
+
+        <activity android:name="demo.simple.picker.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="demo.simple.picker.MainActivity" />
     </application>
 
 </manifest>
