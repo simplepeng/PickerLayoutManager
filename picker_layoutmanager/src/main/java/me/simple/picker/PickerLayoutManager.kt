@@ -113,6 +113,11 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
         if (state.isPreLayout) return
 
+        if (mItemWidth != 0 || mItemHeight != 0) {
+            setWidthAndHeight(mItemWidth, mItemHeight)
+            return
+        }
+
         detachAndScrapAttachedViews(recycler)
 
         val itemView = recycler.getViewForPosition(0)
@@ -127,10 +132,17 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
         detachAndScrapView(itemView, recycler)
 
+        setWidthAndHeight(mItemWidth, mItemHeight)
+    }
+
+    private fun setWidthAndHeight(
+        width: Int,
+        height: Int
+    ) {
         if (orientation == HORIZONTAL) {
-            setMeasuredDimension(mItemWidth * visibleCount, mItemHeight)
+            setMeasuredDimension(width * visibleCount, height)
         } else {
-            setMeasuredDimension(mItemWidth, mItemHeight * visibleCount)
+            setMeasuredDimension(width, height * visibleCount)
         }
     }
 
@@ -156,7 +168,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         if (isScrollTo) {
             mPendingFillPosition = mPendingScrollPosition
         } else if (childCount != 0) {
-            mPendingFillPosition = getPosition(getChildAt(0)!!)
+            mPendingFillPosition = getCenterPosition()
         }
         //暂时移除全部view，然后重新fill进来
         detachAndScrapAttachedViews(recycler)
@@ -548,6 +560,14 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
     private fun getCenterView(): View? {
         return mSnapHelper.findSnapView(this)
+    }
+
+    private fun getCenterPosition(): Int {
+        return if (getCenterView() == null) {
+            0
+        } else {
+            getPosition(getCenterView()!!)
+        }
     }
 
     /**
