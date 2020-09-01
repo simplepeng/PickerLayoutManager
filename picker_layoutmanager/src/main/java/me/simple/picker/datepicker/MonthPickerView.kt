@@ -11,18 +11,20 @@ class MonthPickerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : TextPickerView(context, attrs, defStyleAttr) {
 
-    private val mMonthItems = mutableListOf<String>()
-
     init {
         setMonthInterval()
     }
 
-    fun setMonthInterval(endMonth: Int = 12) {
-        mMonthItems.clear()
-        for (month in 1..endMonth) {
-            mMonthItems.add(PickerUtils.formatTwoChars(month))
+    @SuppressWarnings
+    fun setMonthInterval(
+        startMonth: Int = 1,
+        endMonth: Int = 12
+    ) {
+        mItems.clear()
+        for (month in startMonth..endMonth) {
+            mItems.add(PickerUtils.formatTwoChars(month))
         }
-        setItems(mMonthItems)
+        adapter?.notifyDataSetChanged()
     }
 
     fun getMonth() = getSelectedItem()

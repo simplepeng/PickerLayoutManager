@@ -11,17 +11,24 @@ class DayPickerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : TextPickerView(context, attrs, defStyleAttr) {
 
-    private val mDayItems = mutableListOf<String>()
-
-    fun setDayInterval(endDay: Int = 31) {
-        mDayItems.clear()
-        for (day in 1..endDay) {
-            mDayItems.add(PickerUtils.formatTwoChars(day))
-        }
-        setItems(mDayItems)
+    init {
+        setDayInterval()
     }
 
-    fun setYearAndMonth(year: Int, month: Int) {
+    @SuppressWarnings
+    fun setDayInterval(
+        startDay: Int = 1,
+        endDay: Int = 31
+    ) {
+        mItems.clear()
+        for (day in startDay..endDay) {
+            mItems.add(PickerUtils.formatTwoChars(day))
+        }
+        adapter?.notifyDataSetChanged()
+    }
+
+    @SuppressWarnings
+    fun setDayIntervalByMonth(year: Int, month: Int) {
         setDayInterval(PickerUtils.getDayCountInMonth(year, month))
     }
 

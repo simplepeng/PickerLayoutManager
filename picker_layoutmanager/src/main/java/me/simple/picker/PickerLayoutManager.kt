@@ -176,6 +176,12 @@ open class PickerLayoutManager @JvmOverloads constructor(
         anchor = getAnchor(fillDirection)
         fillLayout(recycler, state, anchor, fillDirection)
 
+        //scrollTo过来的要回调onItemSelected
+        if (isScrollTo) {
+            val centerPosition = getCenterPosition()
+            dispatchOnItemSelectedListener(centerPosition)
+        }
+
         //变换children
         transformChildren()
         //分发事件
@@ -660,7 +666,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
      * 分发回调OnItemSelectedListener
      */
     private fun dispatchOnItemSelectedListener(position: Int) {
-        if (mOnItemSelectedListener.isEmpty())return
+        if (mOnItemSelectedListener.isEmpty()) return
 
         for (listener in mOnItemSelectedListener) {
             listener.invoke(position)

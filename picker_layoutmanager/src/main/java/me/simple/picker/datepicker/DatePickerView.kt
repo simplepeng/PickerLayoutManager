@@ -6,7 +6,8 @@ import me.simple.picker.PickerLinearLayout
 import me.simple.picker.PickerUtils
 import java.util.*
 
-@SuppressWarnings("")
+typealias OnDateSelectedListener = (year: String, month: String, day: String) -> Unit
+
 class DatePickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -23,13 +24,15 @@ class DatePickerView @JvmOverloads constructor(
         layoutParams = generateChildLayoutParams()
     }
 
+    private var mOnSelected: OnDateSelectedListener? = null
+
+    private var mStartYear: Int = PickerUtils.START_YEAR
+    private var mStartMonth: Int = PickerUtils.START_YEAR
+    private var mStartDay: Int = PickerUtils.START_YEAR
+
     private var mEndYear: Int = PickerUtils.getEndYear()
     private var mEndMonth: Int = PickerUtils.getEndMonth()
     private var mEndDay: Int = PickerUtils.getEndDay()
-
-    private var mIsScrollToEnd = true
-
-    private var mOnSelected: ((year: String, month: String, day: String) -> Unit)? = null
 
     init {
         orientation = HORIZONTAL
@@ -39,79 +42,49 @@ class DatePickerView @JvmOverloads constructor(
         addView(mMonthPickerView)
         addView(mDayPickerView)
 
-        initDate()
 
         setDivider(mYearPickerView)
         setDivider(mMonthPickerView)
         setDivider(mDayPickerView)
+
+        setDateInterval()
     }
 
-    private fun initDate() {
-        mYearPickerView.setYearInterval(endYear = mEndYear)
-        mMonthPickerView.setMonthInterval(mEndMonth)
-        mDayPickerView.setDayInterval(mEndDay)
 
-        checkScrollToEnd()
-
-        mYearPickerView.addOnSelectedItemListener {
-            resetDate()
-            dispatchOnSelected()
-        }
-        mMonthPickerView.addOnSelectedItemListener {
-            resetDate()
-            dispatchOnSelected()
-        }
-        mDayPickerView.addOnSelectedItemListener {
-            dispatchOnSelected()
-        }
-    }
-
-    fun setDateInterval(start: Calendar, end: Calendar = Calendar.getInstance()) {
-
-    }
-
+    /**
+     * 设置日期时间的区间
+     */
+    @SuppressWarnings("")
     fun setDateInterval(
-        startYear: Int, startMonth: Int, startDay: Int,
-        endYear: Int, endMonth: Int, endDay: Int
+        start: Calendar = PickerUtils.getStartCalendar(),
+        end: Calendar = PickerUtils.getEndCalendar()
     ) {
-
+        setDateInterval(
+            PickerUtils.getYear(start), PickerUtils.getMonth(start), PickerUtils.getDay(start),
+            PickerUtils.getYear(end), PickerUtils.getMonth(end), PickerUtils.getDay(end)
+        )
     }
 
-    private fun resetDate() {
-        val year = mYearPickerView.getYear()?.toInt() ?: return
-        val month = mMonthPickerView.getMonth()?.toInt() ?: return
+    /**
+     * 设置日期时间的区间
+     */
+    @SuppressWarnings("")
+    fun setDateInterval(
+        startYear: Int = PickerUtils.START_YEAR,
+        startMonth: Int = PickerUtils.START_MONTH,
+        startDay: Int = PickerUtils.START_DAY,
+        endYear: Int = PickerUtils.getEndYear(),
+        endMonth: Int = PickerUtils.getEndMonth(),
+        endDay: Int = PickerUtils.getEndDay()
+    ) {
+        this.mStartYear = startYear
+        this.mStartMonth = startMonth
+        this.mStartDay = startDay
+        this.mEndYear = endYear
+        this.mEndMonth = endMonth
+        this.mEndDay = endDay
 
-        if (year == mEndYear && month == mEndMonth) {
-            mDayPickerView.setDayInterval(mEndDay)
-        } else {
-            mDayPickerView.setYearAndMonth(year, month)
-        }
-    }
-
-    private fun checkScrollToEnd() {
-        if (!mIsScrollToEnd) return
-
-        scrollToEnd()
-    }
-
-    fun scrollToEnd() {
-        mYearPickerView.scrollToEnd()
-        mMonthPickerView.scrollToEnd()
-        mDayPickerView.scrollToEnd()
-    }
-
-    private fun dispatchOnSelected() {
-        val year = mYearPickerView.getYear()
-        val month = mMonthPickerView.getMonth()
-        val day = mDayPickerView.getDay()
-        if (year.isNullOrEmpty() || month.isNullOrEmpty() || day.isNullOrEmpty())
-            return
-
-        mOnSelected?.invoke(year, month, day)
-    }
-
-    fun setOnDateSelectedListener(onSelected: (year: String, month: String, day: String) -> Unit) {
-        this.mOnSelected = onSelected
+        mYearPickerView.setYearInterval(startYear, endYear)
     }
 
     fun getCalendar() = Calendar.getInstance().apply {
@@ -130,4 +103,8 @@ class DatePickerView @JvmOverloads constructor(
         mMonthPickerView.getMonth(),
         mDayPickerView.getDay()
     )
+
+    fun setOnDateSelectedListener(onSelected: OnDateSelectedListener) {
+        this.mOnSelected = onSelected
+    }
 }

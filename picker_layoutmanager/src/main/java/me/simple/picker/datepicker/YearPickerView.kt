@@ -11,17 +11,15 @@ class YearPickerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : TextPickerView(context, attrs, defStyleAttr) {
 
-    private val mYearItems = mutableListOf<String>()
-
     fun setYearInterval(
-        startYear: Int = 1949,
+        startYear: Int = PickerUtils.START_YEAR,
         endYear: Int = PickerUtils.getEndYear()
     ) {
-        mYearItems.clear()
+        mItems.clear()
         for (year in startYear..endYear) {
-            mYearItems.add(year.toString())
+            mItems.add(year.toString())
         }
-        setItems(mYearItems)
+        adapter?.notifyDataSetChanged()
     }
 
     fun getYear(): String? {
