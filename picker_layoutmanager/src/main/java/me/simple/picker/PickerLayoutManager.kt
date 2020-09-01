@@ -44,7 +44,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     }
 
     //当前居中item的position
-    private var mCurrentPosition: Int = 0
+//    private var mCurrentPosition: Int = 0
 
     //将要填充的view的position
     private var mPendingFillPosition: Int = RecyclerView.NO_POSITION
@@ -140,6 +140,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         recycler: RecyclerView.Recycler,
         state: RecyclerView.State
     ) {
+        //如果itemCount==0了，直接移除全部view
         if (state.itemCount == 0) {
             removeAndRecycleAllViews(recycler)
             return
@@ -148,10 +149,30 @@ open class PickerLayoutManager @JvmOverloads constructor(
         //不支持预测动画，直接return
         if (state.isPreLayout) return
 
-        calculateCurrentPosition()
-
+        //计算当前开始的position
+//        calculateCurrentPosition()
+        if (mPendingScrollPosition != RecyclerView.NO_POSITION) {
+            mPendingFillPosition = mPendingScrollPosition
+        } else if (childCount != 0) {
+            mPendingFillPosition = getPosition(getChildAt(0)!!)
+        } else {
+            mPendingFillPosition = 0
+        }
+        //暂时移除全部view，然后重新fill进来
         detachAndScrapAttachedViews(recycler)
-        fillLayout(recycler)
+        //
+        var anchor = getOffsetSpace()
+        var fillDirection = FILL_END
+        //开始就向下填充
+        fillLayout(recycler, anchor, fillDirection)
+        //如果是isLoop=true，或者是scrollTo或软键盘弹起，再向上填充
+        if (isLoop) {
+            fillDirection = FILL_START
+            mPendingFillPosition = getPendingFillPosition(fillDirection)
+            anchor = getAnchorByScroll(fillDirection)
+            fillLayout(recycler, anchor, fillDirection)
+        }
+
 
         //
         logDebug("width == $width -- height == $height")
@@ -247,16 +268,26 @@ open class PickerLayoutManager @JvmOverloads constructor(
      * 初始化摆放view
      */
     private fun fillLayout(
-        recycler: RecyclerView.Recycler
+        recycler: RecyclerView.Recycler,
+        anchor: Int,
+        fillDirection: Int
     ) {
-        val startPosition = getStartPosition()
-        var anchor = getOffsetSpace()
-        for (i in 0 until getFixVisibleCount()) {
-            val child = getViewForPosition(recycler, startPosition + i)
-            addView(child)
+        var innerAnchor = anchor
+        val count = if (fillDirection == FILL_START) getOffsetCount() else getFixVisibleCount()
+        for (i in 0 until count) {
+            val child = nextView(recycler, fillDirection)
+            if (fillDirection == FILL_START) {
+                addView(child, 0)
+            } else {
+                addView(child)
+            }
             measureChildWithMargins(child, 0, 0)
-            layoutChunk(child, anchor)
-            anchor += mOrientationHelper.getDecoratedMeasurement(child)
+            layoutChunk(child, innerAnchor, fillDirection)
+            if (fillDirection == FILL_START) {
+                innerAnchor -= mOrientationHelper.getDecoratedMeasurement(child)
+            } else {
+                innerAnchor += mOrientationHelper.getDecoratedMeasurement(child)
+            }
         }
     }
 
@@ -265,7 +296,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
      */
     private fun getFixVisibleCount(): Int {
         if (isLoop) return visibleCount
-        return visibleCount / 2 + 1
+        return (visibleCount + 1) / 2
     }
 
     /**
@@ -274,7 +305,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     private fun layoutChunk(
         child: View,
         anchor: Int,
-        fillDirection: Int = FILL_END
+        fillDirection: Int
     ) {
         var left: Int = 0
         var top: Int = 0
@@ -420,8 +451,9 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
     }
 
-    private fun getAnchorPosition(fillDirection: Int) =
-        getPosition(getAnchorView(fillDirection))
+    private fun getAnchorPosition(fillDirection: Int): Int {
+        return getPosition(getAnchorView(fillDirection))
+    }
 
     private fun getAnchorByScroll(
         fillDirection: Int
@@ -455,9 +487,9 @@ open class PickerLayoutManager @JvmOverloads constructor(
         recycler: RecyclerView.Recycler
     ) {
         if (delta > 0) {
-            recycleStart(recycler)
+            recycleStart()
         } else {
-            recycleEnd(recycler)
+            recycleEnd()
         }
         for (view in mRecycleViews) {
             removeAndRecycleView(view, recycler)
@@ -465,7 +497,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         mRecycleViews.clear()
     }
 
-    private fun recycleStart(recycler: RecyclerView.Recycler) {
+    private fun recycleStart() {
         for (i in 0 until childCount) {
             val child = getChildAt(i)!!
             val end = mOrientationHelper.getDecoratedEnd(child)
@@ -476,7 +508,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
     }
 
-    private fun recycleEnd(recycler: RecyclerView.Recycler) {
+    private fun recycleEnd() {
         for (i in (childCount - 1) downTo 0) {
             val child = getChildAt(i)!!
             val start = mOrientationHelper.getDecoratedStart(child)
@@ -497,37 +529,49 @@ open class PickerLayoutManager @JvmOverloads constructor(
      *  计算当前开始的position
      */
     private fun calculateCurrentPosition() {
-        if (mPendingScrollPosition != RecyclerView.NO_POSITION) {
-            mCurrentPosition = mPendingScrollPosition
-            return
-        }
+//        mCurrentPosition = 0
+//
+//        if (mPendingScrollPosition != RecyclerView.NO_POSITION) {
+//            mCurrentPosition = mPendingScrollPosition
+//            return
+//        }
+//
+//        if (childCount != 0) {
+//            val centerView = getCenterView() ?: return
+//            mCurrentPosition = getPosition(centerView)
+//            return
+//        }
 
+    }
+
+    private fun getCenterView(): View? {
+        return mSnapHelper.findSnapView(this)
     }
 
     /**
      * 获取开始fill layout的position
      */
     private fun getStartPosition(): Int {
-        val position = mCurrentPosition
+        val currentPosition = 0
 
         //如果是无限循环模式且开始position=0
-        //例如：currentPosition == 0，visibleCount = 3，那么startPosition
-        //就应该是100
-        if (isLoop && position == 0) {
+        //例如：currentPosition == 0，visibleCount = 3，那么startPosition就应该是100
+        //
+        if (isLoop && currentPosition == 0) {
             return itemCount - getOffsetCount()
         }
 
         //如果不是无限循环模式且开始position=0
-        if (!isLoop && position == 0) {
+        if (!isLoop && currentPosition == 0) {
             return 0
         }
 
         //只要position != 0，就是scrollTo调用过来的或者软键盘影响重新onLayout来的
-        if (position != 0) {
-            return position - getOffsetCount()
+        if (currentPosition != 0) {
+            return currentPosition - getOffsetCount()
         }
 
-        return position
+        return currentPosition
     }
 
     /**
@@ -537,6 +581,14 @@ open class PickerLayoutManager @JvmOverloads constructor(
         mItemWidth
     } else {
         mItemHeight
+    }
+
+    /**
+     * 获取已经滚动过的偏移量，在软键盘弹出
+     * 重新onLayoutChildren的时候有用
+     */
+    private fun getScrollOffset() {
+
     }
 
     /**
@@ -550,8 +602,8 @@ open class PickerLayoutManager @JvmOverloads constructor(
      */
     private fun getOffsetSpace(): Int {
         val offset = getOffsetCount() * getItemSpace()
-        if (!isLoop) return offset
-        return 0
+//        if (!isLoop) return offset
+        return offset
     }
 
     /**
@@ -565,8 +617,16 @@ open class PickerLayoutManager @JvmOverloads constructor(
             throw IllegalArgumentException("position <0 or >= itemCount with !isLoop")
         }
 
+        //假设itemCount==100
+        //[0,99] -- 100=0,101=1,102=2
         if (isLoop && position > itemCount - 1) {
             return recycler.getViewForPosition(position % itemCount)
+        }
+
+        //[0,99] -- -1=99,-2=98,-3=97...-99=1,-100=0
+        //              -101=99(-1)
+        if (isLoop && position < 0) {
+            return recycler.getViewForPosition(itemCount + (position % itemCount))
         }
 
         return recycler.getViewForPosition(position)
@@ -579,7 +639,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
         if (position < 0 || position > itemCount - 1)
             throw IllegalArgumentException("position is $position,must be >= 0 and < itemCount,")
     }
-
 
     private fun fixSmoothToPosition(toPosition: Int): Int {
         val fixCount = getOffsetCount()
@@ -627,7 +686,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
             }
 
             override fun onAnimationEnd(animation: Animator?) {
-                mCurrentPosition = centerPosition
                 dispatchListener(centerPosition)
             }
 
