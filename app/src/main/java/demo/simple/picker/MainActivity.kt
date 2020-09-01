@@ -30,7 +30,7 @@ class MainActivity : BaseActivity() {
 
         initLinearPicker()
 
-        initHorizontalPicker()
+//        initHorizontalPicker()
 
     }
 

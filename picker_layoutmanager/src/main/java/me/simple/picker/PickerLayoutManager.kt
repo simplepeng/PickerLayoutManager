@@ -151,27 +151,27 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
         //计算当前开始的position
 //        calculateCurrentPosition()
-        if (mPendingScrollPosition != RecyclerView.NO_POSITION) {
+        mPendingFillPosition = 0
+        val isScrollTo = mPendingScrollPosition != RecyclerView.NO_POSITION
+        if (isScrollTo) {
             mPendingFillPosition = mPendingScrollPosition
         } else if (childCount != 0) {
             mPendingFillPosition = getPosition(getChildAt(0)!!)
-        } else {
-            mPendingFillPosition = 0
         }
         //暂时移除全部view，然后重新fill进来
         detachAndScrapAttachedViews(recycler)
-        //
+
+        //开始就向下填充
         var anchor = getOffsetSpace()
         var fillDirection = FILL_END
-        //开始就向下填充
-        fillLayout(recycler, anchor, fillDirection)
+        fillLayout(recycler, state, anchor, fillDirection)
         //如果是isLoop=true，或者是scrollTo或软键盘弹起，再向上填充
-        if (isLoop) {
-            fillDirection = FILL_START
-            mPendingFillPosition = getPendingFillPosition(fillDirection)
-            anchor = getAnchorByScroll(fillDirection)
-            fillLayout(recycler, anchor, fillDirection)
-        }
+//        if (isLoop || isScrollTo) {
+        fillDirection = FILL_START
+        mPendingFillPosition = getPendingFillPosition(fillDirection)
+        anchor = getAnchorByScroll(fillDirection)
+        fillLayout(recycler, state, anchor, fillDirection)
+//        }
 
 
         //
@@ -269,12 +269,13 @@ open class PickerLayoutManager @JvmOverloads constructor(
      */
     private fun fillLayout(
         recycler: RecyclerView.Recycler,
+        state: RecyclerView.State,
         anchor: Int,
         fillDirection: Int
     ) {
         var innerAnchor = anchor
-        val count = if (fillDirection == FILL_START) getOffsetCount() else getFixVisibleCount()
-        for (i in 0 until count) {
+        var count = if (fillDirection == FILL_START) getOffsetCount() else getFixVisibleCount()
+        while (count > 0 && hasMore(state)) {
             val child = nextView(recycler, fillDirection)
             if (fillDirection == FILL_START) {
                 addView(child, 0)
@@ -288,6 +289,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
             } else {
                 innerAnchor += mOrientationHelper.getDecoratedMeasurement(child)
             }
+            count--
         }
     }
 
