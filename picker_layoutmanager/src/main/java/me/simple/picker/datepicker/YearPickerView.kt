@@ -22,7 +22,15 @@ class YearPickerView @JvmOverloads constructor(
         adapter?.notifyDataSetChanged()
     }
 
-    fun getYear(): String? {
+    fun getYear(position: Int): Int {
+        return mItems[position].toInt()
+    }
+
+    fun getYear(): Int {
+        return getYearStr().toInt()
+    }
+
+    fun getYearStr(): String {
         return getSelectedItem()
     }
 }

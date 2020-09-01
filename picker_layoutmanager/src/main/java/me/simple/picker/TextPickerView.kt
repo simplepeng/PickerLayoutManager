@@ -21,14 +21,7 @@ open class TextPickerView @JvmOverloads constructor(
         adapter = TextPickerAdapter(mItems)
     }
 
-    fun setItems(items: MutableList<String>) {
-        mItems.clear()
-        mItems.addAll(items)
-        adapter?.notifyDataSetChanged()
-    }
-
-    fun getSelectedItem(): String? {
-        if (getSelectedPosition() == RecyclerView.NO_POSITION) return null
+    fun getSelectedItem(): String{
         return mItems[getSelectedPosition()]
     }
 

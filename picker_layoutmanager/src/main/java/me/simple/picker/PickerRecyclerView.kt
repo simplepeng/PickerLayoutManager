@@ -45,7 +45,7 @@ open class PickerRecyclerView @JvmOverloads constructor(
 
     fun scrollToEnd() {
         if (adapter == null) return
-//        this.scrollToPosition(adapter!!.itemCount - 1)
-        this.smoothScrollToPosition(adapter!!.itemCount - 1)
+        this.scrollToPosition(adapter!!.itemCount - 1)
+//        this.smoothScrollToPosition(adapter!!.itemCount - 1)
     }
 }

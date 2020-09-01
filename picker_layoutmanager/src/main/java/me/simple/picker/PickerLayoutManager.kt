@@ -705,13 +705,14 @@ open class PickerLayoutManager @JvmOverloads constructor(
             }
 
             override fun onAnimationEnd(animation: Animator?) {
-                dispatchOnItemSelectedListener(centerPosition)
+
             }
 
             override fun onAnimationCancel(animation: Animator?) {
             }
 
             override fun onAnimationStart(animation: Animator?) {
+                dispatchOnItemSelectedListener(centerPosition)
             }
         })
         animator.start()

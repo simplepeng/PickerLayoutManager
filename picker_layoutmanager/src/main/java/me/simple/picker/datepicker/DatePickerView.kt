@@ -42,12 +42,40 @@ class DatePickerView @JvmOverloads constructor(
         addView(mMonthPickerView)
         addView(mDayPickerView)
 
-
         setDivider(mYearPickerView)
         setDivider(mMonthPickerView)
         setDivider(mDayPickerView)
 
+        mYearPickerView.addOnSelectedItemListener { position ->
+            val year = mYearPickerView.getYear(position)
+            when (year) {
+                mStartYear -> {
+                    mMonthPickerView.setMonthInterval(mStartMonth)
+                }
+                mEndYear -> {
+                    mMonthPickerView.setMonthInterval(endMonth = mEndMonth)
+                }
+                else -> {
+                    mMonthPickerView.setMonthInterval()
+                }
+            }
+        }
+
+        mMonthPickerView.addOnSelectedItemListener { position ->
+            val year = mYearPickerView.getYear()
+            val month = mMonthPickerView.getMonth(position)
+
+            if (year == mStartYear && month == mStartMonth) {
+                mDayPickerView.setDayInterval(startDay = mStartDay)
+            } else if (year == mEndYear && month == mEndMonth) {
+                mDayPickerView.setDayInterval(endDay = mEndDay)
+            } else {
+                mDayPickerView.setDayIntervalByMonth(year, month)
+            }
+        }
+
         setDateInterval()
+        mYearPickerView.scrollToEnd()
     }
 
 
@@ -99,7 +127,7 @@ class DatePickerView @JvmOverloads constructor(
     fun getDate() = getCalendar().time
 
     fun getYearMonthDay() = arrayOf(
-        mYearPickerView.getYear(),
+        mYearPickerView.getYearStr(),
         mMonthPickerView.getMonth(),
         mDayPickerView.getDay()
     )

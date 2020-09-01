@@ -27,5 +27,9 @@ class MonthPickerView @JvmOverloads constructor(
         adapter?.notifyDataSetChanged()
     }
 
-    fun getMonth() = getSelectedItem()
+    fun getMonthStr() = getSelectedItem()
+
+    fun getMonth() = getSelectedItem().toInt()
+
+    fun getMonth(position: Int) = mItems[position].toInt()
 }
