@@ -23,6 +23,8 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        startActivity(Intent(this, DatePickerActivity::class.java))
+
         for (i in 0..29) {
             mItems.add(i.toString())
         }

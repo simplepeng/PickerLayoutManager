@@ -13,12 +13,12 @@ class DatePickerActivity : BaseActivity() {
             toast("$year-$month-$day")
         }
 
-        timePickerView.setOnTimeSelectedListener { hour, minute, second ->
-            toast("$hour:$minute:$second")
-        }
+//        timePickerView.setOnTimeSelectedListener { hour, minute, second ->
+//            toast("$hour:$minute:$second")
+//        }
 
         btnGetDate.setOnClickListener {
-            datePickerView.scrollToEnd()
+//            datePickerView.scrollToEnd()
 
 //            val dateArr = datePickerView.getYearMonthDay()
 //            val timeArr = timePickerView.getHourMinuteSecond()

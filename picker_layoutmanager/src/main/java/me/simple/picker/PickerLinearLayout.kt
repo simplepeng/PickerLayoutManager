@@ -49,7 +49,7 @@ open class PickerLinearLayout @JvmOverloads constructor(
         )
     }
 
-    fun generateChildLayoutParams(): LayoutParams {
+    open fun generateChildLayoutParams(): LayoutParams {
         val lp = LayoutParams(
             0,
             LayoutParams.WRAP_CONTENT
