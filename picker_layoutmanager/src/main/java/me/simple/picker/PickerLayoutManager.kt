@@ -9,8 +9,10 @@ import android.view.animation.LinearInterpolator
 import androidx.annotation.FloatRange
 import androidx.recyclerview.widget.*
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
-typealias OnSelectedItemListener = (position: Int) -> Unit
+typealias OnItemSelectedListener = (position: Int) -> Unit
 
 /**
  * @param orientation 摆放子View的方向
@@ -43,9 +45,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
         var DEBUG = true
     }
 
-    //当前居中item的position
-//    private var mCurrentPosition: Int = 0
-
     //将要填充的view的position
     private var mPendingFillPosition: Int = RecyclerView.NO_POSITION
 
@@ -62,11 +61,11 @@ open class PickerLayoutManager @JvmOverloads constructor(
     //直接搞个SnapHelper来findCenterView
     private val mSnapHelper = LinearSnapHelper()
 
-    //选中中间item的监听器
-    private val mOnSelectedItemListener = mutableListOf<OnSelectedItemListener>()
+    //选中中间item的监听器的集合
+    private val mOnItemSelectedListener = mutableListOf<OnItemSelectedListener>()
 
-    //
-    private val mOnItemLayoutListener = mutableListOf<OnItemLayoutListener>()
+    //子view填充或滚动监听器的集合
+    private val mOnItemFillListener = mutableListOf<OnItemFillListener>()
 
     //Recyclerview内置的帮助类
     private val mOrientationHelper: OrientationHelper by lazy {
@@ -162,7 +161,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
         if (state.isPreLayout) return
 
         //计算当前开始的position
-//        calculateCurrentPosition()
         mPendingFillPosition = 0
         val isScrollTo = mPendingScrollPosition != RecyclerView.NO_POSITION
         if (isScrollTo) {
@@ -177,14 +175,17 @@ open class PickerLayoutManager @JvmOverloads constructor(
         var anchor = getOffsetSpace()
         var fillDirection = FILL_END
         fillLayout(recycler, state, anchor, fillDirection)
+
         //如果是isLoop=true，或者是scrollTo或软键盘弹起，再向上填充
-//        if (isLoop || isScrollTo) {
         fillDirection = FILL_START
         mPendingFillPosition = getPendingFillPosition(fillDirection)
-        anchor = getAnchorByScroll(fillDirection)
+        anchor = getAnchor(fillDirection)
         fillLayout(recycler, state, anchor, fillDirection)
-//        }
 
+        //变换children
+        transformChildren()
+        //分发事件
+        dispatchOnItemFillListener()
 
         //
         logDebug("width == $width -- height == $height")
@@ -262,20 +263,14 @@ open class PickerLayoutManager @JvmOverloads constructor(
         super.onScrollStateChanged(state)
         if (childCount == 0) return
 
-//        if (state == RecyclerView.SCROLL_STATE_IDLE) {
-//            val centerView = mSnapHelper.findSnapView(this) ?: return
-//            val centerPosition = getPosition(centerView)
-//            scrollToCenter(centerView, centerPosition)
-//        }
+        if (state == RecyclerView.SCROLL_STATE_IDLE) {
+            val centerView = getCenterView() ?: return
+            val centerPosition = getPosition(centerView)
+            scrollToCenter(centerView, centerPosition)
+        }
     }
 
     //------------------------------------------------------------------
-
-    /**
-     * 获取itemCount，无限模式就是无限大
-     */
-    private fun getInnerItemCount() = if (isLoop) Int.MAX_VALUE else super.getItemCount()
-
     /**
      * 初始化摆放view
      */
@@ -306,7 +301,15 @@ open class PickerLayoutManager @JvmOverloads constructor(
     }
 
     /**
-     *
+     * 获取偏移的item count
+     * 例如：开始position == 0居中，就要偏移一个item count的距离
+     */
+    private fun getOffsetCount() = (visibleCount - 1) / 2
+
+    /**
+     * 获取真实可见的visible count
+     * 例如：传入的visible count=3，但是在isLoop=false的情况下，
+     * 开始只用填充2个item view进来就行了
      */
     private fun getFixVisibleCount(): Int {
         if (isLoop) return visibleCount
@@ -351,6 +354,9 @@ open class PickerLayoutManager @JvmOverloads constructor(
         layoutDecoratedWithMargins(child, left, top, right, bottom)
     }
 
+    /**
+     * 滑动的统一处理事件
+     */
     private fun scrollBy(
         delta: Int,
         recycler: RecyclerView.Recycler,
@@ -358,9 +364,17 @@ open class PickerLayoutManager @JvmOverloads constructor(
     ): Int {
         if (childCount == 0 || delta == 0) return 0
 
+        //开始填充item view
         val consume = fillScroll(delta, recycler, state)
+        //移动全部子view
         mOrientationHelper.offsetChildren(-consume)
+        //回收屏幕外的view
         recycleChildren(delta, recycler)
+
+        //变换children
+        transformChildren()
+        //分发事件
+        dispatchOnItemFillListener()
 
         //
         logChildCount(recycler)
@@ -390,13 +404,19 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
         //检查是否滚动到了顶部或者底部
         if (checkScrollToEdge(fillDirection, state)) {
-            return getFixLastScroll(fillDirection)
+            val fixLastScroll = getFixLastScroll(fillDirection)
+            return if (fillDirection == FILL_START) {
+                max(fixLastScroll, delta)
+            } else {
+                min(fixLastScroll, delta)
+            }
         }
 
+        //获取将要填充的view
         mPendingFillPosition = getPendingFillPosition(fillDirection)
 
         while (remainSpace > 0 && hasMore(state)) {
-            val anchor = getAnchorByScroll(fillDirection)
+            val anchor = getAnchor(fillDirection)
             val child = nextView(recycler, fillDirection)
             if (fillDirection == FILL_START) {
                 addView(child, 0)
@@ -426,6 +446,9 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 检查是否滚动到了底部或者顶部
+     */
     private fun checkScrollToEdge(
         fillDirection: Int,
         state: RecyclerView.State
@@ -465,11 +488,17 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 获取锚点view的position
+     */
     private fun getAnchorPosition(fillDirection: Int): Int {
         return getPosition(getAnchorView(fillDirection))
     }
 
-    private fun getAnchorByScroll(
+    /**
+     * 获取要开始填充的锚点位置
+     */
+    private fun getAnchor(
         fillDirection: Int
     ): Int {
         val anchorView = getAnchorView(fillDirection)
@@ -480,10 +509,16 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 获取将要填充的view的position
+     */
     private fun getPendingFillPosition(fillDirection: Int): Int {
         return getAnchorPosition(fillDirection) + fillDirection
     }
 
+    /**
+     * 获取下一个view，fill_start就-1，fill_end就是+1
+     */
     private fun nextView(
         recycler: RecyclerView.Recycler,
         fillDirection: Int
@@ -534,66 +569,21 @@ open class PickerLayoutManager @JvmOverloads constructor(
     }
 
     /**
-     * 获取偏移的item count
-     * 例如：开始position == 0居中，就要偏移一个item count的距离
+     * 获取居中的view
      */
-    private fun getOffsetCount() = (visibleCount - 1) / 2
-
-    /**
-     *  计算当前开始的position
-     */
-    private fun calculateCurrentPosition() {
-//        mCurrentPosition = 0
-//
-//        if (mPendingScrollPosition != RecyclerView.NO_POSITION) {
-//            mCurrentPosition = mPendingScrollPosition
-//            return
-//        }
-//
-//        if (childCount != 0) {
-//            val centerView = getCenterView() ?: return
-//            mCurrentPosition = getPosition(centerView)
-//            return
-//        }
-
-    }
-
     private fun getCenterView(): View? {
         return mSnapHelper.findSnapView(this)
     }
 
+    /**
+     * 获取居中的view的position
+     */
     private fun getCenterPosition(): Int {
         return if (getCenterView() == null) {
             0
         } else {
             getPosition(getCenterView()!!)
         }
-    }
-
-    /**
-     * 获取开始fill layout的position
-     */
-    private fun getStartPosition(): Int {
-        val currentPosition = 0
-
-        //如果是无限循环模式且开始position=0
-        //例如：currentPosition == 0，visibleCount = 3，那么startPosition就应该是100
-        //
-        if (isLoop && currentPosition == 0) {
-            return itemCount - getOffsetCount()
-        }
-
-        //如果不是无限循环模式且开始position=0
-        if (!isLoop && currentPosition == 0) {
-            return 0
-        }
-
-        //只要position != 0，就是scrollTo调用过来的或者软键盘影响重新onLayout来的
-        if (currentPosition != 0) {
-            return currentPosition - getOffsetCount()
-        }
-
-        return currentPosition
     }
 
     /**
@@ -608,6 +598,8 @@ open class PickerLayoutManager @JvmOverloads constructor(
     /**
      * 获取已经滚动过的偏移量，在软键盘弹出
      * 重新onLayoutChildren的时候有用
+     * 这个暂时用不到了，因为加了自动居中，在LinearLayoutManager中
+     * 还是用到了的
      */
     private fun getScrollOffset() {
 
@@ -615,6 +607,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
     /**
      * 增加一个偏移量让滚动顺滑点
+     * 暂时没用
      */
     private fun getItemOffset() = getItemSpace() / 2
 
@@ -623,9 +616,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
      * 或者结束item距离尾端的偏移量
      */
     private fun getOffsetSpace(): Int {
-        val offset = getOffsetCount() * getItemSpace()
-//        if (!isLoop) return offset
-        return offset
+        return getOffsetCount() * getItemSpace()
     }
 
     /**
@@ -662,17 +653,22 @@ open class PickerLayoutManager @JvmOverloads constructor(
             throw IllegalArgumentException("position is $position,must be >= 0 and < itemCount,")
     }
 
+    /**
+     * 因为scrollTo是要居中，所以这里要fix一下
+     */
     private fun fixSmoothToPosition(toPosition: Int): Int {
         val fixCount = getOffsetCount()
-        val centerPosition = getPosition(mSnapHelper.findSnapView(this)!!)
+        val centerPosition = getCenterPosition()
         return if (centerPosition < toPosition) toPosition + fixCount else toPosition - fixCount
     }
 
     /**
-     * 分发回调OnSelectedItemListener
+     * 分发回调OnItemSelectedListener
      */
-    private fun dispatchListener(position: Int) {
-        for (listener in mOnSelectedItemListener) {
+    private fun dispatchOnItemSelectedListener(position: Int) {
+        if (mOnItemSelectedListener.isEmpty())return
+
+        for (listener in mOnItemSelectedListener) {
             listener.invoke(position)
         }
     }
@@ -681,17 +677,18 @@ open class PickerLayoutManager @JvmOverloads constructor(
      * 滚动到中间的item
      */
     private fun scrollToCenter(centerView: View, centerPosition: Int) {
-        val distance = if (orientation == VERTICAL) {
-            val destTop = getVerticallySpace() / 2 - getDecoratedMeasuredHeight(centerView) / 2
-            destTop - getDecoratedTop(centerView)
-        } else {
-            val destLeft = getHorizontalSpace() / 2 - getDecoratedMeasuredWidth(centerView) / 2
-            destLeft - getDecoratedLeft(centerView)
-        }
+        val destination =
+            mOrientationHelper.totalSpace / 2 - mOrientationHelper.getDecoratedMeasurement(
+                centerView
+            ) / 2
+        val distance = destination - mOrientationHelper.getDecoratedStart(centerView)
 
         smoothOffsetChildren(distance, centerPosition)
     }
 
+    /**
+     * 加动画平滑的移动
+     */
     private fun smoothOffsetChildren(amount: Int, centerPosition: Int) {
         var lastValue = amount
         val animator = ValueAnimator.ofInt(amount, 0).apply {
@@ -700,7 +697,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
         animator.addUpdateListener {
             val value = it.animatedValue as Int
-            offsetChildren(lastValue - value)
+            mOrientationHelper.offsetChildren(lastValue - value)
             lastValue = value
         }
         animator.addListener(object : Animator.AnimatorListener {
@@ -708,7 +705,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
             }
 
             override fun onAnimationEnd(animation: Animator?) {
-                dispatchListener(centerPosition)
+                dispatchOnItemSelectedListener(centerPosition)
             }
 
             override fun onAnimationCancel(animation: Animator?) {
@@ -720,36 +717,33 @@ open class PickerLayoutManager @JvmOverloads constructor(
         animator.start()
     }
 
-    private fun offsetChildren(amount: Int) {
-        if (orientation == VERTICAL) {
-            offsetChildrenVertical(amount)
-        } else {
-            offsetChildrenHorizontal(amount)
-        }
+    /**
+     * 添加中心item选中的监听器
+     */
+    fun addOnItemSelectedListener(listener: OnItemSelectedListener) {
+        mOnItemSelectedListener.add(listener)
     }
 
-    private fun getVerticallySpace() = height - paddingTop - paddingBottom
-
-    private fun getHorizontalSpace() = width - paddingLeft - paddingRight
-
-    fun addOnSelectedItemListener(listener: OnSelectedItemListener) {
-        mOnSelectedItemListener.add(listener)
+    fun removeOnItemSelectedListener(listener: OnItemSelectedListener) {
+        mOnItemSelectedListener.remove(listener)
     }
 
-    fun removeOnSelectedItemListener(listener: OnSelectedItemListener) {
-        mOnSelectedItemListener.remove(listener)
-    }
-
+    /**
+     * 获取被选中的position
+     */
     fun getSelectedPosition(): Int {
         if (childCount == 0) return RecyclerView.NO_POSITION
         val centerView = mSnapHelper.findSnapView(this) ?: return RecyclerView.NO_POSITION
         return getPosition(centerView)
     }
 
+    /**
+     * 变换子view，缩放或增加透明度
+     */
     open fun transformChildren() {
         if (childCount == 0) return
 
-        val centerView = mSnapHelper.findSnapView(this) ?: return
+        val centerView = getCenterView() ?: return
         val centerPosition = getPosition(centerView)
 
         if (childCount == 0) return
@@ -761,9 +755,8 @@ open class PickerLayoutManager @JvmOverloads constructor(
                 child.scaleY = 1f
                 child.alpha = 1.0f
             } else {
-                val scaleX = transformScale(this.scaleX, getIntervalCount(centerPosition, position))
-                val scaleY = transformScale(this.scaleY, getIntervalCount(centerPosition, position))
-//                logDebug("scaleY == $scaleY")
+                val scaleX = getScale(this.scaleX, getIntervalCount(centerPosition, position))
+                val scaleY = getScale(this.scaleY, getIntervalCount(centerPosition, position))
                 child.scaleX = scaleX
                 child.scaleY = scaleY
                 child.alpha = this.alpha
@@ -771,7 +764,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
     }
 
-    private fun transformScale(scale: Float, intervalCount: Int): Float {
+    private fun getScale(scale: Float, intervalCount: Int): Float {
         if (scale == 1.0f) return scale
         return scale / intervalCount
     }
@@ -797,10 +790,13 @@ open class PickerLayoutManager @JvmOverloads constructor(
         return abs(position - centerPosition)
     }
 
-    private fun dispatchLayout() {
-        if (childCount == 0) return
+    /**
+     * 分发OnItemFillListener事件
+     */
+    private fun dispatchOnItemFillListener() {
+        if (childCount == 0 || mOnItemFillListener.isEmpty()) return
 
-        val centerView = mSnapHelper.findSnapView(this) ?: return
+        val centerView = getCenterView() ?: return
         val centerPosition = getPosition(centerView)
 
         for (i in 0 until childCount) {
@@ -808,39 +804,39 @@ open class PickerLayoutManager @JvmOverloads constructor(
             val position = getPosition(child)
 
             if (position == centerPosition) {
-                onSelectedItemLayout(child, position)
+                onItemSelected(child, position)
             } else {
-                onUnSelectedItemLayout(child, position)
+                onItemUnSelected(child, position)
             }
         }
     }
 
-    open fun onSelectedItemLayout(child: View, position: Int) {
-        for (listener in mOnItemLayoutListener) {
-            listener.onSelectedItemLayout(child, position)
+    open fun onItemSelected(child: View, position: Int) {
+        for (listener in mOnItemFillListener) {
+            listener.onItemSelected(child, position)
         }
     }
 
-    open fun onUnSelectedItemLayout(child: View, position: Int) {
-        for (listener in mOnItemLayoutListener) {
-            listener.onUnSelectedItemLayout(child, position)
+    open fun onItemUnSelected(child: View, position: Int) {
+        for (listener in mOnItemFillListener) {
+            listener.onItemUnSelected(child, position)
         }
     }
 
     /**
-     *
+     * 当item填充或者滚动的时候回调
      */
-    interface OnItemLayoutListener {
-        fun onSelectedItemLayout(child: View, position: Int)
-        fun onUnSelectedItemLayout(child: View, position: Int)
+    interface OnItemFillListener {
+        fun onItemSelected(child: View, position: Int)
+        fun onItemUnSelected(child: View, position: Int)
     }
 
-    fun addOnItemLayoutListener(listener: OnItemLayoutListener) {
-        mOnItemLayoutListener.add(listener)
+    fun addOnItemFillListener(listener: OnItemFillListener) {
+        mOnItemFillListener.add(listener)
     }
 
-    fun removeOnItemLayoutListener(listener: OnItemLayoutListener) {
-        mOnItemLayoutListener.remove(listener)
+    fun removeOnItemFillListener(listener: OnItemFillListener) {
+        mOnItemFillListener.remove(listener)
     }
 
     /**

@@ -40,7 +40,7 @@ open class PickerRecyclerView @JvmOverloads constructor(
     }
 
     fun addOnSelectedItemListener(listener: (position: Int) -> Unit) {
-        layoutManager.addOnSelectedItemListener(listener)
+        layoutManager.addOnItemSelectedListener(listener)
     }
 
     fun scrollToEnd() {

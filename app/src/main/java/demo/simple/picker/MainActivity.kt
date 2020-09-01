@@ -1,21 +1,22 @@
 package demo.simple.picker
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import me.simple.picker.PickerItemDecoration
 import me.simple.picker.PickerLayoutManager
-import java.lang.Exception
 
 class MainActivity : BaseActivity() {
 
     private val mItems = mutableListOf<String>()
-    private val mRecyclerViews = hashSetOf<RecyclerView>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,90 +26,41 @@ class MainActivity : BaseActivity() {
             mItems.add(i.toString())
         }
 
-        mRecyclerViews.add(pickerRecyclerView)
-        mRecyclerViews.add(pickerRecyclerView2)
-
         initLinearPicker()
-
-//        initHorizontalPicker()
-
     }
 
     private fun initLinearPicker() {
         val pickerLayoutManager = PickerLayoutManager(
             orientation = PickerLayoutManager.VERTICAL,
-            visibleCount = 3,
-            isLoop = false
+            visibleCount = 5,
+            isLoop = false,
+            scaleY = 0.75f,
+            alpha = 0.5f
         )
         setListener(pickerLayoutManager)
         pickerRecyclerView.run {
             layoutManager = pickerLayoutManager
-            //            layoutManager = LogLinearLayoutManager(this@MainActivity)
             adapter = PickerAdapter(PickerLayoutManager.VERTICAL)
         }
         pickerRecyclerView.addItemDecoration(PickerItemDecoration())
     }
 
-    private fun initHorizontalPicker() {
-        val pickerLayoutManager = PickerLayoutManager(
-            orientation = PickerLayoutManager.HORIZONTAL,
-            visibleCount = 3,
-            isLoop = false
-        )
-        setListener(pickerLayoutManager)
-        pickerRecyclerView2.run {
-            layoutManager = pickerLayoutManager
-//            layoutManager =
-//                LogLinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
-            adapter = PickerAdapter(PickerLayoutManager.HORIZONTAL)
-        }
-        pickerRecyclerView2.addItemDecoration(PickerItemDecoration())
-    }
-
     private fun setListener(pickerLayoutManager: PickerLayoutManager) {
-        pickerLayoutManager.addOnSelectedItemListener { position ->
+        pickerLayoutManager.addOnItemSelectedListener { position ->
             toast(position.toString())
         }
+        pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFillListener {
+            override fun onItemSelected(child: View, position: Int) {
+                val tvItem = child.findViewById<TextView>(R.id.tv_item)
+                tvItem.setTextColor(Color.RED)
+            }
+
+            override fun onItemUnSelected(child: View, position: Int) {
+                val tvItem = child.findViewById<TextView>(R.id.tv_item)
+                tvItem.setTextColor(Color.BLUE)
+            }
+        })
     }
-
-    fun reLayout(view: View) {
-//        val isLoop = checkBoxIsLoop.isChecked
-//        val visibleCount = etVisibleCount.text.toString().toInt()
-//        val lm = PickerLayoutManager(PickerLayoutManager.VERTICAL, visibleCount, isLoop)
-//        setListener(lm)
-//        pickerRecyclerView.layoutManager = lm
-    }
-
-    fun createLayoutManager() = PickerLayoutManager.Builder()
-        .build()
-
-//    fun scrollTo(view: View) {
-//        try {
-//            val position = etScrollTo.text.toString().toInt()
-//            pickerRecyclerView.scrollToPosition(position)
-//        } catch (e: Exception) {
-//            toast(e.message)
-//        }
-//    }
-
-//    fun smoothScrollTo(view: View) {
-//        try {
-//            val position = etSmoothScrollTo.text.toString().toInt()
-//            pickerRecyclerView.smoothScrollToPosition(position)
-//        } catch (e: Exception) {
-//            toast(e.message)
-//        }
-//    }
-
-//    fun smoothScrollTo2(view: View) {
-//        try {
-//            val position = etSmoothScrollTo2.text.toString().toInt()
-//            pickerRecyclerView.smoothScrollToPosition(position)
-//        } catch (e: Exception) {
-//            toast(e.message)
-//        }
-//    }
-
 
     inner class PickerAdapter(private val orientation: Int) :
         RecyclerView.Adapter<PickerViewHolder>() {
@@ -145,9 +97,9 @@ class MainActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_setting -> {
-
-            }
+//            R.id.menu_setting -> {
+//                showSettingDialog()
+//            }
             R.id.menu_scroll_to -> {
                 showToPositionDialog()
             }
@@ -161,7 +113,17 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showSettingDialog() {
+        val dialog = AlertDialog.Builder(this)
+            .setView(R.layout.dialog_setting)
+            .show()
 
+        val rgOrientation = dialog.findViewById<RadioGroup>(R.id.rgOrientation)!!
+        val etVisibleCount = dialog.findViewById<EditText>(R.id.etVisibleCount)!!
+        val cbIsLoop = dialog.findViewById<CheckBox>(R.id.cbIsLoop)!!
+        dialog.findViewById<View>(R.id.btnOk)!!.setOnClickListener {
+            dialog.dismiss()
+
+        }
     }
 
     private fun showToPositionDialog() {
@@ -173,16 +135,12 @@ class MainActivity : BaseActivity() {
         dialog.findViewById<View>(R.id.btnToPosition)!!.setOnClickListener {
             dialog.dismiss()
             val position = etPosition.text.toString().toInt()
-            for (view in mRecyclerViews) {
-                view.scrollToPosition(position)
-            }
+            pickerRecyclerView.scrollToPosition(position)
         }
         dialog.findViewById<View>(R.id.btnSmoothToPosition)!!.setOnClickListener {
             dialog.dismiss()
             val position = etPosition.text.toString().toInt()
-            for (view in mRecyclerViews) {
-                view.smoothScrollToPosition(position)
-            }
+            pickerRecyclerView.smoothScrollToPosition(position)
         }
     }
 }

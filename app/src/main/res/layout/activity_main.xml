@@ -24,14 +24,15 @@
             tools:background="@color/colorPrimary"
             tools:layout_height="200dp" />
 
-        <me.simple.picker.PickerRecyclerView
-            android:id="@+id/pickerRecyclerView2"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:background="@color/colorAccent"
-            tools:layout_height="200dp" />
+<!--        <me.simple.picker.PickerRecyclerView-->
+<!--            android:id="@+id/pickerRecyclerView2"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="200dp"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:background="@color/colorAccent"-->
+<!--            android:visibility="gone"-->
+<!--            tools:layout_height="200dp" />-->
     </LinearLayout>
 
     <EditText
@@ -42,127 +43,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!--    <CheckBox-->
-    <!--        android:id="@+id/checkBoxIsLoop"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="10dp"-->
-    <!--        android:text="无限循环"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/rvGroup"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/rvGroup" />-->
-
-    <!--    <EditText-->
-    <!--        android:id="@+id/etVisibleCount"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginLeft="20dp"-->
-    <!--        android:gravity="center"-->
-    <!--        android:hint="可见数量"-->
-    <!--        android:inputType="number"-->
-    <!--        android:maxLines="1"-->
-    <!--        android:singleLine="true"-->
-    <!--        android:text="3"-->
-    <!--        android:textSize="13dp"-->
-    <!--        app:layout_constraintLeft_toRightOf="@id/checkBoxIsLoop"-->
-    <!--        app:layout_constraintTop_toTopOf="@+id/checkBoxIsLoop"-->
-    <!--        tools:layout_editor_absoluteX="10dp" />-->
-
-    <!--    <Button-->
-    <!--        android:id="@+id/btnOk"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginLeft="20dp"-->
-    <!--        android:backgroundTint="@color/colorPrimary"-->
-    <!--        android:onClick="reLayout"-->
-    <!--        android:text="确定"-->
-    <!--        android:textColor="@android:color/white"-->
-    <!--        app:layout_constraintStart_toEndOf="@+id/etVisibleCount"-->
-    <!--        app:layout_constraintTop_toTopOf="@+id/etVisibleCount" />-->
-
-    <!--    <EditText-->
-    <!--        android:id="@+id/etScrollTo"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="20dp"-->
-    <!--        android:gravity="center"-->
-    <!--        android:hint="scrollTo"-->
-    <!--        android:inputType="number"-->
-    <!--        android:maxLines="1"-->
-    <!--        android:singleLine="true"-->
-    <!--        android:text="90"-->
-    <!--        android:textSize="13dp"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/checkBoxIsLoop"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/btnOk" />-->
-
-    <!--    <Button-->
-    <!--        android:id="@+id/btnScrollTo"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginLeft="10dp"-->
-    <!--        android:backgroundTint="@color/colorPrimary"-->
-    <!--        android:onClick="scrollTo"-->
-    <!--        android:text="确定"-->
-    <!--        android:textColor="@android:color/white"-->
-    <!--        android:textSize="13dp"-->
-    <!--        app:layout_constraintLeft_toRightOf="@id/etScrollTo"-->
-    <!--        app:layout_constraintTop_toTopOf="@+id/etScrollTo"-->
-    <!--        tools:layout_editor_absoluteX="10dp" />-->
-
-    <!--    <EditText-->
-    <!--        android:id="@+id/etSmoothScrollTo"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="10dp"-->
-    <!--        android:gravity="center"-->
-    <!--        android:hint="smoothScrollTo"-->
-    <!--        android:inputType="number"-->
-    <!--        android:maxLines="1"-->
-    <!--        android:singleLine="true"-->
-    <!--        android:text="80"-->
-    <!--        android:textSize="13dp"-->
-    <!--        app:layout_constraintLeft_toRightOf="@id/btnScrollTo"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/etScrollTo"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/etScrollTo" />-->
-
-    <!--    <Button-->
-    <!--        android:id="@+id/btnSmoothScrollTo"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginLeft="20dp"-->
-    <!--        android:backgroundTint="@color/colorPrimary"-->
-    <!--        android:onClick="smoothScrollTo"-->
-    <!--        android:text="确定"-->
-    <!--        android:textColor="@android:color/white"-->
-    <!--        android:textSize="13dp"-->
-    <!--        app:layout_constraintLeft_toRightOf="@id/etSmoothScrollTo"-->
-    <!--        app:layout_constraintTop_toTopOf="@+id/etSmoothScrollTo" />-->
-
-    <!--    <EditText-->
-    <!--        android:id="@+id/etSmoothScrollTo2"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="10dp"-->
-    <!--        android:gravity="center"-->
-    <!--        android:hint="smoothScrollTo"-->
-    <!--        android:inputType="number"-->
-    <!--        android:maxLines="1"-->
-    <!--        android:singleLine="true"-->
-    <!--        android:text="10"-->
-    <!--        android:textSize="13dp"-->
-    <!--        app:layout_constraintLeft_toRightOf="@id/btnScrollTo"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/etScrollTo"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/etSmoothScrollTo" />-->
-
-    <!--    <Button-->
-    <!--        android:id="@+id/btnSmoothScrollT2"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginLeft="20dp"-->
-    <!--        android:backgroundTint="@color/colorPrimary"-->
-    <!--        android:onClick="smoothScrollTo2"-->
-    <!--        android:text="确定"-->
-    <!--        android:textColor="@android:color/white"-->
-    <!--        android:textSize="13dp"-->
-    <!--        app:layout_constraintLeft_toRightOf="@id/etSmoothScrollTo"-->
-    <!--        app:layout_constraintTop_toTopOf="@+id/etSmoothScrollTo2" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>
