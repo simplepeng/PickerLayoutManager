@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import me.simple.picker.PickerItemDecoration
@@ -37,10 +38,15 @@ class MainActivity : BaseActivity() {
             scaleY = 0.75f,
             alpha = 0.5f
         )
+//        val pickerLayoutManager = LinearLayoutManager(
+//            this@MainActivity,
+//            LinearLayoutManager.VERTICAL,
+//            false
+//        )
         setListener(pickerLayoutManager)
         pickerRecyclerView.run {
             layoutManager = pickerLayoutManager
-            adapter = PickerAdapter(PickerLayoutManager.VERTICAL)
+            adapter = PickerAdapter(pickerLayoutManager.orientation)
         }
         pickerRecyclerView.addItemDecoration(PickerItemDecoration())
     }
@@ -64,11 +70,12 @@ class MainActivity : BaseActivity() {
 
     inner class PickerAdapter(private val orientation: Int) :
         RecyclerView.Adapter<PickerViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickerViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
+                : PickerViewHolder {
             val layoutId = if (orientation == PickerLayoutManager.HORIZONTAL) {
                 R.layout.item_horizontal_picker
             } else {
-                R.layout.item_picker
+                R.layout.item_vertical_picker
             }
             return PickerViewHolder(
                 LayoutInflater.from(this@MainActivity)

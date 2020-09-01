@@ -112,6 +112,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
         if (state.isPreLayout) return
 
+        //如果已经算过宽高了，就直接设置
         if (mItemWidth != 0 || mItemHeight != 0) {
             setWidthAndHeight(mItemWidth, mItemHeight)
             return
@@ -121,16 +122,16 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
         val itemView = recycler.getViewForPosition(0)
         addView(itemView)
+        //这里不能用measureChild方法，具体看内部源码实现，内部getWidth默认为0
 //        measureChildWithMargins(itemView, 0, 0)
         itemView.measure(widthSpec, heightSpec)
 
         mItemWidth = getDecoratedMeasuredWidth(itemView)
         mItemHeight = getDecoratedMeasuredHeight(itemView)
-
         logDebug("mItemWidth == $mItemWidth -- mItemHeight == $mItemHeight")
-
         detachAndScrapView(itemView, recycler)
 
+        //设置宽高
         setWidthAndHeight(mItemWidth, mItemHeight)
     }
 
