@@ -42,7 +42,7 @@ class TimePickerView @JvmOverloads constructor(
 
             when (hour) {
                 mStartHour -> {
-                    mMinutePickerView.setMinuteInterval(mStartMinute)
+                    mMinutePickerView.setMinuteInterval(start = mStartMinute)
                 }
                 mEndHour -> {
                     mMinutePickerView.setMinuteInterval(end = mEndMinute)
@@ -74,13 +74,16 @@ class TimePickerView @JvmOverloads constructor(
         this.mEndMinute = endMinute
 
         mHourPickerView.setHourInterval(startHour, endHour)
-        mMinutePickerView.setMinuteInterval()
+        mMinutePickerView.setMinuteInterval(startMinute)
     }
 
     private fun dispatchOnSelectedItem() {
-//        val hour = mHourPickerView.getHourStr()
-//        val minute = mMinutePickerView.getMinuteStr()
-//        val second = mSecondPickerView.getSecond()
+        this.post {
+            val hour = mHourPickerView.getHourStr()
+            val minute = mMinutePickerView.getMinuteStr()
+
+            mOnTimeSelectedListener?.invoke(hour, minute)
+        }
     }
 
     fun getTime() = arrayOf(
