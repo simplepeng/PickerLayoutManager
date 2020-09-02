@@ -30,6 +30,13 @@ class MainActivity : BaseActivity() {
         }
 
         initLinearPicker()
+
+        btnNotify.setOnClickListener {
+            for (i in 0..10) {
+                mItems.removeAt(mItems.size - 1)
+            }
+            pickerRecyclerView.adapter?.notifyDataSetChanged()
+        }
     }
 
     private fun initLinearPicker() {

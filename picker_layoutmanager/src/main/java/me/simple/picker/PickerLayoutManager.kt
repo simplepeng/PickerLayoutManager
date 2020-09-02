@@ -51,7 +51,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     private var mItemHeight: Int = 0
 
     //将要滚到的position
-    private var mPendingScrollPosition: Int = RecyclerView.NO_POSITION
+    private var mPendingScrollToPosition: Int = RecyclerView.NO_POSITION
 
     //要回收的View先缓存起来
     private val mRecycleViews = hashSetOf<View>()
@@ -145,7 +145,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     ) {
         logDebug("onLayoutChildren")
         //如果itemCount==0了，直接移除全部view
-        if (mPendingScrollPosition != RecyclerView.NO_POSITION) {
+        if (mPendingScrollToPosition != RecyclerView.NO_POSITION) {
             if (state.itemCount == 0) {
                 removeAndRecycleAllViews(recycler)
                 return
@@ -155,14 +155,24 @@ open class PickerLayoutManager @JvmOverloads constructor(
         //不支持预测动画，直接return
         if (state.isPreLayout) return
 
+        logDebug("state.itemCount -- ${state.itemCount}")
+
         //计算当前开始的position
         mPendingFillPosition = 0
-        val isScrollTo = mPendingScrollPosition != RecyclerView.NO_POSITION
+        val isScrollTo = mPendingScrollToPosition != RecyclerView.NO_POSITION
         if (isScrollTo) {
-            mPendingFillPosition = mPendingScrollPosition
+            mPendingFillPosition = mPendingScrollToPosition
         } else if (childCount != 0) {
-            mPendingFillPosition = getCenterPosition()
+            mPendingFillPosition = getSelectedPosition()
         }
+        logDebug("mPendingFillPosition == $mPendingFillPosition")
+
+        //解决当调用notifyDataChanges时itemCount变小
+        //且getSelectedPosition>itemCount的bug
+        if (mPendingFillPosition >= state.itemCount) {
+            mPendingFillPosition = state.itemCount - 1
+        }
+
         //暂时移除全部view，然后重新fill进来
         detachAndScrapAttachedViews(recycler)
 
@@ -182,7 +192,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
         //scrollTo过来的要回调onItemSelected
         if (isScrollTo) {
-            val centerPosition = getCenterPosition()
+            val centerPosition = getSelectedPosition()
             dispatchOnItemSelectedListener(centerPosition)
         }
 
@@ -203,7 +213,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
     override fun onLayoutCompleted(state: RecyclerView.State?) {
         super.onLayoutCompleted(state)
-        mPendingScrollPosition = RecyclerView.NO_POSITION
+        mPendingScrollToPosition = RecyclerView.NO_POSITION
     }
 
     override fun canScrollHorizontally(): Boolean {
@@ -238,7 +248,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         if (childCount == 0) return
         checkToPosition(position)
 
-        mPendingScrollPosition = position
+        mPendingScrollToPosition = position
         requestLayout()
     }
 
@@ -606,17 +616,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
     }
 
     /**
-     * 获取居中的view的position
-     */
-    private fun getCenterPosition(): Int {
-        return if (getSelectedView() == null) {
-            0
-        } else {
-            getPosition(getSelectedView()!!)
-        }
-    }
-
-    /**
      * 获取一个item占用的空间，横向为宽，竖向为高
      */
     private fun getItemSpace() = if (orientation == HORIZONTAL) {
@@ -687,7 +686,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
      */
     private fun fixSmoothToPosition(toPosition: Int): Int {
         val fixCount = getOffsetCount()
-        val centerPosition = getCenterPosition()
+        val centerPosition = getSelectedPosition()
         return if (centerPosition < toPosition) toPosition + fixCount else toPosition - fixCount
     }
 

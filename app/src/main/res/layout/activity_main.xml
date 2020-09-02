@@ -36,6 +36,7 @@
     </LinearLayout>
 
     <EditText
+        android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="测试软键盘弹出"
@@ -43,4 +44,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/btnNotify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="notifyAdapter"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/editText"
+        app:layout_constraintEnd_toEndOf="@+id/rvGroup"
+        app:layout_constraintStart_toStartOf="@+id/rvGroup" />
 </androidx.constraintlayout.widget.ConstraintLayout>
