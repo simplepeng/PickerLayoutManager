@@ -15,13 +15,19 @@ class HourPickerView @JvmOverloads constructor(
         setHourInterval()
     }
 
-    fun setHourInterval(start: Int = 0, end: Int = 24) {
+    @SuppressWarnings
+    fun setHourInterval(
+        start: Int = PickerUtils.START_HOUR,
+        end: Int = PickerUtils.END_HOUR
+    ) {
         mItems.clear()
-        for (hour in start until end) {
+        for (hour in start..end) {
             mItems.add(PickerUtils.formatTwoChars(hour))
         }
         adapter?.notifyDataSetChanged()
     }
 
-    fun getHour() = getSelectedItem()
+    fun getHourStr() = getSelectedItem()
+
+    fun getHour() = getHourStr().toInt()
 }

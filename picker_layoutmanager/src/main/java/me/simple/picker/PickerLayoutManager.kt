@@ -9,8 +9,6 @@ import android.view.animation.LinearInterpolator
 import androidx.annotation.FloatRange
 import androidx.recyclerview.widget.*
 import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 
 typealias OnItemSelectedListener = (position: Int) -> Unit
 
@@ -145,10 +143,13 @@ open class PickerLayoutManager @JvmOverloads constructor(
         recycler: RecyclerView.Recycler,
         state: RecyclerView.State
     ) {
+        logDebug("onLayoutChildren")
         //如果itemCount==0了，直接移除全部view
-        if (state.itemCount == 0) {
-            removeAndRecycleAllViews(recycler)
-            return
+        if (mPendingScrollPosition != RecyclerView.NO_POSITION) {
+            if (state.itemCount == 0) {
+                removeAndRecycleAllViews(recycler)
+                return
+            }
         }
 
         //不支持预测动画，直接return
@@ -270,6 +271,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     override fun onScrollStateChanged(state: Int) {
         super.onScrollStateChanged(state)
         if (childCount == 0) return
+        logDebug("onScrollStateChanged -- $state")
 
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
             val centerView = getSelectedView() ?: return
@@ -384,9 +386,9 @@ open class PickerLayoutManager @JvmOverloads constructor(
         //分发事件
         dispatchOnItemFillListener()
 
-        //
+        //输出当前屏幕全部的子view
         logChildCount(recycler)
-        return delta
+        return consume
     }
 
     /**
@@ -400,29 +402,36 @@ open class PickerLayoutManager @JvmOverloads constructor(
         state: RecyclerView.State
     ): Int {
 
+        val absDelta = abs(delta)
         var remainSpace = abs(delta)
-        logDebug("remainSpace == $remainSpace")
+        logDebug("delta == $delta")
 
         val fillDirection = if (delta > 0) FILL_END else FILL_START
 
         //检查滚动距离是否可以填充下一个view
-        if (!canFillScroll(fillDirection, delta)) {
+        if (canNotFillScroll(fillDirection, absDelta)) {
             return delta
         }
 
         //检查是否滚动到了顶部或者底部
-        if (checkScrollToEdge(fillDirection, state)) {
-            val fixLastScroll = getFixLastScroll(fillDirection)
-            return if (fillDirection == FILL_START) {
-                max(fixLastScroll, delta)
-            } else {
-                min(fixLastScroll, delta)
-            }
-        }
+//        if (checkScrollToEdge(fillDirection, state)) {
+//            val fixLastScroll = getFixLastScroll(fillDirection)
+//            return if (fillDirection == FILL_START) {
+//                max(fixLastScroll, delta)
+//            } else {
+//                min(fixLastScroll, delta)
+//            }
+//        }
 
         //获取将要填充的view
         mPendingFillPosition = getPendingFillPosition(fillDirection)
 
+        //检查是否滚动到了顶部或者底部
+        if (!hasMore(state)) {
+            return getFixLastScroll(fillDirection)
+        }
+
+        //
         while (remainSpace > 0 && hasMore(state)) {
             val anchor = getAnchor(fillDirection)
             val child = nextView(recycler, fillDirection)
@@ -443,14 +452,14 @@ open class PickerLayoutManager @JvmOverloads constructor(
      * 如果anchorView的(start或end)+delta还是没出现在屏幕内，
      * 就继续滚动，不填充view
      */
-    private fun canFillScroll(fillDirection: Int, delta: Int): Boolean {
+    private fun canNotFillScroll(fillDirection: Int, delta: Int): Boolean {
         val anchorView = getAnchorView(fillDirection)
         return if (fillDirection == FILL_START) {
             val start = mOrientationHelper.getDecoratedStart(anchorView)
-            start + delta >= mOrientationHelper.startAfterPadding
+            start + delta < mOrientationHelper.startAfterPadding
         } else {
             val end = mOrientationHelper.getDecoratedEnd(anchorView)
-            end - delta <= mOrientationHelper.endAfterPadding
+            end - delta > mOrientationHelper.endAfterPadding
         }
     }
 
@@ -548,31 +557,44 @@ open class PickerLayoutManager @JvmOverloads constructor(
         } else {
             recycleEnd()
         }
+
+        //
+        logRecycleChildren()
+
+        //
         for (view in mRecycleViews) {
             removeAndRecycleView(view, recycler)
         }
         mRecycleViews.clear()
     }
 
+    /**
+     *  向右或向下移动时，就回收前面部分超出屏幕的子view
+     */
     private fun recycleStart() {
         for (i in 0 until childCount) {
             val child = getChildAt(i)!!
             val end = mOrientationHelper.getDecoratedEnd(child)
-            if (end > mOrientationHelper.startAfterPadding) {
+            if (end < mOrientationHelper.startAfterPadding - getItemOffset()) {
+                mRecycleViews.add(child)
+            } else {
                 break
             }
-            mRecycleViews.add(child)
         }
     }
 
+    /**
+     *  向左或向上移动时，就回收后面部分超出屏幕的子view
+     */
     private fun recycleEnd() {
         for (i in (childCount - 1) downTo 0) {
             val child = getChildAt(i)!!
             val start = mOrientationHelper.getDecoratedStart(child)
-            if (start < mOrientationHelper.endAfterPadding) {
+            if (start > mOrientationHelper.endAfterPadding + getItemOffset()) {
+                mRecycleViews.add(child)
+            } else {
                 break
             }
-            mRecycleViews.add(child)
         }
     }
 
@@ -615,7 +637,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
     /**
      * 增加一个偏移量让滚动顺滑点
-     * 暂时没用
      */
     private fun getItemOffset() = getItemSpace() / 2
 
@@ -852,6 +873,11 @@ open class PickerLayoutManager @JvmOverloads constructor(
         mOnItemFillListener.remove(listener)
     }
 
+    override fun onAttachedToWindow(view: RecyclerView) {
+        super.onAttachedToWindow(view)
+//        mSnapHelper.attachToRecyclerView(view)
+    }
+
     /**
      * 搞个Builder模式，构造函数难得写就用这个
      */
@@ -895,7 +921,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
     private fun logDebug(msg: String) {
         if (!DEBUG) return
-        Log.d(TAG, msg)
+        Log.d(TAG, "${hashCode()} -- " + msg)
     }
 
     private fun logChildCount(recycler: RecyclerView.Recycler) {
@@ -906,12 +932,27 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
     private fun logChildrenPosition() {
         if (!BuildConfig.DEBUG) return
+
         val builder = StringBuilder()
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             builder.append(getPosition(child!!))
             builder.append(",")
         }
+
         logDebug("children == $builder")
+    }
+
+    private fun logRecycleChildren() {
+        if (!BuildConfig.DEBUG) return
+
+        val builder = StringBuilder()
+        for (child in mRecycleViews) {
+            builder.append(getPosition(child))
+            builder.append(",")
+        }
+
+        if (builder.isEmpty()) return
+        logDebug("recycle children == $builder")
     }
 }

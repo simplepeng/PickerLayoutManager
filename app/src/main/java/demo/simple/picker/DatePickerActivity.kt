@@ -15,14 +15,14 @@ class DatePickerActivity : BaseActivity() {
             tvDate.text = "$year-$month-$day"
         }
 
-        timePickerView.setOnTimeSelectedListener { hour, minute, second ->
-            tvTime.text = "$hour:$minute:$second"
+        timePickerView.setOnTimeSelectedListener { hour, minute ->
+            tvTime.text = "$hour:$minute"
         }
 
         btnGetDate.setOnClickListener {
 
             val dateArr = datePickerView.getYearMonthDay()
-            val timeArr = timePickerView.getHourMinuteSecond()
+            val timeArr = timePickerView.getTime()
 
             val year = dateArr[0]
             val month = dateArr[1]

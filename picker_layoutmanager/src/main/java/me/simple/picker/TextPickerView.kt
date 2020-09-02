@@ -18,14 +18,14 @@ open class TextPickerView @JvmOverloads constructor(
 
     init {
         overScrollMode = View.OVER_SCROLL_NEVER
-        adapter = TextPickerAdapter(mItems)
+        adapter = TextPickerAdapter()
     }
 
-    fun getSelectedItem(): String{
+    fun getSelectedItem(): String {
         return mItems[getSelectedPosition()]
     }
 
-    inner class TextPickerAdapter(private val items: MutableList<String>) :
+    inner class TextPickerAdapter :
         RecyclerView.Adapter<TextPickerViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
                 : TextPickerViewHolder {
@@ -34,7 +34,7 @@ open class TextPickerView @JvmOverloads constructor(
         }
 
         override fun getItemCount(): Int {
-            return items.size
+            return mItems.size
         }
 
         override fun onBindViewHolder(holder: TextPickerViewHolder, position: Int) {

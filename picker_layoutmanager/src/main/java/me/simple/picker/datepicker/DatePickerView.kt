@@ -48,37 +48,37 @@ class DatePickerView @JvmOverloads constructor(
         setDivider(mMonthPickerView)
         setDivider(mDayPickerView)
 
-        mYearPickerView.addOnSelectedItemListener { position ->
-            val year = mYearPickerView.getYear()
-            when (year) {
-                mStartYear -> {
-                    mMonthPickerView.setMonthInterval(mStartMonth)
-                }
-                mEndYear -> {
-                    mMonthPickerView.setMonthInterval(endMonth = mEndMonth)
-                }
-                else -> {
-                    mMonthPickerView.setMonthInterval()
-                }
-            }
-            val month = mMonthPickerView.getMonth()
-            setDayInterval(year, month)
+//        mYearPickerView.addOnSelectedItemListener { position ->
+//            val year = mYearPickerView.getYear()
+//            when (year) {
+//                mStartYear -> {
+//                    mMonthPickerView.setMonthInterval(mStartMonth)
+//                }
+//                mEndYear -> {
+//                    mMonthPickerView.setMonthInterval(endMonth = mEndMonth)
+//                }
+//                else -> {
+//                    mMonthPickerView.setMonthInterval()
+//                }
+//            }
+//            val month = mMonthPickerView.getMonth()
+//            setDayInterval(year, month)
+//
+//            dispatchOnItemSelected()
+//        }
 
-            dispatchOnItemSelected()
-        }
-
-        mMonthPickerView.addOnSelectedItemListener { position ->
-            val year = mYearPickerView.getYear()
-            val month = mMonthPickerView.getMonth()
-
-            setDayInterval(year, month)
-
-            dispatchOnItemSelected()
-        }
-
-        mDayPickerView.addOnSelectedItemListener { position ->
-            dispatchOnItemSelected()
-        }
+//        mMonthPickerView.addOnSelectedItemListener { position ->
+//            val year = mYearPickerView.getYear()
+//            val month = mMonthPickerView.getMonth()
+//
+//            setDayInterval(year, month)
+//
+//            dispatchOnItemSelected()
+//        }
+//
+//        mDayPickerView.addOnSelectedItemListener { position ->
+//            dispatchOnItemSelected()
+//        }
 
         setDateInterval()
         mYearPickerView.scrollToEnd()

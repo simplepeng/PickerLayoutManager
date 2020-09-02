@@ -15,13 +15,18 @@ class MinutePickerView @JvmOverloads constructor(
         setMinuteInterval()
     }
 
-    fun setMinuteInterval(start: Int = 0, end: Int = 60) {
+    fun setMinuteInterval(
+        start: Int = PickerUtils.START_MINUTE,
+        end: Int = PickerUtils.END_MINUTE
+    ) {
         mItems.clear()
-        for (minute in start until end) {
+        for (minute in start..end) {
             mItems.add(PickerUtils.formatTwoChars(minute))
         }
-        adapter?.notifyDataSetChanged()
+        adapter!!.notifyDataSetChanged()
     }
 
-    fun getMinute() = getSelectedItem()
+    fun getMinuteStr() = getSelectedItem()
+
+    fun getMinute() = getMinuteStr().toInt()
 }

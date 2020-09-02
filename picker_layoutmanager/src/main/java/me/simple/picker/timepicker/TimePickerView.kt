@@ -2,10 +2,10 @@ package me.simple.picker.timepicker
 
 import android.content.Context
 import android.util.AttributeSet
-import me.simple.picker.PickerItemDecoration
 import me.simple.picker.PickerLinearLayout
-import me.simple.picker.PickerRecyclerView
-import me.simple.picker.R
+import me.simple.picker.PickerUtils
+
+typealias OnTimeSelectedListener = (hour: String, minute: String) -> Unit
 
 class TimePickerView @JvmOverloads constructor(
     context: Context,
@@ -19,54 +19,76 @@ class TimePickerView @JvmOverloads constructor(
     private val mMinutePickerView = MinutePickerView(context).apply {
         layoutParams = generateChildLayoutParams()
     }
-    private val mSecondPickerView = SecondPickerView(context).apply {
-        layoutParams = generateChildLayoutParams()
-    }
 
-    private var mOnSelected: ((hour: String, minute: String, second: String) -> Unit)? = null
+    private var mOnTimeSelectedListener: OnTimeSelectedListener? = null
+
+    private var mStartHour: Int = PickerUtils.START_HOUR
+    private var mStartMinute: Int = PickerUtils.START_MINUTE
+    private var mEndHour: Int = PickerUtils.END_HOUR
+    private var mEndMinute: Int = PickerUtils.END_MINUTE
 
     init {
         orientation = HORIZONTAL
-        weightSum = 3f
+        weightSum = 2f
 
         addView(mHourPickerView)
         addView(mMinutePickerView)
-        addView(mSecondPickerView)
 
         setDivider(mHourPickerView)
         setDivider(mMinutePickerView)
-        setDivider(mSecondPickerView)
 
         mHourPickerView.addOnSelectedItemListener {
+            val hour = mHourPickerView.getHour()
+
+            when (hour) {
+                mStartHour -> {
+                    mMinutePickerView.setMinuteInterval(mStartMinute)
+                }
+                mEndHour -> {
+                    mMinutePickerView.setMinuteInterval(end = mEndMinute)
+                }
+                else -> {
+                    mMinutePickerView.setMinuteInterval()
+                }
+            }
+
             dispatchOnSelectedItem()
         }
         mMinutePickerView.addOnSelectedItemListener {
             dispatchOnSelectedItem()
         }
-        mSecondPickerView.addOnSelectedItemListener {
-            dispatchOnSelectedItem()
-        }
+
+        setTimeInterval(2, 10, 22, 20)
     }
 
-    private fun setTimeInterval() {
+    @SuppressWarnings
+    fun setTimeInterval(
+        startHour: Int = PickerUtils.START_HOUR,
+        startMinute: Int = PickerUtils.START_MINUTE,
+        endHour: Int = PickerUtils.END_HOUR,
+        endMinute: Int = PickerUtils.END_MINUTE
+    ) {
+        this.mStartHour = startHour
+        this.mStartMinute = startMinute
+        this.mEndHour = endHour
+        this.mEndMinute = endMinute
 
+        mHourPickerView.setHourInterval(startHour, endHour)
+        mMinutePickerView.setMinuteInterval()
     }
 
     private fun dispatchOnSelectedItem() {
-        val hour = mHourPickerView.getHour()
-        val minute = mMinutePickerView.getMinute()
-        val second = mSecondPickerView.getSecond()
-        if (hour.isNullOrEmpty() || minute.isNullOrEmpty() || second.isNullOrEmpty()) return
-        mOnSelected?.invoke(hour, minute, second)
+//        val hour = mHourPickerView.getHourStr()
+//        val minute = mMinutePickerView.getMinuteStr()
+//        val second = mSecondPickerView.getSecond()
     }
 
-    fun getHourMinuteSecond() = arrayOf(
-        mHourPickerView.getHour(),
-        mMinutePickerView.getMinute(),
-        mSecondPickerView.getSecond()
+    fun getTime() = arrayOf(
+        mHourPickerView.getHourStr(),
+        mMinutePickerView.getMinuteStr()
     )
 
-    fun setOnTimeSelectedListener(onSelected: (hour: String, minute: String, second: String) -> Unit) {
-        this.mOnSelected = onSelected
+    fun setOnTimeSelectedListener(onSelected: OnTimeSelectedListener) {
+        this.mOnTimeSelectedListener = onSelected
     }
 }

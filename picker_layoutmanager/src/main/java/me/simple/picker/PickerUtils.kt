@@ -14,6 +14,11 @@ object PickerUtils {
     const val START_MONTH = 1
     const val START_DAY = 1
 
+    const val START_HOUR = 0
+    const val END_HOUR = 23
+    const val START_MINUTE = 0
+    const val END_MINUTE = 59
+
     fun formatTwoChars(text: Int) = String.format("%02d", text)
 
     private val bigMonthSet = hashSetOf(1, 3, 5, 7, 8, 10, 12)
