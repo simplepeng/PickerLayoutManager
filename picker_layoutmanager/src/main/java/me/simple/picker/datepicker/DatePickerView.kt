@@ -2,8 +2,10 @@ package me.simple.picker.datepicker
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import me.simple.picker.PickerLinearLayout
 import me.simple.picker.PickerUtils
+import java.lang.Exception
 import java.util.*
 
 typealias OnDateSelectedListener = (year: String, month: String, day: String) -> Unit
@@ -24,7 +26,7 @@ class DatePickerView @JvmOverloads constructor(
         layoutParams = generateChildLayoutParams()
     }
 
-    private var mOnSelected: OnDateSelectedListener? = null
+    private var mOnDateSelectedListener: OnDateSelectedListener? = null
 
     private var mStartYear: Int = PickerUtils.START_YEAR
     private var mStartMonth: Int = PickerUtils.START_YEAR
@@ -47,7 +49,7 @@ class DatePickerView @JvmOverloads constructor(
         setDivider(mDayPickerView)
 
         mYearPickerView.addOnSelectedItemListener { position ->
-            val year = mYearPickerView.getYear(position)
+            val year = mYearPickerView.getYear()
             when (year) {
                 mStartYear -> {
                     mMonthPickerView.setMonthInterval(mStartMonth)
@@ -59,25 +61,54 @@ class DatePickerView @JvmOverloads constructor(
                     mMonthPickerView.setMonthInterval()
                 }
             }
+            val month = mMonthPickerView.getMonth()
+            setDayInterval(year, month)
+
+            dispatchOnItemSelected()
         }
 
         mMonthPickerView.addOnSelectedItemListener { position ->
             val year = mYearPickerView.getYear()
-            val month = mMonthPickerView.getMonth(position)
+            val month = mMonthPickerView.getMonth()
 
-            if (year == mStartYear && month == mStartMonth) {
-                mDayPickerView.setDayInterval(startDay = mStartDay)
-            } else if (year == mEndYear && month == mEndMonth) {
-                mDayPickerView.setDayInterval(endDay = mEndDay)
-            } else {
-                mDayPickerView.setDayIntervalByMonth(year, month)
-            }
+            setDayInterval(year, month)
+
+            dispatchOnItemSelected()
+        }
+
+        mDayPickerView.addOnSelectedItemListener { position ->
+            dispatchOnItemSelected()
         }
 
         setDateInterval()
         mYearPickerView.scrollToEnd()
     }
 
+    private fun setDayInterval(
+        year: Int,
+        month: Int
+    ) {
+        if (year == mStartYear && month == mStartMonth) {
+            mDayPickerView.setDayInterval(startDay = mStartDay)
+        } else if (year == mEndYear && month == mEndMonth) {
+            mDayPickerView.setDayInterval(endDay = mEndDay)
+        } else {
+            mDayPickerView.setDayIntervalByMonth(year, month)
+        }
+    }
+
+    private fun dispatchOnItemSelected() {
+        try {
+            val year = mYearPickerView.getYearStr()
+            val month = mMonthPickerView.getMonthStr()
+            val day = mDayPickerView.getDayStr()
+
+            Log.d("DatePickerView", "dispatchOnItemSelected: $year-$month-$day")
+            mOnDateSelectedListener?.invoke(year, month, day)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     /**
      * 设置日期时间的区间
@@ -113,26 +144,27 @@ class DatePickerView @JvmOverloads constructor(
         this.mEndDay = endDay
 
         mYearPickerView.setYearInterval(startYear, endYear)
+        mMonthPickerView.setMonthInterval(startMonth)
+        mDayPickerView.setDayIntervalByMonth(startYear, startMonth, startDay)
     }
 
-    fun getCalendar() = Calendar.getInstance().apply {
-//        set(Calendar.YEAR, mYearPickerView.getYear().toInt())
-//        set(Calendar.MONTH, mMonthPickerView.getMonth().toInt() - 1)
-//        set(Calendar.DATE, mDayPickerView.getDay().toInt())
-//        set(Calendar.HOUR_OF_DAY, 0)
-//        set(Calendar.MINUTE, 0)
-//        set(Calendar.SECOND, 0)
+    @SuppressWarnings
+    fun getCalendar(): Calendar = Calendar.getInstance().apply {
+        set(
+            mYearPickerView.getYear(), mMonthPickerView.getMonth() - 1, mDayPickerView.getDay(),
+            0, 0, 0
+        )
     }
 
-    fun getDate() = getCalendar().time
+    fun getDate(): Date = getCalendar().time
 
     fun getYearMonthDay() = arrayOf(
         mYearPickerView.getYearStr(),
         mMonthPickerView.getMonth(),
-        mDayPickerView.getDay()
+        mDayPickerView.getDayStr()
     )
 
     fun setOnDateSelectedListener(onSelected: OnDateSelectedListener) {
-        this.mOnSelected = onSelected
+        this.mOnDateSelectedListener = onSelected
     }
 }

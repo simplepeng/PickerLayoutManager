@@ -28,9 +28,15 @@ class DayPickerView @JvmOverloads constructor(
     }
 
     @SuppressWarnings
-    fun setDayIntervalByMonth(year: Int, month: Int) {
-        setDayInterval(PickerUtils.getDayCountInMonth(year, month))
+    fun setDayIntervalByMonth(
+        year: Int,
+        month: Int,
+        startDay: Int = 1
+    ) {
+        setDayInterval(startDay, endDay = PickerUtils.getDayCountInMonth(year, month))
     }
 
-    fun getDay() = getSelectedItem()
+    fun getDayStr() = getSelectedItem()
+
+    fun getDay() = getDayStr().toInt()
 }

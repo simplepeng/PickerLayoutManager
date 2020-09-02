@@ -9,6 +9,8 @@ class DatePickerActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_date_picker)
 
+        datePickerView.setDateInterval(1949,2,24)
+
         datePickerView.setOnDateSelectedListener { year, month, day ->
             tvDate.text = "$year-$month-$day"
         }
