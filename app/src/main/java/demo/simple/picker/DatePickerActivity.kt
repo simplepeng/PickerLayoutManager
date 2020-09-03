@@ -9,7 +9,7 @@ class DatePickerActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_date_picker)
 
-        datePickerView.setDateInterval(1949,2,24)
+//        datePickerView.setDateInterval(1949, 2, 24)
 
         datePickerView.setOnDateSelectedListener { year, month, day ->
             tvDate.text = "$year-$month-$day"
@@ -30,13 +30,14 @@ class DatePickerActivity : BaseActivity() {
 
             val hour = timeArr[0]
             val minute = timeArr[1]
-            val second = timeArr[2]
 
             val date = "$year-$month-$day"
-            val time = "$hour:$minute:$second"
+            val time = "$hour:$minute"
 
             tvDate.text = date
             tvTime.text = time
+
+            toast("$date   $time")
         }
 
     }

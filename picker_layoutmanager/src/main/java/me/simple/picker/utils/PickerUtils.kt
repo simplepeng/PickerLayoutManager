@@ -1,4 +1,4 @@
-package me.simple.picker
+package me.simple.picker.utils
 
 import android.content.Context
 import android.widget.Toast
@@ -7,6 +7,8 @@ import java.util.*
 fun Context.toast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 }
+
+
 
 object PickerUtils {
 
@@ -37,7 +39,11 @@ object PickerUtils {
      * 获取开始的日期
      */
     fun getStartCalendar(): Calendar = Calendar.getInstance().apply {
-        set(START_YEAR, START_MONTH, START_DAY)
+        set(
+            START_YEAR,
+            START_MONTH,
+            START_DAY
+        )
     }
 
     /**
@@ -50,6 +56,6 @@ object PickerUtils {
     fun getEndDay() = getEndCalendar().get(Calendar.DATE)
 
     fun getYear(calendar: Calendar) = calendar.get(Calendar.YEAR)
-    fun getMonth(calendar: Calendar) = calendar.get(Calendar.MONTH) + 1
+    fun getMonth(calendar: Calendar) = calendar.get(Calendar.MONTH)
     fun getDay(calendar: Calendar) = calendar.get(Calendar.DATE)
 }

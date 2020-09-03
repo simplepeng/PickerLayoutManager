@@ -2,16 +2,16 @@ package me.simple.picker.timepicker
 
 import android.content.Context
 import android.util.AttributeSet
-import me.simple.picker.PickerLinearLayout
-import me.simple.picker.PickerUtils
+import me.simple.picker.widget.TextPickerLinearLayout
+import me.simple.picker.utils.PickerUtils
 
 typealias OnTimeSelectedListener = (hour: String, minute: String) -> Unit
 
-class TimePickerView @JvmOverloads constructor(
+class TimeTextPickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : PickerLinearLayout(context, attrs, defStyleAttr) {
+) : TextPickerLinearLayout(context, attrs, defStyleAttr) {
 
     private val mHourPickerView = HourPickerView(context).apply {
         layoutParams = generateChildLayoutParams()

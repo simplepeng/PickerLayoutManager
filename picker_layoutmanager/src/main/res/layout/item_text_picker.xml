@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
+    android:textSize="14sp"
     android:paddingTop="15dp"
     android:paddingBottom="15dp"
     tools:text="item">

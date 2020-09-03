@@ -3,6 +3,9 @@ package me.simple.picker
 import android.content.Context
 import android.util.AttributeSet
 import androidx.recyclerview.widget.RecyclerView
+import me.simple.picker.OnItemSelectedListener
+import me.simple.picker.PickerLayoutManager
+import me.simple.picker.R
 
 
 open class PickerRecyclerView @JvmOverloads constructor(
@@ -11,26 +14,48 @@ open class PickerRecyclerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : RecyclerView(context, attrs, defStyleAttr) {
 
-    init {
-        val typeA = context.obtainStyledAttributes(attrs, R.styleable.PickerRecyclerView)
-        val orientation =
-            typeA.getInt(R.styleable.PickerRecyclerView_orientation, PickerLayoutManager.VERTICAL)
-        val visibleCount = typeA.getInt(R.styleable.PickerRecyclerView_visibleCount, 3)
-        val isLoop = typeA.getBoolean(R.styleable.PickerRecyclerView_isLoop, false)
-        val scaleX = typeA.getFloat(R.styleable.PickerRecyclerView_scaleX, 1.0f)
-        val scaleY = typeA.getFloat(R.styleable.PickerRecyclerView_scaleY, 1.0f)
-        val alpha = typeA.getFloat(R.styleable.PickerRecyclerView_alpha, 1.0f)
+    var mOrientation = PickerLayoutManager.VERTICAL
+    var mVisibleCount = 3
+    var mIsLoop = false
+    var mScaleX = 1.0f
+    var mScaleY = 1.0f
+    var mAlpha = 1.0f
 
-        val lm =
-            PickerLayoutManager(orientation, visibleCount, isLoop, scaleX, scaleY, alpha)
+    init {
+        val typeA = context.obtainStyledAttributes(attrs,
+            R.styleable.PickerRecyclerView
+        )
+
+        mOrientation = typeA.getInt(R.styleable.PickerRecyclerView_orientation, mOrientation)
+        mVisibleCount = typeA.getInt(R.styleable.PickerRecyclerView_visibleCount, mVisibleCount)
+        mIsLoop = typeA.getBoolean(R.styleable.PickerRecyclerView_isLoop, mIsLoop)
+        mScaleX = typeA.getFloat(R.styleable.PickerRecyclerView_scaleX, mScaleX)
+        mScaleY = typeA.getFloat(R.styleable.PickerRecyclerView_scaleY, mScaleY)
+        mAlpha = typeA.getFloat(R.styleable.PickerRecyclerView_alpha, mAlpha)
+
         typeA.recycle()
 
-        layoutManager = lm
+        resetLayoutManager()
     }
 
-    fun resetLayoutManager() {
-        layoutManager = PickerLayoutManager.Builder()
-            .build()
+    @SuppressWarnings
+    fun resetLayoutManager(lm: PickerLayoutManager? = null) {
+        layoutManager =
+            lm ?: PickerLayoutManager(
+                mOrientation,
+                mVisibleCount,
+                mIsLoop,
+                mScaleX,
+                mScaleY,
+                mAlpha
+            )
+    }
+
+    override fun setLayoutManager(layout: LayoutManager?) {
+        super.setLayoutManager(layout)
+        if (layout !is PickerLayoutManager) {
+            throw IllegalArgumentException("LayoutManager only can use PickerLayoutManager")
+        }
     }
 
     fun getSelectedPosition() = layoutManager.getSelectedPosition()
@@ -39,13 +64,19 @@ open class PickerRecyclerView @JvmOverloads constructor(
         return super.getLayoutManager() as PickerLayoutManager
     }
 
-    fun addOnSelectedItemListener(listener: (position: Int) -> Unit) {
+    fun addOnSelectedItemListener(listener: OnItemSelectedListener) {
         layoutManager.addOnItemSelectedListener(listener)
+    }
+
+    fun removeOnItemSelectedListener(listener: OnItemSelectedListener) {
+        layoutManager.removeOnItemSelectedListener(listener)
     }
 
     fun scrollToEnd() {
         if (adapter == null) return
-        this.scrollToPosition(adapter!!.itemCount - 1)
+        this.post {
+            this.scrollToPosition(adapter!!.itemCount - 1)
 //        this.smoothScrollToPosition(adapter!!.itemCount - 1)
+        }
     }
 }

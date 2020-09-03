@@ -2,8 +2,8 @@ package me.simple.picker.datepicker
 
 import android.content.Context
 import android.util.AttributeSet
-import me.simple.picker.PickerUtils
-import me.simple.picker.TextPickerView
+import me.simple.picker.utils.PickerUtils
+import me.simple.picker.widget.TextPickerView
 
 class DayPickerView @JvmOverloads constructor(
     context: Context,

@@ -1,9 +1,10 @@
-package me.simple.picker
+package me.simple.picker.utils
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.recyclerview.widget.RecyclerView
+import me.simple.picker.PickerLayoutManager
 
 internal class CenterHelperLineItemDecoration : RecyclerView.ItemDecoration() {
 

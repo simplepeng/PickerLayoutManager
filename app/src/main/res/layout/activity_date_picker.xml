@@ -10,7 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:selectedTextColor="@android:color/holo_red_light"
+        app:unSelectedTextColor="@android:color/holo_green_dark" />
 
     <TextView
         android:id="@+id/tvDate"
@@ -22,7 +24,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/datePickerView" />
 
-    <me.simple.picker.timepicker.TimePickerView
+    <me.simple.picker.timepicker.TimeTextPickerView
         android:id="@+id/timePickerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
