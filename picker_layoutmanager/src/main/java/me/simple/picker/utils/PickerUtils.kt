@@ -1,6 +1,7 @@
 package me.simple.picker.utils
 
 import android.content.Context
+import android.content.res.Resources
 import android.widget.Toast
 import java.util.*
 
@@ -8,7 +9,8 @@ fun Context.toast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 }
 
-
+val Float.dp: Float
+    get() = Resources.getSystem().displayMetrics.density * this + 0.5f
 
 object PickerUtils {
 

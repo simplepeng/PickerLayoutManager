@@ -4,10 +4,13 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.Px
 import androidx.recyclerview.widget.RecyclerView
 import me.simple.picker.PickerLayoutManager
 import me.simple.picker.PickerRecyclerView
@@ -31,7 +34,8 @@ open class TextPickerView @JvmOverloads constructor(
     var mSelectedIsBold = false
 
     init {
-        val typeA = context.obtainStyledAttributes(attrs,
+        val typeA = context.obtainStyledAttributes(
+            attrs,
             R.styleable.TextPickerView
         )
         mSelectedTextColor =
@@ -50,19 +54,19 @@ open class TextPickerView @JvmOverloads constructor(
         adapter = TextPickerAdapter()
     }
 
-    fun setSelectedTextColor(textColor: Int) {
+    fun setSelectedTextColor(@ColorInt textColor: Int) {
         this.mSelectedTextColor = textColor
     }
 
-    fun setUnSelectedTextColor(textColor: Int) {
+    fun setUnSelectedTextColor(@ColorInt textColor: Int) {
         this.mUnSelectedTextColor = textColor
     }
 
-    fun setSelectedTextSize(textSize: Float) {
+    fun setSelectedTextSize(@Px textSize: Float) {
         this.mSelectedTextSize = textSize
     }
 
-    fun setUnSelectedTextSize(textSize: Float) {
+    fun setUnSelectedTextSize(@Px textSize: Float) {
         this.mUnSelectedTextSize = textSize
     }
 
@@ -109,7 +113,7 @@ open class TextPickerView @JvmOverloads constructor(
     override fun onItemSelected(child: View, position: Int) {
         val tv = child as TextView
         tv.setTextColor(mSelectedTextColor)
-        tv.textSize = mSelectedTextSize
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSelectedTextSize)
         if (mSelectedIsBold) {
             tv.typeface = Typeface.DEFAULT_BOLD
         }
@@ -118,7 +122,7 @@ open class TextPickerView @JvmOverloads constructor(
     override fun onItemUnSelected(child: View, position: Int) {
         val tv = child as TextView
         tv.setTextColor(mUnSelectedTextColor)
-        tv.textSize = mUnSelectedTextSize
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mUnSelectedTextSize)
         if (mSelectedIsBold) {
             tv.typeface = Typeface.DEFAULT
         }

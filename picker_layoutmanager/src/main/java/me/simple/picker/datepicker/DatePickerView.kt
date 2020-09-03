@@ -35,16 +35,14 @@ class DatePickerView @JvmOverloads constructor(
     private var mEndDay: Int = PickerUtils.getEndDay()
 
     init {
-        orientation = HORIZONTAL
         weightSum = 3f
 
         addView(mYearPickerView)
         addView(mMonthPickerView)
         addView(mDayPickerView)
 
-        setDivider(mYearPickerView)
-        setDivider(mMonthPickerView)
-        setDivider(mDayPickerView)
+        setAttrs()
+        resetLayoutManager()
 
         mYearPickerView.addOnSelectedItemListener { position ->
             val year = mYearPickerView.getYear()

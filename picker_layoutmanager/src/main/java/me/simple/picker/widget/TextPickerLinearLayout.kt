@@ -8,6 +8,7 @@ import me.simple.picker.PickerItemDecoration
 import me.simple.picker.PickerLayoutManager
 import me.simple.picker.PickerRecyclerView
 import me.simple.picker.R
+import me.simple.picker.utils.dp
 
 open class TextPickerLinearLayout @JvmOverloads constructor(
     context: Context,
@@ -15,6 +16,7 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    var mOrientation = PickerLayoutManager.VERTICAL
     var mVisibleCount = 3
     var mIsLoop = false
     var mScaleX = 1.0f
@@ -29,30 +31,33 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
     var mSelectedTextColor: Int = Color.BLACK
     var mUnSelectedTextColor: Int = Color.DKGRAY
 
-    var mSelectedTextSize = 14f
-    var mUnSelectedTextSize = 14f
+    var mSelectedTextSize = 14f.dp
+    var mUnSelectedTextSize = 14f.dp
 
     var mSelectedIsBold = false
 
     init {
+        orientation = HORIZONTAL
         initAttrs(attrs)
     }
 
     private fun initAttrs(attrs: AttributeSet? = null) {
-        val typeA = context.obtainStyledAttributes(attrs,
+        val typeA = context.obtainStyledAttributes(
+            attrs,
             R.styleable.TextPickerLinearLayout
         )
 
-        mVisibleCount = typeA.getInt(R.styleable.TextPickerLinearLayout_visibleCount, 3)
-        mIsLoop = typeA.getBoolean(R.styleable.TextPickerLinearLayout_isLoop, false)
-        mScaleX = typeA.getFloat(R.styleable.TextPickerLinearLayout_scaleX, 1.0f)
-        mScaleY = typeA.getFloat(R.styleable.TextPickerLinearLayout_scaleY, 1.0f)
-        mAlpha = typeA.getFloat(R.styleable.TextPickerLinearLayout_alpha, 1.0f)
+        mOrientation = typeA.getInt(R.styleable.TextPickerLinearLayout_orientation, mOrientation)
+        mVisibleCount = typeA.getInt(R.styleable.TextPickerLinearLayout_visibleCount, mVisibleCount)
+        mIsLoop = typeA.getBoolean(R.styleable.TextPickerLinearLayout_isLoop, mIsLoop)
+        mScaleX = typeA.getFloat(R.styleable.TextPickerLinearLayout_scaleX, mScaleX)
+        mScaleY = typeA.getFloat(R.styleable.TextPickerLinearLayout_scaleY, mScaleY)
+        mAlpha = typeA.getFloat(R.styleable.TextPickerLinearLayout_alpha, mAlpha)
 
-        mDividerSize = typeA.getDimension(R.styleable.TextPickerLinearLayout_dividerSize, 1.0f)
+        mDividerSize = typeA.getDimension(R.styleable.TextPickerLinearLayout_dividerSize, mDividerSize)
         mDividerColor =
-            typeA.getColor(R.styleable.TextPickerLinearLayout_dividerColor, Color.LTGRAY)
-        mDividerPadding = typeA.getDimension(R.styleable.TextPickerLinearLayout_dividerColor, 1f)
+            typeA.getColor(R.styleable.TextPickerLinearLayout_dividerColor, mDividerColor)
+        mDividerPadding = typeA.getDimension(R.styleable.TextPickerLinearLayout_dividerColor, mDividerPadding)
 
         mScrollToEnd =
             typeA.getBoolean(R.styleable.TextPickerLinearLayout_scrollToEnd, mScrollToEnd)
@@ -61,7 +66,7 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
             typeA.getColor(R.styleable.TextPickerLinearLayout_selectedTextColor, mSelectedTextColor)
         mUnSelectedTextColor =
             typeA.getColor(
-                R.styleable.TextPickerLinearLayout_selectedTextColor,
+                R.styleable.TextPickerLinearLayout_unSelectedTextColor,
                 mUnSelectedTextColor
             )
         mSelectedTextSize =
@@ -78,8 +83,6 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
             typeA.getBoolean(R.styleable.TextPickerLinearLayout_selectedIsBold, mSelectedIsBold)
 
         typeA.recycle()
-
-        setAttrs()
     }
 
     fun setAttrs() {
@@ -162,9 +165,15 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
         return views
     }
 
-    fun setOnItemFillListener(listener:PickerLayoutManager.OnItemFillListener){
+    fun setOnItemFillListener(listener: PickerLayoutManager.OnItemFillListener) {
         getTextPickerViews().forEach {
             it.layoutManager.addOnItemFillListener(listener)
+        }
+    }
+
+    fun resetLayoutManager() {
+        getTextPickerViews().forEach {
+            it.resetLayoutManager(mOrientation, mVisibleCount, mIsLoop, mScaleX, mScaleY, mAlpha)
         }
     }
 }

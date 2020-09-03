@@ -22,7 +22,8 @@ open class PickerRecyclerView @JvmOverloads constructor(
     var mAlpha = 1.0f
 
     init {
-        val typeA = context.obtainStyledAttributes(attrs,
+        val typeA = context.obtainStyledAttributes(
+            attrs,
             R.styleable.PickerRecyclerView
         )
 
@@ -35,20 +36,25 @@ open class PickerRecyclerView @JvmOverloads constructor(
 
         typeA.recycle()
 
-        resetLayoutManager()
+        resetLayoutManager(mOrientation, mVisibleCount, mIsLoop, mScaleX, mScaleY, mAlpha)
     }
 
-    @SuppressWarnings
-    fun resetLayoutManager(lm: PickerLayoutManager? = null) {
-        layoutManager =
-            lm ?: PickerLayoutManager(
-                mOrientation,
-                mVisibleCount,
-                mIsLoop,
-                mScaleX,
-                mScaleY,
-                mAlpha
-            )
+    fun resetLayoutManager(
+        orientation: Int,
+        visibleCount: Int,
+        isLoop: Boolean,
+        scaleX: Float,
+        scaleY: Float,
+        alpha: Float
+    ) {
+        layoutManager = PickerLayoutManager(
+            orientation,
+            visibleCount,
+            isLoop,
+            scaleX,
+            scaleY,
+            alpha
+        )
     }
 
     override fun setLayoutManager(layout: LayoutManager?) {
