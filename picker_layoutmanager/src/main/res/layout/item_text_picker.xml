@@ -3,12 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:textSize="14sp"
-    android:paddingTop="15dp"
-    android:maxLines="1"
     android:ellipsize="end"
+    android:gravity="center"
+    android:maxLines="1"
+    android:minHeight="50dp"
     android:singleLine="true"
-    android:paddingBottom="15dp"
-    tools:text="item">
-</TextView>
+    android:textSize="14sp"
+    tools:text="item" />

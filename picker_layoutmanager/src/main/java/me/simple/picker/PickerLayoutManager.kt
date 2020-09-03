@@ -110,13 +110,12 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
         if (state.isPreLayout) return
 
-        //用第一个view计算宽高
+        //用第一个view计算宽高，这种方式可能不太好
         val itemView = recycler.getViewForPosition(0)
         addView(itemView)
         //这里不能用measureChild方法，具体看内部源码实现，内部getWidth默认为0
 //        measureChildWithMargins(itemView, 0, 0)
         itemView.measure(widthSpec, heightSpec)
-
         mItemWidth = getDecoratedMeasuredWidth(itemView)
         mItemHeight = getDecoratedMeasuredHeight(itemView)
         logDebug("mItemWidth == $mItemWidth -- mItemHeight == $mItemHeight")
@@ -198,7 +197,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
         //变换children
         transformChildren()
-        //分发事件
+        //分发Item Fill事件
         dispatchOnItemFillListener()
 
         //

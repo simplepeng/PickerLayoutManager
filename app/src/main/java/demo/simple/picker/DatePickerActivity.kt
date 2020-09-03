@@ -19,7 +19,7 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
         datePickerView.setOnDateSelectedListener { year, month, day ->
             tvDate.text = "$year-$month-$day"
         }
-        datePickerView.setOnItemFillListener(this)
+//        datePickerView.setOnItemFillListener(this)
 
         timePickerView.setOnTimeSelectedListener { hour, minute ->
             tvTime.text = "$hour:$minute"
@@ -52,14 +52,13 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
         val tv = child as TextView
         tv.setTextColor(Color.RED)
         tv.textSize = 15f
-//        tv.typeface = Typeface.DEFAULT_BOLD
+        tv.typeface = Typeface.DEFAULT_BOLD
     }
 
     override fun onItemUnSelected(child: View, position: Int) {
         val tv = child as TextView
         tv.setTextColor(Color.BLUE)
         tv.textSize = 11f
-//        tv.typeface = Typeface.DEFAULT
-
+        tv.typeface = Typeface.DEFAULT
     }
 }
