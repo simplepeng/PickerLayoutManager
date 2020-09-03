@@ -58,7 +58,8 @@ class TimePickerView @JvmOverloads constructor(
             dispatchOnSelectedItem()
         }
 
-        setTimeInterval(2, 10, 22, 20)
+//        setTimeInterval(2, 10, 22, 20)
+        setTimeInterval()
     }
 
     @SuppressWarnings
