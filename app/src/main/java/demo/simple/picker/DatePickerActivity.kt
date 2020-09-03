@@ -1,9 +1,14 @@
 package demo.simple.picker
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_date_picker.*
+import me.simple.picker.PickerLayoutManager
 
-class DatePickerActivity : BaseActivity() {
+class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -14,6 +19,7 @@ class DatePickerActivity : BaseActivity() {
         datePickerView.setOnDateSelectedListener { year, month, day ->
             tvDate.text = "$year-$month-$day"
         }
+        datePickerView.setOnItemFillListener(this)
 
         timePickerView.setOnTimeSelectedListener { hour, minute ->
             tvTime.text = "$hour:$minute"
@@ -39,6 +45,21 @@ class DatePickerActivity : BaseActivity() {
 
             toast("$date   $time")
         }
+
+    }
+
+    override fun onItemSelected(child: View, position: Int) {
+        val tv = child as TextView
+        tv.setTextColor(Color.RED)
+        tv.textSize = 15f
+//        tv.typeface = Typeface.DEFAULT_BOLD
+    }
+
+    override fun onItemUnSelected(child: View, position: Int) {
+        val tv = child as TextView
+        tv.setTextColor(Color.BLUE)
+        tv.textSize = 11f
+//        tv.typeface = Typeface.DEFAULT
 
     }
 }

@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import me.simple.picker.PickerItemDecoration
+import me.simple.picker.PickerLayoutManager
 import me.simple.picker.PickerRecyclerView
 import me.simple.picker.R
 
@@ -159,5 +160,11 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
             }
         }
         return views
+    }
+
+    fun setOnItemFillListener(listener:PickerLayoutManager.OnItemFillListener){
+        getTextPickerViews().forEach {
+            it.layoutManager.addOnItemFillListener(listener)
+        }
     }
 }

@@ -6,6 +6,9 @@
     android:gravity="center"
     android:textSize="14sp"
     android:paddingTop="15dp"
+    android:maxLines="1"
+    android:ellipsize="end"
+    android:singleLine="true"
     android:paddingBottom="15dp"
     tools:text="item">
 </TextView>
