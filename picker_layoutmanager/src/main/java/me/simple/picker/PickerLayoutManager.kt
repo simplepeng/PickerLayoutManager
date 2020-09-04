@@ -17,7 +17,7 @@ typealias OnItemSelectedListener = (position: Int) -> Unit
 /**
  * @param orientation 摆放子View的方向
  * @param visibleCount 显示多少个子View
- * @param isLoop 是否支持无线滚动
+ * @param isLoop 是否支持无限滚动
  * @param scaleX x轴缩放的比例
  * @param scaleY y轴缩放的比例
  * @param alpha 未选中item的透明度

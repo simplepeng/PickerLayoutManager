@@ -145,6 +145,28 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
 
     //重新设置属性值-------------------------------------------
 
+    fun setVisibleCount(count: Int) {
+        this.mVisibleCount = count
+    }
+
+    fun setIsLoop(isLoop: Boolean) {
+        this.mIsLoop = isLoop
+    }
+
+    fun setItemScaleX(scaleX: Float) {
+        this.mScaleX = scaleX
+    }
+
+    fun setItemScaleY(scaleY: Float) {
+        this.mScaleY = scaleY
+    }
+
+    fun setItemAlpha(alpha: Float) {
+        this.mAlpha = alpha
+    }
+
+
+
     fun setSelectedTextColor(textColor: Int) {
         this.mSelectedTextColor = textColor
     }
@@ -165,25 +187,6 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
         this.mSelectedIsBold = bold
     }
 
-    fun setVisibleCount(count: Int) {
-        this.mVisibleCount = count
-    }
-
-    fun setIsLoop(isLoop: Boolean) {
-        this.mIsLoop = isLoop
-    }
-
-    fun setItemScaleX(scaleX: Float) {
-        this.mScaleX = scaleX
-    }
-
-    fun setItemScaleY(scaleY: Float) {
-        this.mScaleY = scaleY
-    }
-
-    fun setItemAlpha(alpha: Float) {
-        this.mAlpha = alpha
-    }
 
     fun setDividerVisible(visible: Boolean) {
         this.mDividerVisible = visible

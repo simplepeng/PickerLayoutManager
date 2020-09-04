@@ -23,7 +23,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        startActivity(Intent(this, DatePickerActivity::class.java))
+//        startActivity(Intent(this, DatePickerActivity::class.java))
 
         for (i in 0..29) {
             mItems.add(i.toString())
@@ -43,7 +43,7 @@ class MainActivity : BaseActivity() {
         val pickerLayoutManager = PickerLayoutManager(
             orientation = PickerLayoutManager.VERTICAL,
             visibleCount = 5,
-            isLoop = true
+            isLoop = false
         )
 //        val pickerLayoutManager = LinearLayoutManager(
 //            this@MainActivity,
