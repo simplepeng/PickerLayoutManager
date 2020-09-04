@@ -34,8 +34,8 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
 
     var mSelectedTextColor = PickerUtils.SELECTED_TEXT_COLOR
     var mUnSelectedTextColor = PickerUtils.UNSELECTED_TEXT_COLOR
-    var mSelectedTextSize = PickerUtils.SELECTED_TEXT_SIZE
-    var mUnSelectedTextSize = PickerUtils.UNSELECTED_TEXT_SIZE
+    var mSelectedTextSize = PickerUtils.SELECTED_TEXT_SIZE.dp
+    var mUnSelectedTextSize = PickerUtils.UNSELECTED_TEXT_SIZE.dp
     var mSelectedIsBold = PickerUtils.SELECTED_IS_BOLD
 
     init {

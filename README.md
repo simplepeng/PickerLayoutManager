@@ -53,17 +53,19 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
         })
 ```
 
-这个方法超级有用，可以实现选中和取消选中itemView的自定义化。
+这个方法超级有用，可以实现选中和取消选中itemView的自定义化，下面的几个扩展View都使用到了这个方法回调。
 
 ## 基于PickerLayoutManager实现的扩展View
 
 ### TextPickerView
 
+![](files/gif_text_picker.gif)
+
 这个实现相对简单，就自定义了一个item layout为TextView的Adapter而已，再做了一点自定义属性的封装。
 
 #### 支持的属性和方法
 
-`注意：`在调用自定义属性的方法后，必须重新调用`resetLayoutManager()`方法
+**`注意：`在调用自定义属性的方法后，必须重新调用`resetLayoutManager()`方法才会起作用。**
 
 | 属性        | 方法 | 注释 |
 | ------------------- | ------------- | ---- |
@@ -106,9 +108,11 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
 
 ### DataPickerView和TimePickerView
 
+![](files/gif_date_time_picker.gif)
+
 #### 支持的属性和方法
 
-同`TextPickerView`
+同上面的`TextPickerView`
 
 #### 如何使用
 
@@ -129,5 +133,17 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvDate" />
+```
+
+#### 监听选中
+
+```kotlin
+        datePickerView.setOnDateSelectedListener { year, month, day ->
+            tvDate.text = "$year-$month-$day"
+        }
+
+        timePickerView.setOnTimeSelectedListener { hour, minute ->
+            tvTime.text = "$hour:$minute"
+        }
 ```
 
