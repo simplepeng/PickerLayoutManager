@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 class PickerItemDecoration(
     private val color: Int = Color.LTGRAY,
     private val size: Float = 1.0f,
-    private val padding: Float = 0f
+    private val margin: Float = 0f
 ) : RecyclerView.ItemDecoration() {
 
     private val mPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -51,12 +51,12 @@ class PickerItemDecoration(
         if (lm.orientation == PickerLayoutManager.HORIZONTAL) {
             val left = position * itemSize.toFloat() - size / 2
             val right = left + size
-            mRectF.set(left, padding, right, parent.height - padding)
+            mRectF.set(left, margin, right, parent.height - margin)
             canvas.drawRect(mRectF, mPaint)
         } else {
             val top = position * itemSize.toFloat() - size / 2
             val bottom = top + size
-            mRectF.set(padding, top, parent.width - padding, bottom)
+            mRectF.set(margin, top, parent.width - margin, bottom)
             canvas.drawRect(mRectF, mPaint)
         }
     }

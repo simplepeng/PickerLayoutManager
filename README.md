@@ -55,6 +55,16 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
 
 这个方法超级有用，可以实现选中和取消选中itemView的自定义化，下面的几个扩展View都使用到了这个方法回调。
 
+## 设置分割线
+
+分割线基于`ItemDecoration`实现，给RecyclerView添加`PickerItemDecoration`即可。
+
+```kotlin
+recyclerView.addItemDecoration(PickerItemDecoration())
+```
+
+`PickerItemDecoration`支持`color`，`size`，`margin`的构造参数
+
 ## 基于PickerLayoutManager实现的扩展View
 
 ### TextPickerView
@@ -87,6 +97,8 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
 
 #### 如何使用
 
+在布局中添加TextPickerView
+
 ```xml
     <me.simple.picker.widget.TextPickerView
         android:id="@+id/textPickerView"
@@ -96,6 +108,8 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 ```
+
+设置数据源
 
 ```kotlin
         val items = mutableListOf<String>()
