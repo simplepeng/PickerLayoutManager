@@ -65,10 +65,13 @@ class DatePickerView @JvmOverloads constructor(
                     mMonthPickerView.setMonthInterval()
                 }
             }
-            val month = mMonthPickerView.getMonth()
-            setDayInterval(year, month)
 
-            dispatchOnItemSelected()
+            this.post {
+                val month = mMonthPickerView.getMonth()
+                setDayInterval(year, month)
+
+                dispatchOnItemSelected()
+            }
         }
 
         mMonthPickerView.addOnSelectedItemListener { position ->

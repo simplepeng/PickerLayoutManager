@@ -11,7 +11,15 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
+        app:visibleCount="5"
+        app:isLoop="false"
+        app:scrollToEnd="false"
+        app:selectedTextColor="@color/colorAccent"
+        app:unSelectedTextColor="@color/colorPrimary"
+        app:selectedTextSize="20dp"
+        app:unSelectedTextSize="10dp"
+        app:selectedIsBold="true"
+        app:dividerVisible="true"
          />
 
     <TextView

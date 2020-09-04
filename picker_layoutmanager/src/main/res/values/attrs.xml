@@ -7,9 +7,9 @@
     <attr name="scaleY" format="float" />
     <attr name="alpha" format="float" />
 
-    <attr name="dividerColor" format="dimension" />
+    <attr name="dividerColor" format="color" />
     <attr name="dividerSize" format="dimension" />
-    <attr name="dividerPadding" format="dimension" />
+    <attr name="dividerMargin" format="dimension" />
 
     <attr name="selectedTextColor" format="color|reference" />
     <attr name="unSelectedTextColor" format="color|reference" />
@@ -32,7 +32,7 @@
         <attr name="alpha" />
         <attr name="dividerColor" />
         <attr name="dividerSize" />
-        <attr name="dividerPadding" />
+        <attr name="dividerMargin" />
     </declare-styleable>
 
     <declare-styleable name="TextPickerLinearLayout">
@@ -44,7 +44,7 @@
 
         <attr name="dividerColor" />
         <attr name="dividerSize" />
-        <attr name="dividerPadding" />
+        <attr name="dividerMargin" />
 
         <attr name="selectedTextColor" />
         <attr name="unSelectedTextColor" />

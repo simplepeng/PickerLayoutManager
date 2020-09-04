@@ -18,7 +18,7 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    var mVisibleCount = 3
+     var mVisibleCount = 3
     var mIsLoop = false
     var mScaleX = 1.0f
     var mScaleY = 1.0f
@@ -27,12 +27,12 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
     var mDividerVisible = true
     var mDividerSize = 1.0f
     var mDividerColor = Color.LTGRAY
-    var mDividerPadding = 1f
+    var mDividerMargin = 0f
 
     var mScrollToEnd: Boolean = false
 
     var mSelectedTextColor: Int = Color.BLACK
-    var mUnSelectedTextColor: Int = Color.DKGRAY
+    var mUnSelectedTextColor: Int = Color.LTGRAY
 
     var mSelectedTextSize = 14f.dp
     var mUnSelectedTextSize = 14f.dp
@@ -62,8 +62,8 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
             typeA.getDimension(R.styleable.TextPickerLinearLayout_dividerSize, mDividerSize)
         mDividerColor =
             typeA.getColor(R.styleable.TextPickerLinearLayout_dividerColor, mDividerColor)
-        mDividerPadding =
-            typeA.getDimension(R.styleable.TextPickerLinearLayout_dividerColor, mDividerPadding)
+        mDividerMargin =
+            typeA.getDimension(R.styleable.TextPickerLinearLayout_dividerMargin, mDividerMargin)
 
         mScrollToEnd =
             typeA.getBoolean(R.styleable.TextPickerLinearLayout_scrollToEnd, mScrollToEnd)
@@ -96,12 +96,13 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
             PickerItemDecoration(
                 mDividerColor,
                 mDividerSize,
-                mDividerPadding
+                mDividerMargin
             ), 0
         )
     }
 
     private fun removeDivider(pickerView: PickerRecyclerView) {
+        if (pickerView.itemDecorationCount <= 0) return
         pickerView.removeItemDecorationAt(0)
     }
 
@@ -195,7 +196,7 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
     }
 
     fun setDividerMargin(margin: Float) {
-        this.mDividerPadding = margin
+        this.mDividerMargin = margin
     }
 
     /**

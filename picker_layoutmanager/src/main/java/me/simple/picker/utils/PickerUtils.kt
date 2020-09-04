@@ -39,11 +39,12 @@ object PickerUtils {
 
     /**
      * 获取开始的日期
+     * 1949-1-1
      */
     fun getStartCalendar(): Calendar = Calendar.getInstance().apply {
         set(
             START_YEAR,
-            START_MONTH,
+            START_MONTH - 1,
             START_DAY
         )
     }
@@ -53,11 +54,11 @@ object PickerUtils {
      */
     fun getEndCalendar(): Calendar = Calendar.getInstance()
 
-    fun getEndYear() = getEndCalendar().get(Calendar.YEAR)
-    fun getEndMonth() = getEndCalendar().get(Calendar.MONTH) + 1
-    fun getEndDay() = getEndCalendar().get(Calendar.DATE)
+    fun getEndYear() = getYear(getEndCalendar())
+    fun getEndMonth() = getMonth(getEndCalendar())
+    fun getEndDay() = getDay(getEndCalendar())
 
     fun getYear(calendar: Calendar) = calendar.get(Calendar.YEAR)
-    fun getMonth(calendar: Calendar) = calendar.get(Calendar.MONTH)
+    fun getMonth(calendar: Calendar) = calendar.get(Calendar.MONTH) + 1
     fun getDay(calendar: Calendar) = calendar.get(Calendar.DATE)
 }
