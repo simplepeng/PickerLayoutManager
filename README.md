@@ -57,11 +57,13 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
 
 ## 基于PickerLayoutManager实现的扩展View
 
-### DataPickerView和TimePickerView
+### TextPickerView
 
-
+这个实现相对简单，就自定义了一个item layout为TextView的Adapter而已，再做了一点自定义属性的封装。
 
 #### 支持的属性和方法
+
+`注意：`在调用自定义属性的方法后，必须重新调用`resetLayoutManager()`方法
 
 | 属性        | 方法 | 注释 |
 | ------------------- | ------------- | ---- |
@@ -83,7 +85,32 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
 
 #### 如何使用
 
-直接加入布局文件即可
+```xml
+    <me.simple.picker.widget.TextPickerView
+        android:id="@+id/textPickerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+```
+
+```kotlin
+        val items = mutableListOf<String>()
+        for (index in 0 until 100) {
+            items.add(index.toString())
+        }
+
+        textPickerView.setData(items)
+```
+
+### DataPickerView和TimePickerView
+
+#### 支持的属性和方法
+
+同`TextPickerView`
+
+#### 如何使用
 
 ```xml
     <me.simple.picker.datepicker.DatePickerView
@@ -102,7 +129,5 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvDate" />
-
-
 ```
 

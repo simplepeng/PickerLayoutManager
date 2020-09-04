@@ -23,15 +23,20 @@ typealias OnItemSelectedListener = (position: Int) -> Unit
  * @param alpha 未选中item的透明度
  */
 open class PickerLayoutManager @JvmOverloads constructor(
-    val orientation: Int = VERTICAL,
-    val visibleCount: Int = 3,
-    val isLoop: Boolean = false,
+    var orientation: Int = ORIENTATION,
+
+    var visibleCount: Int = VISIBLE_COUNT,
+
+    var isLoop: Boolean = IS_LOOP,
+
     @FloatRange(from = 0.0, to = 1.0)
-    val scaleX: Float = 1.0f,
+    var scaleX: Float = SCALE_X,
+
     @FloatRange(from = 0.0, to = 1.0)
-    val scaleY: Float = 1.0f,
+    var scaleY: Float = SCALE_Y,
+
     @FloatRange(from = 0.0, to = 1.0)
-    val alpha: Float = 1.0f
+    var alpha: Float = ALPHA
 ) : RecyclerView.LayoutManager(), RecyclerView.SmoothScroller.ScrollVectorProvider {
 
     companion object {
@@ -42,7 +47,14 @@ open class PickerLayoutManager @JvmOverloads constructor(
         const val FILL_END = 1
 
         const val TAG = "PickerLayoutManager"
-        var DEBUG = true
+        var DEBUG = BuildConfig.DEBUG
+
+        const val ORIENTATION = VERTICAL
+        const val VISIBLE_COUNT = 3
+        const val IS_LOOP = false
+        const val SCALE_X = 1.0f
+        const val SCALE_Y = 1.0f
+        const val ALPHA = 1.0f
     }
 
     //将要填充的view的position
