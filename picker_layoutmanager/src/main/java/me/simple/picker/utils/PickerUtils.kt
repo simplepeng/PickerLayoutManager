@@ -2,6 +2,7 @@ package me.simple.picker.utils
 
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
 import android.widget.Toast
 import java.util.*
 
@@ -22,6 +23,12 @@ object PickerUtils {
     const val END_HOUR = 23
     const val START_MINUTE = 0
     const val END_MINUTE = 59
+
+    const val SELECTED_TEXT_COLOR = Color.BLACK
+    const val UNSELECTED_TEXT_COLOR = Color.LTGRAY
+    const val SELECTED_TEXT_SIZE = 14f
+    const val UNSELECTED_TEXT_SIZE = 14f
+    const val SELECTED_IS_BOLD = false
 
     fun formatTwoChars(text: Int) = String.format("%02d", text)
 

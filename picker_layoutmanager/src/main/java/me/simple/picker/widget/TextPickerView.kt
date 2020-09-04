@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import me.simple.picker.PickerLayoutManager
 import me.simple.picker.PickerRecyclerView
 import me.simple.picker.R
+import me.simple.picker.utils.PickerUtils
+import me.simple.picker.utils.dp
 
 open class TextPickerView @JvmOverloads constructor(
     context: Context,
@@ -25,15 +27,23 @@ open class TextPickerView @JvmOverloads constructor(
 
     val mItems = mutableListOf<String>()
 
-    var mSelectedTextColor = Color.BLACK
-    var mUnSelectedTextColor = Color.LTGRAY
-
-    var mSelectedTextSize = 14f
-    var mUnSelectedTextSize = 14f
-
-    var mSelectedIsBold = false
+    var mSelectedTextColor = PickerUtils.SELECTED_TEXT_COLOR
+    var mUnSelectedTextColor = PickerUtils.UNSELECTED_TEXT_COLOR
+    var mSelectedTextSize = PickerUtils.SELECTED_TEXT_SIZE.dp
+    var mUnSelectedTextSize = PickerUtils.UNSELECTED_TEXT_SIZE.dp
+    var mSelectedIsBold = PickerUtils.SELECTED_IS_BOLD
 
     init {
+        initAttrs(attrs)
+
+        mOrientation = PickerLayoutManager.VERTICAL
+        overScrollMode = View.OVER_SCROLL_NEVER
+        adapter = TextPickerAdapter()
+
+        resetLayoutManager()
+    }
+
+    private fun initAttrs(attrs: AttributeSet?) {
         val typeA = context.obtainStyledAttributes(
             attrs,
             R.styleable.TextPickerView
@@ -49,10 +59,18 @@ open class TextPickerView @JvmOverloads constructor(
         mSelectedIsBold =
             typeA.getBoolean(R.styleable.TextPickerView_selectedIsBold, mSelectedIsBold)
         typeA.recycle()
-
-        overScrollMode = View.OVER_SCROLL_NEVER
-        adapter = TextPickerAdapter()
     }
+
+    /**
+     * 设置数据源
+     */
+    fun setData(data: List<String>) {
+        mItems.clear()
+        mItems.addAll(data)
+        adapter?.notifyDataSetChanged()
+    }
+
+    //重新设置属性值-------------------------------------------
 
     fun setSelectedTextColor(@ColorInt textColor: Int) {
         this.mSelectedTextColor = textColor
@@ -74,8 +92,9 @@ open class TextPickerView @JvmOverloads constructor(
         this.mSelectedIsBold = bold
     }
 
-    override fun setLayoutManager(layout: LayoutManager?) {
+     override fun setLayoutManager(layout: LayoutManager?) {
         super.setLayoutManager(layout)
+
         layoutManager.addOnItemFillListener(this)
     }
 

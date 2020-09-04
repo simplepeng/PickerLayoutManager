@@ -10,6 +10,7 @@ import me.simple.picker.PickerItemDecoration
 import me.simple.picker.PickerLayoutManager
 import me.simple.picker.PickerRecyclerView
 import me.simple.picker.R
+import me.simple.picker.utils.PickerUtils
 import me.simple.picker.utils.dp
 
 open class TextPickerLinearLayout @JvmOverloads constructor(
@@ -31,13 +32,11 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
 
     var mScrollToEnd: Boolean = false
 
-    var mSelectedTextColor: Int = Color.BLACK
-    var mUnSelectedTextColor: Int = Color.LTGRAY
-
-    var mSelectedTextSize = 14f.dp
-    var mUnSelectedTextSize = 14f.dp
-
-    var mSelectedIsBold = false
+    var mSelectedTextColor = PickerUtils.SELECTED_TEXT_COLOR
+    var mUnSelectedTextColor = PickerUtils.UNSELECTED_TEXT_COLOR
+    var mSelectedTextSize = PickerUtils.SELECTED_TEXT_SIZE
+    var mUnSelectedTextSize = PickerUtils.UNSELECTED_TEXT_SIZE
+    var mSelectedIsBold = PickerUtils.SELECTED_IS_BOLD
 
     init {
         orientation = HORIZONTAL
@@ -128,9 +127,18 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
         return views
     }
 
-    fun setOnItemFillListener(listener: PickerLayoutManager.OnItemFillListener) {
+    /**
+     * 设置监听
+     */
+    fun addOnItemFillListener(listener: PickerLayoutManager.OnItemFillListener) {
         getTextPickerViews().forEach {
             it.layoutManager.addOnItemFillListener(listener)
+        }
+    }
+
+    fun removeOnItemFillListener(listener: PickerLayoutManager.OnItemFillListener) {
+        getTextPickerViews().forEach {
+            it.layoutManager.removeOnItemFillListener(listener)
         }
     }
 
@@ -164,7 +172,6 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
     fun setItemAlpha(alpha: Float) {
         this.mAlpha = alpha
     }
-
 
 
     fun setSelectedTextColor(textColor: Int) {

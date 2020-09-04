@@ -873,11 +873,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
         mOnItemFillListener.remove(listener)
     }
 
-    override fun onAttachedToWindow(view: RecyclerView) {
-        super.onAttachedToWindow(view)
-//        mSnapHelper.attachToRecyclerView(view)
-    }
-
     /**
      * 搞个Builder模式，构造函数难得写就用这个
      */

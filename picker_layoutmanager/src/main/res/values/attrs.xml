@@ -7,6 +7,7 @@
     <attr name="scaleY" format="float" />
     <attr name="alpha" format="float" />
 
+    <attr name="dividerVisible" format="boolean" />
     <attr name="dividerColor" format="color" />
     <attr name="dividerSize" format="dimension" />
     <attr name="dividerMargin" format="dimension" />
@@ -18,7 +19,7 @@
     <attr name="selectedIsBold" format="boolean" />
 
     <attr name="scrollToEnd" format="boolean" />
-    <attr name="dividerVisible" format="boolean" />
+
 
     <declare-styleable name="PickerRecyclerView">
         <attr name="orientation" format="enum">
@@ -30,6 +31,8 @@
         <attr name="scaleX" />
         <attr name="scaleY" />
         <attr name="alpha" />
+
+        <attr name="dividerVisible"/>
         <attr name="dividerColor" />
         <attr name="dividerSize" />
         <attr name="dividerMargin" />

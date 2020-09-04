@@ -24,6 +24,7 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
 
 //        startActivity(Intent(this, DatePickerActivity::class.java))
+        startActivity(Intent(this, TextPickerActivity::class.java))
 
         for (i in 0..29) {
             mItems.add(i.toString())
@@ -35,27 +36,23 @@ class MainActivity : BaseActivity() {
             for (i in 0..10) {
                 mItems.removeAt(mItems.size - 1)
             }
-            pickerRecyclerView.adapter?.notifyDataSetChanged()
+            recyclerView.adapter?.notifyDataSetChanged()
         }
     }
 
     private fun initLinearPicker() {
-        val pickerLayoutManager = PickerLayoutManager(
-            orientation = PickerLayoutManager.VERTICAL,
-            visibleCount = 5,
-            isLoop = false
-        )
+        val pickerLayoutManager = PickerLayoutManager(PickerLayoutManager.VERTICAL)
 //        val pickerLayoutManager = LinearLayoutManager(
 //            this@MainActivity,
 //            LinearLayoutManager.VERTICAL,
 //            false
 //        )
         setListener(pickerLayoutManager)
-        pickerRecyclerView.run {
+        recyclerView.run {
             layoutManager = pickerLayoutManager
             adapter = PickerAdapter(pickerLayoutManager.orientation)
         }
-        pickerRecyclerView.addItemDecoration(PickerItemDecoration())
+        recyclerView.addItemDecoration(PickerItemDecoration())
     }
 
     private fun setListener(pickerLayoutManager: PickerLayoutManager) {
@@ -120,6 +117,9 @@ class MainActivity : BaseActivity() {
             R.id.menu_date_picker -> {
                 startActivity(Intent(this, DatePickerActivity::class.java))
             }
+            R.id.menu_text_picker -> {
+                startActivity(Intent(this, TextPickerActivity::class.java))
+            }
             else -> {
             }
         }
@@ -149,12 +149,12 @@ class MainActivity : BaseActivity() {
         dialog.findViewById<View>(R.id.btnToPosition)!!.setOnClickListener {
             dialog.dismiss()
             val position = etPosition.text.toString().toInt()
-            pickerRecyclerView.scrollToPosition(position)
+            recyclerView.scrollToPosition(position)
         }
         dialog.findViewById<View>(R.id.btnSmoothToPosition)!!.setOnClickListener {
             dialog.dismiss()
             val position = etPosition.text.toString().toInt()
-            pickerRecyclerView.smoothScrollToPosition(position)
+            recyclerView.smoothScrollToPosition(position)
         }
     }
 }

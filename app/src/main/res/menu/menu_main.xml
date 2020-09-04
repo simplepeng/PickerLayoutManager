@@ -12,4 +12,8 @@
     <item
         android:id="@+id/menu_date_picker"
         android:title="DatePicker" />
+
+    <item
+        android:id="@+id/menu_text_picker"
+        android:title="TextPicker" />
 </menu>
