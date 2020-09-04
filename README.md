@@ -29,6 +29,32 @@ recyclerView.adapter = Adapter()
 * scaleY：y轴缩放的比例，默认为1.0f
 * alpha：未选中item的透明度，默认为1.0f
 
+## 监听被选中
+
+```kotlin
+pickerLayoutManager.addOnItemSelectedListener { position ->
+           toast(position.toString()) 
+}
+```
+
+## 监听被选中和取消选中时child的回调
+
+```kotlin
+        pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFillListener {
+            override fun onItemSelected(itemView: View, position: Int) {
+                val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
+                tvItem.setTextColor(Color.RED)
+            }
+
+            override fun onItemUnSelected(itemView: View, position: Int) {
+                val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
+                tvItem.setTextColor(Color.BLUE)
+            }
+        })
+```
+
+这个方法超级有用，可以实现选中和取消选中itemView的自定义化。
+
 ## 基于PickerLayoutManager实现的扩展View
 
 ### DataPickerView和TimePickerView

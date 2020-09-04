@@ -105,6 +105,10 @@ open class PickerRecyclerView @JvmOverloads constructor(
 
     //重新设置属性值
 
+    fun setOrientation(orientation: Int) {
+        this.mOrientation = orientation
+    }
+
     fun setVisibleCount(count: Int) {
         this.mVisibleCount = count
     }

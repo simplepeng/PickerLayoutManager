@@ -861,8 +861,8 @@ open class PickerLayoutManager @JvmOverloads constructor(
      * 当item填充或者滚动的时候回调
      */
     interface OnItemFillListener {
-        fun onItemSelected(child: View, position: Int)
-        fun onItemUnSelected(child: View, position: Int)
+        fun onItemSelected(itemView: View, position: Int)
+        fun onItemUnSelected(itemView: View, position: Int)
     }
 
     fun addOnItemFillListener(listener: OnItemFillListener) {
