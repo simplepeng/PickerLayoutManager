@@ -24,7 +24,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/datePickerView" />
 
-    <me.simple.picker.timepicker.TimeTextPickerView
+    <me.simple.picker.timepicker.TimePickerView
         android:id="@+id/timePickerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

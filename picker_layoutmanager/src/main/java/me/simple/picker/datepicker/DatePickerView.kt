@@ -41,9 +41,17 @@ class DatePickerView @JvmOverloads constructor(
         addView(mMonthPickerView)
         addView(mDayPickerView)
 
-        setAttrs()
         resetLayoutManager()
 
+        setDateInterval()
+    }
+
+    override fun resetLayoutManager() {
+        super.resetLayoutManager()
+        setListener()
+    }
+
+    private fun setListener() {
         mYearPickerView.addOnSelectedItemListener { position ->
             val year = mYearPickerView.getYear()
             when (year) {
@@ -75,16 +83,6 @@ class DatePickerView @JvmOverloads constructor(
         mDayPickerView.addOnSelectedItemListener { position ->
             dispatchOnItemSelected()
         }
-
-        setDateInterval()
-    }
-
-    private fun scrollToEnd() {
-        if (!mScrollToEnd) return
-
-        mYearPickerView.scrollToEnd()
-        mMonthPickerView.scrollToEnd()
-        mDayPickerView.scrollToEnd()
     }
 
     private fun setDayInterval(
@@ -148,7 +146,9 @@ class DatePickerView @JvmOverloads constructor(
         mMonthPickerView.setMonthInterval(startMonth)
         mDayPickerView.setDayIntervalByMonth(startYear, startMonth, startDay)
 
-        scrollToEnd()
+        if (mScrollToEnd){
+            scrollToEnd()
+        }
     }
 
     @SuppressWarnings

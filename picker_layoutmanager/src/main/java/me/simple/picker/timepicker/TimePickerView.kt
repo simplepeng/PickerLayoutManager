@@ -7,7 +7,7 @@ import me.simple.picker.utils.PickerUtils
 
 typealias OnTimeSelectedListener = (hour: String, minute: String) -> Unit
 
-class TimeTextPickerView @JvmOverloads constructor(
+class TimePickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -34,9 +34,18 @@ class TimeTextPickerView @JvmOverloads constructor(
         addView(mHourPickerView)
         addView(mMinutePickerView)
 
-        setDivider(mHourPickerView)
-        setDivider(mMinutePickerView)
+        resetLayoutManager()
 
+//        setTimeInterval(2, 10, 22, 20)
+        setTimeInterval()
+    }
+
+    override fun resetLayoutManager() {
+        super.resetLayoutManager()
+        setListener()
+    }
+
+    private fun setListener() {
         mHourPickerView.addOnSelectedItemListener {
             val hour = mHourPickerView.getHour()
 
@@ -54,12 +63,10 @@ class TimeTextPickerView @JvmOverloads constructor(
 
             dispatchOnSelectedItem()
         }
+
         mMinutePickerView.addOnSelectedItemListener {
             dispatchOnSelectedItem()
         }
-
-//        setTimeInterval(2, 10, 22, 20)
-        setTimeInterval()
     }
 
     @SuppressWarnings
@@ -76,6 +83,10 @@ class TimeTextPickerView @JvmOverloads constructor(
 
         mHourPickerView.setHourInterval(startHour, endHour)
         mMinutePickerView.setMinuteInterval(startMinute)
+
+        if (mScrollToEnd){
+            scrollToEnd()
+        }
     }
 
     private fun dispatchOnSelectedItem() {

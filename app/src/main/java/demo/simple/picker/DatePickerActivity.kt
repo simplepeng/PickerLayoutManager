@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_date_picker.*
 import me.simple.picker.PickerLayoutManager
+import me.simple.picker.utils.dp
 
 class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListener {
 
@@ -19,6 +20,27 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
         datePickerView.setOnDateSelectedListener { year, month, day ->
             tvDate.text = "$year-$month-$day"
         }
+        datePickerView.run {
+//            setSelectedTextColor(Color.RED)
+//            setUnSelectedTextColor(Color.GREEN)
+//            setSelectedTextSize(16f.dp)
+//            setUnSelectedTextSize(12f.dp)
+//            setSelectedIsBold(true)
+
+//            setVisibleCount(5)
+//            setIsLoop(true)
+//            setItemAlpha(0.75f)
+//            setItemScaleX(0.75f)
+//            setItemScaleY(0.75f)
+
+//            setDividerVisible(true)
+//            setDividerColor(Color.RED)
+//            setDividerSize(1f)
+//            setDividerMargin(10f)
+
+            resetLayoutManager()
+        }
+
 //        datePickerView.setOnItemFillListener(this)
 
         timePickerView.setOnTimeSelectedListener { hour, minute ->

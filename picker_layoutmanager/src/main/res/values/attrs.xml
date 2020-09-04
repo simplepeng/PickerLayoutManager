@@ -15,9 +15,10 @@
     <attr name="unSelectedTextColor" format="color|reference" />
     <attr name="selectedTextSize" format="dimension" />
     <attr name="unSelectedTextSize" format="dimension" />
-    <attr name="selectedIsBold" format="boolean"/>
+    <attr name="selectedIsBold" format="boolean" />
 
     <attr name="scrollToEnd" format="boolean" />
+    <attr name="dividerVisible" format="boolean" />
 
     <declare-styleable name="PickerRecyclerView">
         <attr name="orientation" format="enum">
@@ -35,7 +36,6 @@
     </declare-styleable>
 
     <declare-styleable name="TextPickerLinearLayout">
-        <attr name="orientation"/>
         <attr name="visibleCount" />
         <attr name="isLoop" />
         <attr name="scaleX" />
@@ -50,9 +50,10 @@
         <attr name="unSelectedTextColor" />
         <attr name="selectedTextSize" />
         <attr name="unSelectedTextSize" />
-        <attr name="selectedIsBold"/>
+        <attr name="selectedIsBold" />
 
         <attr name="scrollToEnd" />
+        <attr name="dividerVisible" />
     </declare-styleable>
 
     <declare-styleable name="TextPickerView">
@@ -60,6 +61,6 @@
         <attr name="unSelectedTextColor" />
         <attr name="selectedTextSize" />
         <attr name="unSelectedTextSize" />
-        <attr name="selectedIsBold"/>
+        <attr name="selectedIsBold" />
     </declare-styleable>
 </resources>
