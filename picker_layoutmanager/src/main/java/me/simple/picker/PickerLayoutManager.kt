@@ -9,6 +9,8 @@ import android.view.animation.LinearInterpolator
 import androidx.annotation.FloatRange
 import androidx.recyclerview.widget.*
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 typealias OnItemSelectedListener = (position: Int) -> Unit
 
@@ -423,22 +425,22 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
 
         //检查是否滚动到了顶部或者底部
-//        if (checkScrollToEdge(fillDirection, state)) {
-//            val fixLastScroll = getFixLastScroll(fillDirection)
-//            return if (fillDirection == FILL_START) {
-//                max(fixLastScroll, delta)
-//            } else {
-//                min(fixLastScroll, delta)
-//            }
-//        }
+        if (checkScrollToEdge(fillDirection, state)) {
+            val fixLastScroll = getFixLastScroll(fillDirection)
+            return if (fillDirection == FILL_START) {
+                max(fixLastScroll, delta)
+            } else {
+                min(fixLastScroll, delta)
+            }
+        }
 
         //获取将要填充的view
         mPendingFillPosition = getPendingFillPosition(fillDirection)
 
         //检查是否滚动到了顶部或者底部
-        if (!hasMore(state)) {
-            return getFixLastScroll(fillDirection)
-        }
+//        if (!hasMore(state)) {
+//            return getFixLastScroll(fillDirection)
+//        }
 
         //
         while (remainSpace > 0 && hasMore(state)) {

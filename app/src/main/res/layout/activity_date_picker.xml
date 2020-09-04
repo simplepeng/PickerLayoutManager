@@ -11,16 +11,25 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:visibleCount="5"
-        app:isLoop="false"
-        app:scrollToEnd="false"
-        app:selectedTextColor="@color/colorAccent"
-        app:unSelectedTextColor="@color/colorPrimary"
-        app:selectedTextSize="20dp"
-        app:unSelectedTextSize="10dp"
-        app:selectedIsBold="true"
-        app:dividerVisible="true"
          />
+
+<!--    app:visibleCount="5"-->
+<!--    app:isLoop="true"-->
+<!--    app:scrollToEnd="true"-->
+<!--    app:alpha="0.5"-->
+<!--    app:scaleY="0.5"-->
+<!--    app:scaleX="0.5"-->
+
+<!--    app:selectedTextColor="@color/colorAccent"-->
+<!--    app:unSelectedTextColor="@color/colorPrimary"-->
+<!--    app:selectedTextSize="20dp"-->
+<!--    app:unSelectedTextSize="10dp"-->
+<!--    app:selectedIsBold="true"-->
+
+<!--    app:dividerVisible="true"-->
+<!--    app:dividerMargin="20dp"-->
+<!--    app:dividerColor="@color/colorPrimaryDark"-->
+<!--    app:dividerSize="3dp"-->
 
     <TextView
         android:id="@+id/tvDate"
@@ -37,6 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvDate" />
 

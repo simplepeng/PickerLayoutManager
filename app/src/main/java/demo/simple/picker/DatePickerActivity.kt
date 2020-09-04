@@ -21,31 +21,53 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
             tvDate.text = "$year-$month-$day"
         }
         datePickerView.run {
+//            setVisibleCount(5)
+//            setIsLoop(true)
+//            setItemScaleX(0.75f)
+//            setItemScaleY(0.75f)
+//            setItemAlpha(0.75f)
+//
 //            setSelectedTextColor(Color.RED)
 //            setUnSelectedTextColor(Color.GREEN)
 //            setSelectedTextSize(16f.dp)
 //            setUnSelectedTextSize(12f.dp)
 //            setSelectedIsBold(true)
-
-//            setVisibleCount(5)
-//            setIsLoop(true)
-//            setItemAlpha(0.75f)
-//            setItemScaleX(0.75f)
-//            setItemScaleY(0.75f)
-
+//
+//
 //            setDividerVisible(true)
+//            setDividerSize(2f.dp)
 //            setDividerColor(Color.RED)
-//            setDividerSize(1f)
-//            setDividerMargin(10f)
-
-            resetLayoutManager()
+//            setDividerMargin(10f.dp)
+//
+//            resetLayoutManager()
         }
-
 //        datePickerView.setOnItemFillListener(this)
 
         timePickerView.setOnTimeSelectedListener { hour, minute ->
             tvTime.text = "$hour:$minute"
         }
+//        timePickerView.run {
+//            setVisibleCount(5)
+//            setIsLoop(true)
+//            setItemScaleX(0.75f)
+//            setItemScaleY(0.75f)
+//            setItemAlpha(0.75f)
+//
+//            setSelectedTextColor(Color.RED)
+//            setUnSelectedTextColor(Color.GREEN)
+//            setSelectedTextSize(16f.dp)
+//            setUnSelectedTextSize(12f.dp)
+//            setSelectedIsBold(true)
+//
+//
+//            setDividerVisible(true)
+//            setDividerSize(2f.dp)
+//            setDividerColor(Color.RED)
+//            setDividerMargin(10f.dp)
+//
+//            resetLayoutManager()
+//        }
+//        timePickerView.setOnItemFillListener(this)
 
         btnGetDate.setOnClickListener {
 

@@ -42,6 +42,7 @@
         <attr name="scaleY" />
         <attr name="alpha" />
 
+        <attr name="dividerVisible" />
         <attr name="dividerColor" />
         <attr name="dividerSize" />
         <attr name="dividerMargin" />
@@ -53,7 +54,6 @@
         <attr name="selectedIsBold" />
 
         <attr name="scrollToEnd" />
-        <attr name="dividerVisible" />
     </declare-styleable>
 
     <declare-styleable name="TextPickerView">

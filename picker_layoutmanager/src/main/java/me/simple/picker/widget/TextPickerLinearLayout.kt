@@ -97,13 +97,15 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
                 mDividerColor,
                 mDividerSize,
                 mDividerMargin
-            ), 0
+            )
         )
     }
 
     private fun removeDivider(pickerView: PickerRecyclerView) {
-        if (pickerView.itemDecorationCount <= 0) return
-        pickerView.removeItemDecorationAt(0)
+        val count = pickerView.itemDecorationCount
+        for(index in 0 until count){
+            pickerView.removeItemDecorationAt(index)
+        }
     }
 
     protected fun generateChildLayoutParams(): LayoutParams {
@@ -211,10 +213,9 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
             view.setUnSelectedTextSize(mUnSelectedTextSize)
             view.setSelectedIsBold(mSelectedIsBold)
 
+            removeDivider(view)
             if (mDividerVisible) {
                 setDivider(view)
-            } else {
-                removeDivider(view)
             }
 
             val lm = PickerLayoutManager(
