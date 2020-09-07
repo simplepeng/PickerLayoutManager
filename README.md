@@ -6,8 +6,23 @@
 
 ## 导入依赖
 
-```gr
+在根目录的`build.gradle`中添加`jitpack`的仓库
 
+```groovy
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://www.jitpack.io' }
+		}
+	}
+```
+
+在`app`的`build.gradle`添加依赖
+
+```gr
+	dependencies {
+	        implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.0'
+	}
 ```
 
 ## 如何使用
@@ -101,12 +116,12 @@ recyclerView.addItemDecoration(PickerItemDecoration())
 
 ```xml
 <me.simple.picker.widget.TextPickerView
-		android:id="@+id/textPickerView"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
+	android:id="@+id/textPickerView"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	app:layout_constraintEnd_toEndOf="parent"
+	app:layout_constraintStart_toStartOf="parent"
+	app:layout_constraintTop_toTopOf="parent" />
 ```
 
 设置数据源
@@ -153,11 +168,11 @@ textPickerView.setData(items)
 
 ```kotlin
 datePickerView.setOnDateSelectedListener { year, month, day ->
-		tvDate.text = "$year-$month-$day"
+	tvDate.text = "$year-$month-$day"
 }
 
 timePickerView.setOnTimeSelectedListener { hour, minute ->
-    tvTime.text = "$hour:$minute"
+	tvTime.text = "$hour:$minute"
 }
 ```
 
