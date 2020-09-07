@@ -164,6 +164,15 @@ textPickerView.setData(items)
    app:layout_constraintTop_toBottomOf="@id/tvDate" />
 ```
 
+#### 设置数据源
+
+```kotlin
+//默认从1949-1-1到当前这天
+datePickerView.setDateInterval()
+//默认从0点到24点
+timerPickerView.setTimeInterval()
+```
+
 #### 监听选中
 
 ```kotlin
