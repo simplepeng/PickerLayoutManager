@@ -59,17 +59,17 @@ class MainActivity : BaseActivity() {
         pickerLayoutManager.addOnItemSelectedListener { position ->
             toast(position.toString())
         }
-        pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFillListener {
-            override fun onItemSelected(itemView: View, position: Int) {
-                val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
-                tvItem.setTextColor(Color.RED)
-            }
-
-            override fun onItemUnSelected(itemView: View, position: Int) {
-                val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
-                tvItem.setTextColor(Color.BLUE)
-            }
-        })
+//        pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFillListener {
+//            override fun onItemSelected(itemView: View, position: Int) {
+//                val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
+//                tvItem.setTextColor(Color.RED)
+//            }
+//
+//            override fun onItemUnSelected(itemView: View, position: Int) {
+//                val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
+//                tvItem.setTextColor(Color.BLUE)
+//            }
+//        })
     }
 
     inner class PickerAdapter(private val orientation: Int) :

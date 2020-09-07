@@ -2,7 +2,7 @@
 
 一个基于自定义LayoutManager的PickerView，扩展自由度极高。
 
-
+![](files/gif_picker.gif)
 
 ## 导入依赖
 
@@ -29,7 +29,7 @@ recyclerView.adapter = Adapter()
 * scaleY：y轴缩放的比例，默认为1.0f
 * alpha：未选中item的透明度，默认为1.0f
 
-## 监听被选中
+## 监听选中
 
 ```kotlin
 pickerLayoutManager.addOnItemSelectedListener { position ->
@@ -37,7 +37,7 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
 }
 ```
 
-## 监听被选中和取消选中时child的回调
+## 监听选中和取消选中时itemView被填充的回调
 
 ```kotlin
  pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFillListener {
@@ -63,7 +63,7 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
 recyclerView.addItemDecoration(PickerItemDecoration())
 ```
 
-`PickerItemDecoration`支持`color`，`size`，`margin`的构造参数
+`PickerItemDecoration`支持`color`，`size`，`margin`等构造参数。
 
 ## 基于PickerLayoutManager实现的扩展View
 
@@ -101,23 +101,23 @@ recyclerView.addItemDecoration(PickerItemDecoration())
 
 ```xml
 <me.simple.picker.widget.TextPickerView
-        android:id="@+id/textPickerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+		android:id="@+id/textPickerView"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 ```
 
 设置数据源
 
 ```kotlin
 val items = mutableListOf<String>()
-        for (index in 0 until 100) {
-            items.add(index.toString())
-        }
+	for (index in 0 until 100) {
+	items.add(index.toString())
+}
 
-        textPickerView.setData(items)
+textPickerView.setData(items)
 ```
 
 ### DataPickerView和TimePickerView
@@ -152,12 +152,12 @@ val items = mutableListOf<String>()
 #### 监听选中
 
 ```kotlin
-        datePickerView.setOnDateSelectedListener { year, month, day ->
-            tvDate.text = "$year-$month-$day"
-        }
+		datePickerView.setOnDateSelectedListener { year, month, day ->
+		tvDate.text = "$year-$month-$day"
+		}
 
-        timePickerView.setOnTimeSelectedListener { hour, minute ->
-            tvTime.text = "$hour:$minute"
-        }
+		timePickerView.setOnTimeSelectedListener { hour, minute ->
+    tvTime.text = "$hour:$minute"
+		}
 ```
 

@@ -449,11 +449,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
         //获取将要填充的view
         mPendingFillPosition = getPendingFillPosition(fillDirection)
 
-        //检查是否滚动到了顶部或者底部
-//        if (!hasMore(state)) {
-//            return getFixLastScroll(fillDirection)
-//        }
-
         //
         while (remainSpace > 0 && hasMore(state)) {
             val anchor = getAnchor(fillDirection)
