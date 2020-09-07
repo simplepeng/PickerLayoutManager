@@ -2,7 +2,7 @@
 
 一个基于自定义LayoutManager的PickerView，扩展自由度极高。
 
-![](files/gif_picker.gif)
+![gif_picker.gif](https://i.loli.net/2020/09/07/RBNdOF64fsCuj5U.gif)
 
 ## 导入依赖
 
@@ -69,7 +69,7 @@ recyclerView.addItemDecoration(PickerItemDecoration())
 
 ### TextPickerView
 
-![](files/gif_text_picker.gif)
+![gif_text_picker.gif](https://i.loli.net/2020/09/07/pUMW5o4TKBGlY9R.gif)
 
 这个实现相对简单，就自定义了一个item layout为TextView的Adapter而已，再做了一点自定义属性的封装。
 
@@ -122,7 +122,7 @@ textPickerView.setData(items)
 
 ### DataPickerView和TimePickerView
 
-![](files/gif_date_time_picker.gif)
+![gif_date_time_picker.gif](https://i.loli.net/2020/09/07/vREh2qdQi1HpgYj.gif)
 
 #### 支持的属性和方法
 
@@ -131,33 +131,33 @@ textPickerView.setData(items)
 #### 如何使用
 
 ```xml
-    <me.simple.picker.datepicker.DatePickerView
-        android:id="@+id/datePickerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:isLoop="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:scrollToEnd="true" />
+<me.simple.picker.datepicker.DatePickerView
+   android:id="@+id/datePickerView"
+   android:layout_width="match_parent"
+   android:layout_height="wrap_content"
+   app:isLoop="true"
+   app:layout_constraintStart_toStartOf="parent"
+   app:layout_constraintTop_toTopOf="parent"
+   app:scrollToEnd="true" />
 
-    <me.simple.picker.timepicker.TimePickerView
-        android:id="@+id/timePickerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDate" />
+<me.simple.picker.timepicker.TimePickerView
+   android:id="@+id/timePickerView"
+   android:layout_width="match_parent"
+   android:layout_height="wrap_content"
+   android:layout_marginTop="30dp"
+   app:layout_constraintStart_toStartOf="parent"
+   app:layout_constraintTop_toBottomOf="@id/tvDate" />
 ```
 
 #### 监听选中
 
 ```kotlin
-		datePickerView.setOnDateSelectedListener { year, month, day ->
+datePickerView.setOnDateSelectedListener { year, month, day ->
 		tvDate.text = "$year-$month-$day"
-		}
+}
 
-		timePickerView.setOnTimeSelectedListener { hour, minute ->
+timePickerView.setOnTimeSelectedListener { hour, minute ->
     tvTime.text = "$hour:$minute"
-		}
+}
 ```
 
