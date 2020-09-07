@@ -20,7 +20,7 @@ recyclerView.layoutManager = pickerLayoutManager
 recyclerView.adapter = Adapter()
 ```
 
-`PickerLayoutManager`支持的构造属性
+`PickerLayoutManager`支持的构造参数属性
 
 * orientation：摆放子View的方向，默认为VERTICAL
 * visibleCount：显示多少个子View，默认为3，切只支持设置奇数
@@ -40,7 +40,7 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
 ## 监听被选中和取消选中时child的回调
 
 ```kotlin
-        pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFillListener {
+ pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFillListener {
             override fun onItemSelected(itemView: View, position: Int) {
                 val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
                 tvItem.setTextColor(Color.RED)
@@ -50,7 +50,7 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
                 val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
                 tvItem.setTextColor(Color.BLUE)
             }
-        })
+})       
 ```
 
 这个方法超级有用，可以实现选中和取消选中itemView的自定义化，下面的几个扩展View都使用到了这个方法回调。
@@ -100,7 +100,7 @@ recyclerView.addItemDecoration(PickerItemDecoration())
 在布局中添加TextPickerView
 
 ```xml
-    <me.simple.picker.widget.TextPickerView
+<me.simple.picker.widget.TextPickerView
         android:id="@+id/textPickerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -112,7 +112,7 @@ recyclerView.addItemDecoration(PickerItemDecoration())
 设置数据源
 
 ```kotlin
-        val items = mutableListOf<String>()
+val items = mutableListOf<String>()
         for (index in 0 until 100) {
             items.add(index.toString())
         }
