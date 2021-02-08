@@ -23,7 +23,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        startActivity(Intent(this, DatePickerActivity::class.java))
+        startActivity(Intent(this, DatePickerActivity::class.java))
 //        startActivity(Intent(this, TextPickerActivity::class.java))
 
         for (i in 0..29) {

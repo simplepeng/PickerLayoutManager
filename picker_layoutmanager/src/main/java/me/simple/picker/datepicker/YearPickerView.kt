@@ -13,7 +13,7 @@ class YearPickerView @JvmOverloads constructor(
 
     fun setYearInterval(
         startYear: Int = PickerUtils.START_YEAR,
-        endYear: Int = PickerUtils.getEndYear()
+        endYear: Int = PickerUtils.getCurrentYear()
     ) {
         mItems.clear()
         for (year in startYear..endYear) {

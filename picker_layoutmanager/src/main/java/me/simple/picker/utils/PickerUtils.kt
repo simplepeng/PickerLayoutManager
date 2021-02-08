@@ -59,11 +59,11 @@ object PickerUtils {
     /**
      * 获取结束的日期，就是当天
      */
-    fun getEndCalendar(): Calendar = Calendar.getInstance()
+    fun getCurrentCalendar(): Calendar = Calendar.getInstance()
 
-    fun getEndYear() = getYear(getEndCalendar())
-    fun getEndMonth() = getMonth(getEndCalendar())
-    fun getEndDay() = getDay(getEndCalendar())
+    fun getCurrentYear() = getYear(getCurrentCalendar())
+    fun getCurrentMonth() = getMonth(getCurrentCalendar())
+    fun getCurrentDay() = getDay(getCurrentCalendar())
 
     fun getYear(calendar: Calendar) = calendar.get(Calendar.YEAR)
     fun getMonth(calendar: Calendar) = calendar.get(Calendar.MONTH) + 1

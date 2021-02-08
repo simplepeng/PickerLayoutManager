@@ -30,9 +30,9 @@ class DatePickerView @JvmOverloads constructor(
     private var mStartMonth: Int = PickerUtils.START_YEAR
     private var mStartDay: Int = PickerUtils.START_YEAR
 
-    private var mEndYear: Int = PickerUtils.getEndYear()
-    private var mEndMonth: Int = PickerUtils.getEndMonth()
-    private var mEndDay: Int = PickerUtils.getEndDay()
+    private var mEndYear: Int = PickerUtils.getCurrentYear()
+    private var mEndMonth: Int = PickerUtils.getCurrentMonth()
+    private var mEndDay: Int = PickerUtils.getCurrentDay()
 
     init {
         weightSum = 3f
@@ -118,7 +118,7 @@ class DatePickerView @JvmOverloads constructor(
     @SuppressWarnings("")
     fun setDateInterval(
         start: Calendar = PickerUtils.getStartCalendar(),
-        end: Calendar = PickerUtils.getEndCalendar()
+        end: Calendar = PickerUtils.getCurrentCalendar()
     ) {
         setDateInterval(
             PickerUtils.getYear(start), PickerUtils.getMonth(start), PickerUtils.getDay(start),
@@ -135,9 +135,9 @@ class DatePickerView @JvmOverloads constructor(
         startMonth: Int = PickerUtils.START_MONTH,
         startDay: Int = PickerUtils.START_DAY,
 
-        endYear: Int = PickerUtils.getEndYear(),
-        endMonth: Int = PickerUtils.getEndMonth(),
-        endDay: Int = PickerUtils.getEndDay()
+        endYear: Int = PickerUtils.getCurrentYear(),
+        endMonth: Int = PickerUtils.getCurrentMonth(),
+        endDay: Int = PickerUtils.getCurrentDay()
     ) {
         this.mStartYear = startYear
         this.mStartMonth = startMonth
