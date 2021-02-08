@@ -18,7 +18,7 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
         datePickerView.setIsLoop(false)
         datePickerView.setDateInterval(
             1949, 2, 24,
-            2021, 1, 6
+            2021, 2, 6
         )
 
         datePickerView.setOnDateSelectedListener { year, month, day ->

@@ -676,7 +676,8 @@ open class PickerLayoutManager @JvmOverloads constructor(
         //[0,99] -- -1=99,-2=98,-3=97...-99=1,-100=0
         //              -101=99(-1)
         if (isLoop && position < 0) {
-            return recycler.getViewForPosition(itemCount + (position % itemCount))
+//            return recycler.getViewForPosition(itemCount + (position % itemCount))
+            return recycler.getViewForPosition(itemCount + position)
         }
 
         return recycler.getViewForPosition(position)

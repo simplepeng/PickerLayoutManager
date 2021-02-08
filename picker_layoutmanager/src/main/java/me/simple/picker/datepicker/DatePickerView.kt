@@ -134,6 +134,7 @@ class DatePickerView @JvmOverloads constructor(
         startYear: Int = PickerUtils.START_YEAR,
         startMonth: Int = PickerUtils.START_MONTH,
         startDay: Int = PickerUtils.START_DAY,
+
         endYear: Int = PickerUtils.getEndYear(),
         endMonth: Int = PickerUtils.getEndMonth(),
         endDay: Int = PickerUtils.getEndDay()
@@ -141,15 +142,29 @@ class DatePickerView @JvmOverloads constructor(
         this.mStartYear = startYear
         this.mStartMonth = startMonth
         this.mStartDay = startDay
+
         this.mEndYear = endYear
         this.mEndMonth = endMonth
         this.mEndDay = endDay
 
         mYearPickerView.setYearInterval(startYear, endYear)
-        mMonthPickerView.setMonthInterval(startMonth)
-        mDayPickerView.setDayIntervalByMonth(startYear, startMonth, startDay)
 
-        if (mScrollToEnd){
+        if (mScrollToEnd) {
+            mMonthPickerView.setMonthInterval(endMonth = endMonth)
+        } else {
+            mMonthPickerView.setMonthInterval(startMonth)
+        }
+
+        if (mScrollToEnd) {
+            mDayPickerView.setDayInterval(endDay = endDay)
+        } else {
+            mDayPickerView.setDayInterval(
+                startDay,
+                PickerUtils.getDayCountInMonth(startYear, startMonth)
+            )
+        }
+
+        if (mScrollToEnd) {
             scrollToEnd()
         }
     }
