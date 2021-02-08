@@ -6,9 +6,6 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.recyclerview.widget.RecyclerView
-import me.simple.picker.OnItemSelectedListener
-import me.simple.picker.PickerLayoutManager
-import me.simple.picker.R
 
 open class PickerRecyclerView @JvmOverloads constructor(
     context: Context,

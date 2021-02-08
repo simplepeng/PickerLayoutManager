@@ -662,6 +662,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         recycler: RecyclerView.Recycler,
         position: Int
     ): View {
+        //加入不是循环模式，且position不合法
         if (!isLoop && (position < 0 || position >= itemCount)) {
             throw IllegalArgumentException("position <0 or >= itemCount with !isLoop")
         }

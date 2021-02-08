@@ -13,13 +13,16 @@ import me.simple.picker.R
 import me.simple.picker.utils.PickerUtils
 import me.simple.picker.utils.dp
 
+/**
+ * PickerView的包装器
+ */
 open class TextPickerLinearLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-     var mVisibleCount = 3
+    var mVisibleCount = 3
     var mIsLoop = false
     var mScaleX = 1.0f
     var mScaleY = 1.0f
@@ -102,7 +105,7 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
 
     private fun removeDivider(pickerView: PickerRecyclerView) {
         val count = pickerView.itemDecorationCount
-        for(index in 0 until count){
+        for (index in 0 until count) {
             pickerView.removeItemDecorationAt(index)
         }
     }
