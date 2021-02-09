@@ -70,6 +70,8 @@ open class TextPickerView @JvmOverloads constructor(
         adapter?.notifyDataSetChanged()
     }
 
+    fun getData() = mItems
+
     //重新设置属性值-------------------------------------------
 
     fun setSelectedTextColor(@ColorInt textColor: Int) {

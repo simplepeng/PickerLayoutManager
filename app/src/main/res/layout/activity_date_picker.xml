@@ -12,7 +12,7 @@
         app:isLoop="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:scrollToEnd="true" />
+        app:scrollToEnd="false" />
 
     <!--    app:visibleCount="5"-->
     <!--    app:isLoop="true"-->

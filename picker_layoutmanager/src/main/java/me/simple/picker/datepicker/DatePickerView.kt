@@ -169,6 +169,45 @@ class DatePickerView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 滚动到当前日期
+     */
+    fun scrollToCurrentDate() {
+        val currentYear = PickerUtils.getCurrentYear()
+        val currentMonth = PickerUtils.getCurrentMonth()
+        val currentDay = PickerUtils.getCurrentDay()
+
+        with(mYearPickerView) {
+            post {
+                getData().forEachIndexed { index, year ->
+                    if (year.toInt() == currentYear) {
+                        scrollToPosition(index)
+                    }
+                }
+            }
+        }
+
+        with(mMonthPickerView) {
+            post {
+                getData().forEachIndexed { index, month ->
+                    if (month.toInt() == currentMonth) {
+                        scrollToPosition(index)
+                    }
+                }
+            }
+        }
+
+        with(mDayPickerView) {
+            post {
+                getData().forEachIndexed { index, day ->
+                    if (day.toInt() == currentDay) {
+                        scrollToPosition(index)
+                    }
+                }
+            }
+        }
+    }
+
     @SuppressWarnings
     fun getCalendar(): Calendar = Calendar.getInstance().apply {
         set(

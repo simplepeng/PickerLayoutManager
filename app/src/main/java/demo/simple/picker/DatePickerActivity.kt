@@ -19,7 +19,11 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
 //            1949, 2, 24,
 //            2021, 5, 1
 //        )
-        datePickerView.setDateInterval()
+        datePickerView.setDateInterval(
+            1949, 1, 1,
+            2030, 1, 1
+        )
+        datePickerView.scrollToCurrentDate()
 
         datePickerView.setOnDateSelectedListener { year, month, day ->
             tvDate.text = "$year-$month-$day"
