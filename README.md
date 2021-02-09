@@ -1,5 +1,7 @@
 # PickerLayoutManager
 
+[![](https://jitpack.io/v/simplepeng/PickerLayoutManager.svg)](https://jitpack.io/#simplepeng/PickerLayoutManager)
+
 一个基于自定义LayoutManager的PickerView，扩展自由度极高。
 
 ![gif_picker.gif](https://i.loli.net/2020/09/07/RBNdOF64fsCuj5U.gif)
@@ -9,20 +11,19 @@
 在根目录的`build.gradle`中添加`jitpack`的仓库
 
 ```groovy
-	allprojects {
-		repositories {
-			...
+allprojects {
+	repositories {
 			maven { url 'https://www.jitpack.io' }
-		}
 	}
+}
 ```
 
 在`app`的`build.gradle`添加依赖
 
 ```gr
-	dependencies {
-	        implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.0'
-	}
+dependencies {
+	    implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.1'
+}
 ```
 
 ## 如何使用
@@ -169,6 +170,9 @@ textPickerView.setData(items)
 ```kotlin
 //默认从1949-1-1到当前这天
 datePickerView.setDateInterval()
+//滚动到当前日期，不可与`scrollToEnd`同时使用
+datePickerView.scrollToCurrentDate()
+
 //默认从0点到24点
 timerPickerView.setTimeInterval()
 ```
@@ -185,3 +189,8 @@ timePickerView.setOnTimeSelectedListener { hour, minute ->
 }
 ```
 
+## 版本迭代
+
+* v1.0.1：修复`itemCount=1`且`isLoop=true`闪退的bug，`DatePickerView`增加`scrollToCurrentDate`的方法。
+
+* v1.0.0：首次上传
