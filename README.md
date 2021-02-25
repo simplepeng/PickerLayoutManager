@@ -13,16 +13,16 @@
 ```groovy
 allprojects {
 	repositories {
-			maven { url 'https://www.jitpack.io' }
+		maven { url 'https://www.jitpack.io' }
 	}
 }
 ```
 
 在`app`的`build.gradle`添加依赖
 
-```gr
+```groovy
 dependencies {
-	    implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.1'
+	implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.1'
 }
 ```
 
@@ -60,7 +60,7 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
             override fun onItemSelected(itemView: View, position: Int) {
                 val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
                 tvItem.setTextColor(Color.RED)
-            }
+            	}
 
             override fun onItemUnSelected(itemView: View, position: Int) {
                 val tvItem = itemView.findViewById<TextView>(R.id.tv_item)

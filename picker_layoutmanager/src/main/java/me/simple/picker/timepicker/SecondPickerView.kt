@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import me.simple.picker.utils.PickerUtils
 import me.simple.picker.widget.TextPickerView
 
-class SecondPickerView @JvmOverloads constructor(
+open class SecondPickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

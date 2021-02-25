@@ -8,7 +8,7 @@ import java.util.*
 
 typealias OnDateSelectedListener = (year: String, month: String, day: String) -> Unit
 
-class DatePickerView @JvmOverloads constructor(
+open class DatePickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

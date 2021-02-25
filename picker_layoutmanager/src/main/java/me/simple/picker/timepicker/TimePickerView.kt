@@ -7,7 +7,7 @@ import me.simple.picker.utils.PickerUtils
 
 typealias OnTimeSelectedListener = (hour: String, minute: String) -> Unit
 
-class TimePickerView @JvmOverloads constructor(
+open class TimePickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

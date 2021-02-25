@@ -6,7 +6,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import androidx.recyclerview.widget.RecyclerView
 
-class PickerItemDecoration(
+open class PickerItemDecoration(
     private val color: Int = Color.LTGRAY,
     private val size: Float = 1.0f,
     private val margin: Float = 0f
