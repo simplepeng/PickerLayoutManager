@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_date_picker.*
 import me.simple.picker.PickerLayoutManager
-import me.simple.picker.utils.dp
 import java.util.*
 
 class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListener {

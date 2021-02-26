@@ -1,17 +1,7 @@
 package me.simple.picker.utils
 
-import android.content.Context
-import android.content.res.Resources
 import android.graphics.Color
-import android.widget.Toast
 import java.util.*
-
-fun Context.toast(text: String) {
-    Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
-}
-
-val Float.dp: Float
-    get() = Resources.getSystem().displayMetrics.density * this + 0.5f
 
 object PickerUtils {
 
@@ -26,14 +16,25 @@ object PickerUtils {
 
     const val SELECTED_TEXT_COLOR = Color.BLACK
     const val UNSELECTED_TEXT_COLOR = Color.LTGRAY
+
     const val SELECTED_TEXT_SIZE = 14f
     const val UNSELECTED_TEXT_SIZE = 14f
+
     const val SELECTED_IS_BOLD = false
 
+    /**
+     * 格式化不足2位的月份或日期
+     */
     fun formatTwoChars(text: Int) = String.format("%02d", text)
 
+    /**
+     * 有31天的月数组
+     */
     private val bigMonthSet = hashSetOf(1, 3, 5, 7, 8, 10, 12)
 
+    /**
+     * 获取这个月最多有多少天
+     */
     fun getDayCountInMonth(year: Int, month: Int): Int {
         if (bigMonthSet.contains(month)) return 31
 

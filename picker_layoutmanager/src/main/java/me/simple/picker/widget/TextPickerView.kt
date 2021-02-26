@@ -15,7 +15,6 @@ import me.simple.picker.PickerLayoutManager
 import me.simple.picker.PickerRecyclerView
 import me.simple.picker.R
 import me.simple.picker.utils.PickerUtils
-import me.simple.picker.utils.dp
 
 open class TextPickerView @JvmOverloads constructor(
     context: Context,
@@ -28,8 +27,21 @@ open class TextPickerView @JvmOverloads constructor(
 
     var mSelectedTextColor = PickerUtils.SELECTED_TEXT_COLOR
     var mUnSelectedTextColor = PickerUtils.UNSELECTED_TEXT_COLOR
-    var mSelectedTextSize = PickerUtils.SELECTED_TEXT_SIZE.dp
-    var mUnSelectedTextSize = PickerUtils.UNSELECTED_TEXT_SIZE.dp
+
+//    var mSelectedTextSize = PickerUtils.SELECTED_TEXT_SIZE
+//    var mUnSelectedTextSize = PickerUtils.UNSELECTED_TEXT_SIZE
+
+    var mSelectedTextSize = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        PickerUtils.SELECTED_TEXT_SIZE,
+        resources.displayMetrics
+    )
+    var mUnSelectedTextSize = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        PickerUtils.UNSELECTED_TEXT_SIZE,
+        resources.displayMetrics
+    )
+
     var mSelectedIsBold = PickerUtils.SELECTED_IS_BOLD
 
     init {
