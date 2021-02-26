@@ -93,6 +93,12 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
         typeA.recycle()
     }
 
+    override fun generateDefaultLayoutParams(): LayoutParams {
+        val lp = LayoutParams(0, LayoutParams.WRAP_CONTENT)
+        lp.weight = 1f
+        return lp
+    }
+
     private fun setDivider(pickerView: PickerRecyclerView) {
         pickerView.addItemDecoration(
             PickerItemDecoration(
@@ -108,15 +114,6 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
         for (index in 0 until count) {
             pickerView.removeItemDecorationAt(index)
         }
-    }
-
-    protected fun generateChildLayoutParams(): LayoutParams {
-        val lp = LayoutParams(
-            0,
-            LayoutParams.WRAP_CONTENT
-        )
-        lp.weight = 1f
-        return lp
     }
 
     private fun getTextPickerViews(): HashSet<TextPickerView> {

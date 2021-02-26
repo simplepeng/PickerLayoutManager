@@ -1,7 +1,6 @@
 package me.simple.picker.widget
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.TypedValue
@@ -70,40 +69,81 @@ open class TextPickerView @JvmOverloads constructor(
         adapter?.notifyDataSetChanged()
     }
 
+    /**
+     * 获取数据源
+     */
     fun getData() = mItems
 
     //重新设置属性值-------------------------------------------
 
+    /**
+     * 设置选中时文字的颜色
+     */
     fun setSelectedTextColor(@ColorInt textColor: Int) {
         this.mSelectedTextColor = textColor
     }
 
+    /**
+     * 设置未选中时文字的颜色
+     */
     fun setUnSelectedTextColor(@ColorInt textColor: Int) {
         this.mUnSelectedTextColor = textColor
     }
 
+    /**
+     * 设置选中时文字的大小
+     */
     fun setSelectedTextSize(@Px textSize: Float) {
         this.mSelectedTextSize = textSize
     }
 
+    /**
+     * 设置未选中时文字的大小
+     */
     fun setUnSelectedTextSize(@Px textSize: Float) {
         this.mUnSelectedTextSize = textSize
     }
 
+    /**
+     * 设置选中时文字是否加粗
+     */
     fun setSelectedIsBold(bold: Boolean) {
         this.mSelectedIsBold = bold
     }
 
-     override fun setLayoutManager(layout: LayoutManager?) {
+    /**
+     * 获取选中那个item的文本
+     */
+    fun getSelectedItem(): String {
+        return mItems[getSelectedPosition()]
+    }
+
+    /**
+     * 选中某个item
+     */
+    fun scrollTo(
+        item: String,
+        smoothScroll: Boolean = false
+    ) {
+        this.post {
+            val position = mItems.indexOf(item)
+            if (!smoothScroll) {
+                scrollToPosition(position)
+            } else {
+                smoothScrollToPosition(position)
+            }
+        }
+    }
+
+    override fun setLayoutManager(layout: LayoutManager?) {
         super.setLayoutManager(layout)
 
         layoutManager.addOnItemFillListener(this)
     }
 
-    fun getSelectedItem(): String {
-        return mItems[getSelectedPosition()]
-    }
-
+    /**
+     *
+     */
     inner class TextPickerAdapter :
         RecyclerView.Adapter<TextPickerViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
@@ -121,6 +161,9 @@ open class TextPickerView @JvmOverloads constructor(
         }
     }
 
+    /**
+     *
+     */
     inner class TextPickerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val textView = itemView as TextView
@@ -131,8 +174,8 @@ open class TextPickerView @JvmOverloads constructor(
         }
     }
 
-    override fun onItemSelected(child: View, position: Int) {
-        val tv = child as TextView
+    override fun onItemSelected(itemView: View, position: Int) {
+        val tv = itemView as TextView
         tv.setTextColor(mSelectedTextColor)
         tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSelectedTextSize)
         if (mSelectedIsBold) {
@@ -140,8 +183,8 @@ open class TextPickerView @JvmOverloads constructor(
         }
     }
 
-    override fun onItemUnSelected(child: View, position: Int) {
-        val tv = child as TextView
+    override fun onItemUnSelected(itemView: View, position: Int) {
+        val tv = itemView as TextView
         tv.setTextColor(mUnSelectedTextColor)
         tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mUnSelectedTextSize)
         if (mSelectedIsBold) {

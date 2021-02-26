@@ -5,38 +5,33 @@ import android.util.AttributeSet
 import me.simple.picker.widget.TextPickerLinearLayout
 import me.simple.picker.utils.PickerUtils
 
-typealias OnTimeSelectedListener = (hour: String, minute: String) -> Unit
-
 open class TimePickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : TextPickerLinearLayout(context, attrs, defStyleAttr) {
 
-    private val mHourPickerView = HourPickerView(context).apply {
-        layoutParams = generateChildLayoutParams()
-    }
-    private val mMinutePickerView = MinutePickerView(context).apply {
-        layoutParams = generateChildLayoutParams()
-    }
+    private val hourPickerView = HourPickerView(context)
 
-    private var mOnTimeSelectedListener: OnTimeSelectedListener? = null
+    private val minutePickerView = MinutePickerView(context)
+
+    private var mOnTimeSelectedListener: ((hour: String, minute: String) -> Unit)? = null
 
     private var mStartHour: Int = PickerUtils.START_HOUR
     private var mStartMinute: Int = PickerUtils.START_MINUTE
+
     private var mEndHour: Int = PickerUtils.END_HOUR
     private var mEndMinute: Int = PickerUtils.END_MINUTE
 
     init {
-        orientation = HORIZONTAL
         weightSum = 2f
 
-        addView(mHourPickerView)
-        addView(mMinutePickerView)
+        addViewInLayout(hourPickerView, 0, generateDefaultLayoutParams(), true)
+        addViewInLayout(minutePickerView, 1, generateDefaultLayoutParams(), true)
+        requestLayout()
 
         resetLayoutManager()
 
-//        setTimeInterval(2, 10, 22, 20)
         setTimeInterval()
     }
 
@@ -46,25 +41,25 @@ open class TimePickerView @JvmOverloads constructor(
     }
 
     private fun setListener() {
-        mHourPickerView.addOnSelectedItemListener {
-            val hour = mHourPickerView.getHour()
+        hourPickerView.addOnSelectedItemListener {
+            val hour = hourPickerView.getHour()
 
             when (hour) {
                 mStartHour -> {
-                    mMinutePickerView.setMinuteInterval(start = mStartMinute)
+                    minutePickerView.setMinuteInterval(start = mStartMinute)
                 }
                 mEndHour -> {
-                    mMinutePickerView.setMinuteInterval(end = mEndMinute)
+                    minutePickerView.setMinuteInterval(end = mEndMinute)
                 }
                 else -> {
-                    mMinutePickerView.setMinuteInterval()
+                    minutePickerView.setMinuteInterval()
                 }
             }
 
             dispatchOnSelectedItem()
         }
 
-        mMinutePickerView.addOnSelectedItemListener {
+        minutePickerView.addOnSelectedItemListener {
             dispatchOnSelectedItem()
         }
     }
@@ -81,29 +76,35 @@ open class TimePickerView @JvmOverloads constructor(
         this.mEndHour = endHour
         this.mEndMinute = endMinute
 
-        mHourPickerView.setHourInterval(startHour, endHour)
-        mMinutePickerView.setMinuteInterval(startMinute)
+        hourPickerView.setHourInterval(startHour, endHour)
+        minutePickerView.setMinuteInterval(startMinute)
 
-        if (mScrollToEnd){
+        if (mScrollToEnd) {
             scrollToEnd()
         }
     }
 
     private fun dispatchOnSelectedItem() {
         this.post {
-            val hour = mHourPickerView.getHourStr()
-            val minute = mMinutePickerView.getMinuteStr()
+            val hour = hourPickerView.getHourStr()
+            val minute = minutePickerView.getMinuteStr()
 
             mOnTimeSelectedListener?.invoke(hour, minute)
         }
     }
 
+    /**
+     * 获取时间的字符串数组
+     */
     fun getTime() = arrayOf(
-        mHourPickerView.getHourStr(),
-        mMinutePickerView.getMinuteStr()
+        hourPickerView.getHourStr(),
+        minutePickerView.getMinuteStr()
     )
 
-    fun setOnTimeSelectedListener(onSelected: OnTimeSelectedListener) {
+    /**
+     * 设置时间选中的监听
+     */
+    fun setOnTimeSelectedListener(onSelected: (hour: String, minute: String) -> Unit) {
         this.mOnTimeSelectedListener = onSelected
     }
 }

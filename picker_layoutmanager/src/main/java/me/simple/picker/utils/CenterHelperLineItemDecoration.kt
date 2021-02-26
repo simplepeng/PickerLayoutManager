@@ -6,7 +6,7 @@ import android.graphics.Paint
 import androidx.recyclerview.widget.RecyclerView
 import me.simple.picker.PickerLayoutManager
 
-internal class CenterHelperLineItemDecoration : RecyclerView.ItemDecoration() {
+open class CenterHelperLineItemDecoration : RecyclerView.ItemDecoration() {
 
     private val mPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.RED

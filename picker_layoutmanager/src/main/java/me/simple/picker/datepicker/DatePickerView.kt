@@ -6,25 +6,17 @@ import me.simple.picker.widget.TextPickerLinearLayout
 import me.simple.picker.utils.PickerUtils
 import java.util.*
 
-typealias OnDateSelectedListener = (year: String, month: String, day: String) -> Unit
-
 open class DatePickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : TextPickerLinearLayout(context, attrs, defStyleAttr) {
 
-    private val mYearPickerView = YearPickerView(context).apply {
-        layoutParams = generateChildLayoutParams()
-    }
-    private val mMonthPickerView = MonthPickerView(context).apply {
-        layoutParams = generateChildLayoutParams()
-    }
-    private val mDayPickerView = DayPickerView(context).apply {
-        layoutParams = generateChildLayoutParams()
-    }
+    val yearPickerView = YearPickerView(context)
+    val monthPickerView = MonthPickerView(context)
+    val dayPickerView = DayPickerView(context)
 
-    private var mOnDateSelectedListener: OnDateSelectedListener? = null
+    private var mOnDateSelectedListener: ((year: String, month: String, day: String) -> Unit)? = null
 
     private var mStartYear: Int = PickerUtils.START_YEAR
     private var mStartMonth: Int = PickerUtils.START_YEAR
@@ -34,12 +26,14 @@ open class DatePickerView @JvmOverloads constructor(
     private var mEndMonth: Int = PickerUtils.getCurrentMonth()
     private var mEndDay: Int = PickerUtils.getCurrentDay()
 
+
     init {
         weightSum = 3f
 
-        addView(mYearPickerView)
-        addView(mMonthPickerView)
-        addView(mDayPickerView)
+        addViewInLayout(yearPickerView, 0, generateDefaultLayoutParams(), true)
+        addViewInLayout(monthPickerView, 1, generateDefaultLayoutParams(), true)
+        addViewInLayout(dayPickerView, 2, generateDefaultLayoutParams(), true)
+        requestLayout()
 
         resetLayoutManager()
 
@@ -52,38 +46,38 @@ open class DatePickerView @JvmOverloads constructor(
     }
 
     private fun setListener() {
-        mYearPickerView.addOnSelectedItemListener { position ->
-            val year = mYearPickerView.getYear()
+        yearPickerView.addOnSelectedItemListener { position ->
+            val year = yearPickerView.getYear()
             when (year) {
                 mStartYear -> {
-                    mMonthPickerView.setMonthInterval(mStartMonth)
+                    monthPickerView.setMonthInterval(mStartMonth)
                 }
                 mEndYear -> {
-                    mMonthPickerView.setMonthInterval(endMonth = mEndMonth)
+                    monthPickerView.setMonthInterval(endMonth = mEndMonth)
                 }
                 else -> {
-                    mMonthPickerView.setMonthInterval()
+                    monthPickerView.setMonthInterval()
                 }
             }
 
             this.post {
-                val month = mMonthPickerView.getMonth()
+                val month = monthPickerView.getMonth()
                 setDayInterval(year, month)
 
                 dispatchOnItemSelected()
             }
         }
 
-        mMonthPickerView.addOnSelectedItemListener { position ->
-            val year = mYearPickerView.getYear()
-            val month = mMonthPickerView.getMonth()
+        monthPickerView.addOnSelectedItemListener { position ->
+            val year = yearPickerView.getYear()
+            val month = monthPickerView.getMonth()
 
             setDayInterval(year, month)
 
             dispatchOnItemSelected()
         }
 
-        mDayPickerView.addOnSelectedItemListener { position ->
+        dayPickerView.addOnSelectedItemListener { position ->
             dispatchOnItemSelected()
         }
     }
@@ -94,19 +88,19 @@ open class DatePickerView @JvmOverloads constructor(
     ) {
         if (year == mStartYear && month == mStartMonth) {
             val endDay = PickerUtils.getDayCountInMonth(year, month)
-            mDayPickerView.setDayInterval(mStartDay, endDay)
+            dayPickerView.setDayInterval(mStartDay, endDay)
         } else if (year == mEndYear && month == mEndMonth) {
-            mDayPickerView.setDayInterval(endDay = mEndDay)
+            dayPickerView.setDayInterval(endDay = mEndDay)
         } else {
-            mDayPickerView.setDayIntervalByMonth(year, month)
+            dayPickerView.setDayIntervalByMonth(year, month)
         }
     }
 
     private fun dispatchOnItemSelected() {
         this.post {
-            val year = mYearPickerView.getYearStr()
-            val month = mMonthPickerView.getMonthStr()
-            val day = mDayPickerView.getDayStr()
+            val year = yearPickerView.getYearStr()
+            val month = monthPickerView.getMonthStr()
+            val day = dayPickerView.getDayStr()
 
             mOnDateSelectedListener?.invoke(year, month, day)
         }
@@ -147,18 +141,18 @@ open class DatePickerView @JvmOverloads constructor(
         this.mEndMonth = endMonth
         this.mEndDay = endDay
 
-        mYearPickerView.setYearInterval(startYear, endYear)
+        yearPickerView.setYearInterval(startYear, endYear)
 
         if (mScrollToEnd) {
-            mMonthPickerView.setMonthInterval(endMonth = endMonth)
+            monthPickerView.setMonthInterval(endMonth = endMonth)
         } else {
-            mMonthPickerView.setMonthInterval(startMonth)
+            monthPickerView.setMonthInterval(startMonth)
         }
 
         if (mScrollToEnd) {
-            mDayPickerView.setDayInterval(endDay = endDay)
+            dayPickerView.setDayInterval(endDay = endDay)
         } else {
-            mDayPickerView.setDayInterval(
+            dayPickerView.setDayInterval(
                 startDay,
                 PickerUtils.getDayCountInMonth(startYear, startMonth)
             )
@@ -177,7 +171,7 @@ open class DatePickerView @JvmOverloads constructor(
         val currentMonth = PickerUtils.getCurrentMonth()
         val currentDay = PickerUtils.getCurrentDay()
 
-        with(mYearPickerView) {
+        with(yearPickerView) {
             post {
                 getData().forEachIndexed { index, year ->
                     if (year.toInt() == currentYear) {
@@ -187,7 +181,7 @@ open class DatePickerView @JvmOverloads constructor(
             }
         }
 
-        with(mMonthPickerView) {
+        with(monthPickerView) {
             post {
                 getData().forEachIndexed { index, month ->
                     if (month.toInt() == currentMonth) {
@@ -197,7 +191,7 @@ open class DatePickerView @JvmOverloads constructor(
             }
         }
 
-        with(mDayPickerView) {
+        with(dayPickerView) {
             post {
                 getData().forEachIndexed { index, day ->
                     if (day.toInt() == currentDay) {
@@ -208,23 +202,78 @@ open class DatePickerView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 获取当前选中时间的Calendar
+     */
     @SuppressWarnings
     fun getCalendar(): Calendar = Calendar.getInstance().apply {
         set(
-            mYearPickerView.getYear(), mMonthPickerView.getMonth() - 1, mDayPickerView.getDay(),
+            yearPickerView.getYear(), monthPickerView.getMonth() - 1, dayPickerView.getDay(),
             0, 0, 0
         )
     }
 
+    /**
+     *
+     */
     fun getDate(): Date = getCalendar().time
 
+    /**
+     * 获取年月日的字符串数组
+     */
     fun getYearMonthDay() = arrayOf(
-        mYearPickerView.getYearStr(),
-        mMonthPickerView.getMonthStr(),
-        mDayPickerView.getDayStr()
+        yearPickerView.getYearStr(),
+        monthPickerView.getMonthStr(),
+        dayPickerView.getDayStr()
     )
 
-    fun setOnDateSelectedListener(onSelected: OnDateSelectedListener) {
+    /**
+     * 日期选中的监听
+     */
+    fun setOnDateSelectedListener(onSelected: (year: String, month: String, day: String) -> Unit) {
         this.mOnDateSelectedListener = onSelected
+    }
+
+    /**
+     * 滚动到指定的Calendar
+     */
+    fun scrollTo(
+        calendar: Calendar,
+        smoothScroll: Boolean = false
+    ) {
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH) + 1
+        val day = calendar.get(Calendar.DATE)
+        scrollTo(year, month, day, smoothScroll)
+    }
+
+    /**
+     * 滚动到指定的Date
+     */
+    fun scrollTo(
+        date: Date,
+        smoothScroll: Boolean = false
+    ) {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        scrollTo(calendar, smoothScroll)
+    }
+
+    /**
+     * 滚动到指定的年月日
+     */
+    fun scrollTo(
+        year: Int,
+        month: Int,
+        day: Int,
+        smoothScroll: Boolean = false
+    ) {
+        yearPickerView.scrollTo(year.toString(), smoothScroll)
+        yearPickerView.post {
+            monthPickerView.scrollTo(PickerUtils.formatTwoChars(month), smoothScroll)
+        }
+        monthPickerView.post {
+            dayPickerView.scrollTo(PickerUtils.formatTwoChars(day), smoothScroll)
+        }
     }
 }

@@ -8,6 +8,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_date_picker.*
 import me.simple.picker.PickerLayoutManager
 import me.simple.picker.utils.dp
+import java.util.*
 
 class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListener {
 
@@ -98,6 +99,19 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
             toast("$date   $time")
         }
 
+        btnDatePickerScrollTo.setOnClickListener {
+            val year = 2020
+            val month = 2
+            val day = 15
+
+            val calendar = Calendar.getInstance().apply {
+                set(year, month - 1, day)
+            }
+
+            val smoothScroll = false
+            datePickerView.scrollTo(calendar, smoothScroll)
+//            datePickerView.scrollTo(year, month, day)
+        }
     }
 
     override fun onItemSelected(child: View, position: Int) {
