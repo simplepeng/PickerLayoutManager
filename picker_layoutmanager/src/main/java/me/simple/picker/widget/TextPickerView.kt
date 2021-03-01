@@ -28,9 +28,6 @@ open class TextPickerView @JvmOverloads constructor(
     var mSelectedTextColor = PickerUtils.SELECTED_TEXT_COLOR
     var mUnSelectedTextColor = PickerUtils.UNSELECTED_TEXT_COLOR
 
-//    var mSelectedTextSize = PickerUtils.SELECTED_TEXT_SIZE
-//    var mUnSelectedTextSize = PickerUtils.UNSELECTED_TEXT_SIZE
-
     var mSelectedTextSize = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
         PickerUtils.SELECTED_TEXT_SIZE,
@@ -127,23 +124,18 @@ open class TextPickerView @JvmOverloads constructor(
      * 获取选中那个item的文本
      */
     fun getSelectedItem(): String {
+        val selectedPosition = getSelectedPosition()
+        if (selectedPosition == -1) return ""
         return mItems[getSelectedPosition()]
     }
 
     /**
      * 选中某个item
      */
-    fun scrollTo(
-        item: String,
-        smoothScroll: Boolean = false
-    ) {
+    open fun selectedItem(item: String) {
         this.post {
             val position = mItems.indexOf(item)
-            if (!smoothScroll) {
-                scrollToPosition(position)
-            } else {
-                smoothScrollToPosition(position)
-            }
+            scrollToPosition(position)
         }
     }
 

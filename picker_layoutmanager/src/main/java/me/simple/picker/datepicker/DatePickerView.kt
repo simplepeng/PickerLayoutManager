@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import me.simple.picker.widget.TextPickerLinearLayout
 import me.simple.picker.utils.PickerUtils
 import java.util.*
+import kotlin.IllegalArgumentException
 
 open class DatePickerView @JvmOverloads constructor(
     context: Context,
@@ -16,7 +17,11 @@ open class DatePickerView @JvmOverloads constructor(
     val monthPickerView = MonthPickerView(context)
     val dayPickerView = DayPickerView(context)
 
-    private var mOnDateSelectedListener: ((year: String, month: String, day: String) -> Unit)? = null
+    private var mOnDateSelectedListener: ((
+        year: String,
+        month: String,
+        day: String
+    ) -> Unit)? = null
 
     private var mStartYear: Int = PickerUtils.START_YEAR
     private var mStartMonth: Int = PickerUtils.START_YEAR
@@ -45,7 +50,11 @@ open class DatePickerView @JvmOverloads constructor(
         setListener()
     }
 
+    /**
+     *
+     */
     private fun setListener() {
+        yearPickerView.removeAllOnItemSelectedListener()
         yearPickerView.addOnSelectedItemListener { position ->
             val year = yearPickerView.getYear()
             when (year) {
@@ -60,7 +69,7 @@ open class DatePickerView @JvmOverloads constructor(
                 }
             }
 
-            this.post {
+            yearPickerView.post {
                 val month = monthPickerView.getMonth()
                 setDayInterval(year, month)
 
@@ -68,6 +77,7 @@ open class DatePickerView @JvmOverloads constructor(
             }
         }
 
+        monthPickerView.removeAllOnItemSelectedListener()
         monthPickerView.addOnSelectedItemListener { position ->
             val year = yearPickerView.getYear()
             val month = monthPickerView.getMonth()
@@ -77,11 +87,15 @@ open class DatePickerView @JvmOverloads constructor(
             dispatchOnItemSelected()
         }
 
+        dayPickerView.removeAllOnItemSelectedListener()
         dayPickerView.addOnSelectedItemListener { position ->
             dispatchOnItemSelected()
         }
     }
 
+    /**
+     * 设置日期-天的区间
+     */
     private fun setDayInterval(
         year: Int,
         month: Int
@@ -96,6 +110,9 @@ open class DatePickerView @JvmOverloads constructor(
         }
     }
 
+    /**
+     *
+     */
     private fun dispatchOnItemSelected() {
         this.post {
             val year = yearPickerView.getYearStr()
@@ -109,7 +126,6 @@ open class DatePickerView @JvmOverloads constructor(
     /**
      * 设置日期时间的区间
      */
-    @SuppressWarnings("")
     fun setDateInterval(
         start: Calendar = PickerUtils.getStartCalendar(),
         end: Calendar = PickerUtils.getCurrentCalendar()
@@ -123,7 +139,6 @@ open class DatePickerView @JvmOverloads constructor(
     /**
      * 设置日期时间的区间
      */
-    @SuppressWarnings("")
     fun setDateInterval(
         startYear: Int = PickerUtils.START_YEAR,
         startMonth: Int = PickerUtils.START_MONTH,
@@ -163,12 +178,82 @@ open class DatePickerView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 选中当前时间的那个item
+     */
+    @Deprecated("方法名不合理", ReplaceWith("selectedCurrentDateItem"))
+    fun scrollToCurrentDate() {
+        selectedCurrentDateItem()
+    }
+
+    /**
+     * 选中当前时间的那个item
+     */
+    fun selectedCurrentDateItem() {
+        val currentCalendar = PickerUtils.getCurrentCalendar()
+        setSelectedItem(currentCalendar)
+    }
+
+    /**
+     *
+     */
+    fun setSelectedItem(date: Date) {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        setSelectedItem(calendar)
+    }
+
+    /**
+     *
+     */
+    fun setSelectedItem(calendar: Calendar) {
+        val year = PickerUtils.getYear(calendar)
+        val month = PickerUtils.getMonth(calendar)
+        val day = PickerUtils.getDay(calendar)
+        setSelectedItem(year, month, day)
+    }
+
+    /**
+     *
+     */
+    fun setSelectedItem(
+        year: Int,
+        month: Int,
+        day: Int
+    ) {
+        if (year < mStartYear || year > mEndYear) {
+            throw IllegalArgumentException("year must be >= $mStartYear and <= $mEndYear")
+        }
+
+        if (year == mStartYear && month < mStartMonth) {
+            throw IllegalArgumentException("month must be >= $mStartMonth")
+        }
+        if (year == mEndYear && month > mEndMonth) {
+            throw IllegalArgumentException("month must be <= $mEndMonth")
+        }
+
+        if (year == mStartYear && month == mStartMonth && day < mStartDay) {
+            throw IllegalArgumentException("day must be >= $mStartDay")
+        }
+        if (year == mEndYear && month == mEndMonth && day > mEndDay) {
+            throw IllegalArgumentException("day must be <= $mEndDay")
+        }
+
+        yearPickerView.post {
+            yearPickerView.selectedItem(year)
+        }
+        monthPickerView.post {
+            monthPickerView.selectedItem(month)
+        }
+        dayPickerView.post {
+            dayPickerView.selectedItem(day)
+        }
+    }
 
 
     /**
      * 获取当前选中时间的Calendar
      */
-    @SuppressWarnings
     fun getCalendar(): Calendar = Calendar.getInstance().apply {
         set(
             yearPickerView.getYear(), monthPickerView.getMonth() - 1, dayPickerView.getDay(),

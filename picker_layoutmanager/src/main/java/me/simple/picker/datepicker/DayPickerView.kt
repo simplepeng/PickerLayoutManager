@@ -11,11 +11,6 @@ open class DayPickerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : TextPickerView(context, attrs, defStyleAttr) {
 
-    init {
-        setDayInterval()
-    }
-
-    @SuppressWarnings
     fun setDayInterval(
         startDay: Int = 1,
         endDay: Int = 31
@@ -27,7 +22,6 @@ open class DayPickerView @JvmOverloads constructor(
         adapter?.notifyDataSetChanged()
     }
 
-    @SuppressWarnings
     fun setDayIntervalByMonth(
         year: Int,
         month: Int,
@@ -39,4 +33,8 @@ open class DayPickerView @JvmOverloads constructor(
     fun getDayStr() = getSelectedItem()
 
     fun getDay() = getDayStr().toInt()
+
+    fun selectedItem(number: Int) {
+        selectedItem(PickerUtils.formatTwoChars(number))
+    }
 }

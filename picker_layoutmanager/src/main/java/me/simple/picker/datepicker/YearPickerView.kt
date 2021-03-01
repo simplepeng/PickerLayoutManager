@@ -33,4 +33,8 @@ open class YearPickerView @JvmOverloads constructor(
     fun getYearStr(): String {
         return getSelectedItem()
     }
+
+    fun selectedItem(number: Int) {
+        selectedItem(number.toString())
+    }
 }
