@@ -110,7 +110,7 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
             val smoothScroll = false
 //            datePickerView.scrollTo(calendar, smoothScroll)
 //            datePickerView.scrollTo(year, month, day)
-            datePickerView.scrollToCurrentDate()
+
         }
     }
 

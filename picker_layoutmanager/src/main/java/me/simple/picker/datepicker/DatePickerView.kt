@@ -163,44 +163,7 @@ open class DatePickerView @JvmOverloads constructor(
         }
     }
 
-    /**
-     * 滚动到当前日期
-     */
-    fun scrollToCurrentDate() {
-        val currentYear = PickerUtils.getCurrentYear()
-        val currentMonth = PickerUtils.getCurrentMonth()
-        val currentDay = PickerUtils.getCurrentDay()
 
-        with(yearPickerView) {
-            post {
-                getData().forEachIndexed { index, year ->
-                    if (year.toInt() == currentYear) {
-                        scrollToPosition(index)
-                    }
-                }
-            }
-        }
-
-        with(monthPickerView) {
-            post {
-                getData().forEachIndexed { index, month ->
-                    if (month.toInt() == currentMonth) {
-                        scrollToPosition(index)
-                    }
-                }
-            }
-        }
-
-        with(dayPickerView) {
-            post {
-                getData().forEachIndexed { index, day ->
-                    if (day.toInt() == currentDay) {
-                        scrollToPosition(index)
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * 获取当前选中时间的Calendar
