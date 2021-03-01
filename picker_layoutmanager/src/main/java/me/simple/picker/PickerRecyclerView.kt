@@ -164,13 +164,22 @@ open class PickerRecyclerView @JvmOverloads constructor(
     /**
      *
      */
-
     fun addOnSelectedItemListener(listener: OnItemSelectedListener) {
         layoutManager.addOnItemSelectedListener(listener)
     }
 
+    /**
+     *
+     */
     fun removeOnItemSelectedListener(listener: OnItemSelectedListener) {
         layoutManager.removeOnItemSelectedListener(listener)
+    }
+
+    /**
+     * 删除所有的监听器
+     */
+    fun removeAllOnItemSelectedListener() {
+        layoutManager.removeAllOnItemSelectedListener()
     }
 
     /**

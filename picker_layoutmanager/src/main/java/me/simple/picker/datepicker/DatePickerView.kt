@@ -214,7 +214,7 @@ open class DatePickerView @JvmOverloads constructor(
     }
 
     /**
-     *
+     * 获取当前选中时间的Date
      */
     fun getDate(): Date = getCalendar().time
 
@@ -234,46 +234,4 @@ open class DatePickerView @JvmOverloads constructor(
         this.mOnDateSelectedListener = onSelected
     }
 
-    /**
-     * 滚动到指定的Calendar
-     */
-    fun scrollTo(
-        calendar: Calendar,
-        smoothScroll: Boolean = false
-    ) {
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH) + 1
-        val day = calendar.get(Calendar.DATE)
-        scrollTo(year, month, day, smoothScroll)
-    }
-
-    /**
-     * 滚动到指定的Date
-     */
-    fun scrollTo(
-        date: Date,
-        smoothScroll: Boolean = false
-    ) {
-        val calendar = Calendar.getInstance()
-        calendar.time = date
-        scrollTo(calendar, smoothScroll)
-    }
-
-    /**
-     * 滚动到指定的年月日
-     */
-    fun scrollTo(
-        year: Int,
-        month: Int,
-        day: Int,
-        smoothScroll: Boolean = false
-    ) {
-        yearPickerView.scrollTo(year.toString(), smoothScroll)
-        yearPickerView.post {
-            monthPickerView.scrollTo(PickerUtils.formatTwoChars(month), smoothScroll)
-        }
-        monthPickerView.post {
-            dayPickerView.scrollTo(PickerUtils.formatTwoChars(day), smoothScroll)
-        }
-    }
 }

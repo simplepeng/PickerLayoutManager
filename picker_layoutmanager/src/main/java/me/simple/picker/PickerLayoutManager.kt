@@ -767,8 +767,18 @@ open class PickerLayoutManager @JvmOverloads constructor(
         mOnItemSelectedListener.add(listener)
     }
 
+    /**
+     * 删除中心item选中的监听器
+     */
     fun removeOnItemSelectedListener(listener: OnItemSelectedListener) {
         mOnItemSelectedListener.remove(listener)
+    }
+
+    /**
+     * 删除所有的监听器
+     */
+    fun removeAllOnItemSelectedListener() {
+        mOnItemSelectedListener.clear()
     }
 
     /**

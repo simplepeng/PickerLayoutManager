@@ -23,7 +23,7 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
             1949, 1, 1,
             2030, 1, 1
         )
-        datePickerView.scrollToCurrentDate()
+//        datePickerView.scrollToCurrentDate()
 
         datePickerView.setOnDateSelectedListener { year, month, day ->
             tvDate.text = "$year-$month-$day"
@@ -108,8 +108,9 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
             }
 
             val smoothScroll = false
-            datePickerView.scrollTo(calendar, smoothScroll)
+//            datePickerView.scrollTo(calendar, smoothScroll)
 //            datePickerView.scrollTo(year, month, day)
+            datePickerView.scrollToCurrentDate()
         }
     }
 
