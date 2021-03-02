@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_date_picker.*
 import me.simple.picker.PickerLayoutManager
-import me.simple.picker.datepicker.DatePickerView
 import me.simple.picker.widget.TextPickerLinearLayout
 import java.text.SimpleDateFormat
 import java.util.*
@@ -55,8 +54,8 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
                 set(year, month - 1, day)
             }
 
-//            datePickerView.selectedCurrentDateItem()
-            datePickerView.setSelectedItem(calendar)
+            datePickerView.selectedTodayItem()
+//            datePickerView.setSelectedItem(calendar)
 //            datePickerView.setSelectedItem(year, month, day)
         }
 
@@ -107,7 +106,6 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
             setSelectedTextSize(16f.dp)
             setUnSelectedTextSize(12f.dp)
             setSelectedIsBold(true)
-
 
             setDividerVisible(true)
             setDividerSize(2f.dp)

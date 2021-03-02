@@ -33,8 +33,6 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
     var mDividerColor = Color.LTGRAY
     var mDividerMargin = 0f
 
-    var mScrollToEnd: Boolean = false
-
     var mSelectedTextColor = PickerUtils.SELECTED_TEXT_COLOR
     var mUnSelectedTextColor = PickerUtils.UNSELECTED_TEXT_COLOR
 
@@ -56,7 +54,7 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
         initAttrs(attrs)
     }
 
-    private fun initAttrs(attrs: AttributeSet? = null) {
+    open fun initAttrs(attrs: AttributeSet? = null) {
         val typeA = context.obtainStyledAttributes(
             attrs,
             R.styleable.TextPickerLinearLayout
@@ -76,9 +74,6 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
             typeA.getColor(R.styleable.TextPickerLinearLayout_dividerColor, mDividerColor)
         mDividerMargin =
             typeA.getDimension(R.styleable.TextPickerLinearLayout_dividerMargin, mDividerMargin)
-
-        mScrollToEnd =
-            typeA.getBoolean(R.styleable.TextPickerLinearLayout_scrollToEnd, mScrollToEnd)
 
         mSelectedTextColor =
             typeA.getColor(R.styleable.TextPickerLinearLayout_selectedTextColor, mSelectedTextColor)

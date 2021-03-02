@@ -12,8 +12,7 @@
         android:layout_height="wrap_content"
         app:isLoop="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:scrollToEnd="false" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--    app:visibleCount="5"-->
     <!--    app:isLoop="true"-->

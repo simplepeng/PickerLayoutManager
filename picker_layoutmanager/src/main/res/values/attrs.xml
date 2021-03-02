@@ -18,9 +18,6 @@
     <attr name="unSelectedTextSize" format="dimension" />
     <attr name="selectedIsBold" format="boolean" />
 
-    <attr name="scrollToEnd" format="boolean" />
-
-
     <declare-styleable name="PickerRecyclerView">
         <attr name="orientation" format="enum">
             <enum name="horizontal" value="0" />
@@ -56,7 +53,6 @@
         <attr name="unSelectedTextSize" />
         <attr name="selectedIsBold" />
 
-        <attr name="scrollToEnd" />
     </declare-styleable>
 
     <declare-styleable name="TextPickerView">

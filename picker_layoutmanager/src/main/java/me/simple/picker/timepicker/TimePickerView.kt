@@ -78,10 +78,6 @@ open class TimePickerView @JvmOverloads constructor(
 
         hourPickerView.setHourInterval(startHour, endHour)
         minutePickerView.setMinuteInterval(startMinute)
-
-        if (mScrollToEnd) {
-            scrollToEnd()
-        }
     }
 
     private fun dispatchOnSelectedItem() {

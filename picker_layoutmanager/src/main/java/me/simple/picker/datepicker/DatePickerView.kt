@@ -41,7 +41,10 @@ open class DatePickerView @JvmOverloads constructor(
         addViewInLayout(monthPickerView, 1, generateDefaultLayoutParams(), true)
         addViewInLayout(dayPickerView, 2, generateDefaultLayoutParams(), true)
         requestLayout()
+    }
 
+    override fun initAttrs(attrs: AttributeSet?) {
+        super.initAttrs(attrs)
         setListener()
 
         setDateInterval()
@@ -182,14 +185,14 @@ open class DatePickerView @JvmOverloads constructor(
     }
 
     /**
-     *
+     * 选中结束时间
      */
     override fun scrollToEnd() {
         selectedEndItem()
     }
 
     /**
-     *
+     * 选中结束时间
      */
     fun selectedEndItem() {
         yearPickerView.post {
@@ -208,40 +211,40 @@ open class DatePickerView @JvmOverloads constructor(
      */
     @Deprecated("方法名不合理", ReplaceWith("selectedCurrentDateItem"))
     fun scrollToCurrentDate() {
-        selectedCurrentDateItem()
+        selectedTodayItem()
     }
 
     /**
      * 选中当前时间的那个item
      */
-    fun selectedCurrentDateItem() {
+    fun selectedTodayItem() {
         val currentCalendar = PickerUtils.getCurrentCalendar()
-        setSelectedItem(currentCalendar)
+        selectedItem(currentCalendar)
     }
 
     /**
-     *
+     * 选中某一个item
      */
-    fun setSelectedItem(date: Date) {
+    fun selectedItem(date: Date) {
         val calendar = Calendar.getInstance()
         calendar.time = date
-        setSelectedItem(calendar)
+        selectedItem(calendar)
     }
 
     /**
-     *
+     * 选中某一个item
      */
-    fun setSelectedItem(calendar: Calendar) {
+    fun selectedItem(calendar: Calendar) {
         val year = PickerUtils.getYear(calendar)
         val month = PickerUtils.getMonth(calendar)
         val day = PickerUtils.getDay(calendar)
-        setSelectedItem(year, month, day)
+        selectedItem(year, month, day)
     }
 
     /**
-     *
+     * 选中某一个item
      */
-    fun setSelectedItem(
+    fun selectedItem(
         year: Int,
         month: Int,
         day: Int
