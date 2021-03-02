@@ -11,6 +11,10 @@ open class YearPickerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : TextPickerView(context, attrs, defStyleAttr) {
 
+    init {
+        setYearInterval()
+    }
+
     fun setYearInterval(
         startYear: Int = PickerUtils.START_YEAR,
         endYear: Int = PickerUtils.getCurrentYear()

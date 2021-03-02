@@ -11,6 +11,10 @@ open class MonthPickerView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : TextPickerView(context, attrs, defStyleAttr) {
 
+    init {
+        setMonthInterval()
+    }
+
     fun setMonthInterval(
         startMonth: Int = 1,
         endMonth: Int = 12

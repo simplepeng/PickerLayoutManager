@@ -139,6 +139,14 @@ open class TextPickerView @JvmOverloads constructor(
         }
     }
 
+    /**
+     *
+     */
+    open fun selectedEndItem() {
+        if (adapter == null) return
+        scrollToPosition(adapter!!.itemCount - 1)
+    }
+
     override fun setLayoutManager(layout: LayoutManager?) {
         super.setLayoutManager(layout)
 

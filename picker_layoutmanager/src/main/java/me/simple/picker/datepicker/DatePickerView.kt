@@ -40,21 +40,15 @@ open class DatePickerView @JvmOverloads constructor(
         addViewInLayout(dayPickerView, 2, generateDefaultLayoutParams(), true)
         requestLayout()
 
-        resetLayoutManager()
+        setListener()
 
         setDateInterval()
-    }
-
-    override fun resetLayoutManager() {
-        super.resetLayoutManager()
-        setListener()
     }
 
     /**
      *
      */
     private fun setListener() {
-        yearPickerView.removeAllOnItemSelectedListener()
         yearPickerView.addOnSelectedItemListener { position ->
             val year = yearPickerView.getYear()
             when (year) {
@@ -69,7 +63,7 @@ open class DatePickerView @JvmOverloads constructor(
                 }
             }
 
-            yearPickerView.post {
+            monthPickerView.post {
                 val month = monthPickerView.getMonth()
                 setDayInterval(year, month)
 
@@ -77,7 +71,6 @@ open class DatePickerView @JvmOverloads constructor(
             }
         }
 
-        monthPickerView.removeAllOnItemSelectedListener()
         monthPickerView.addOnSelectedItemListener { position ->
             val year = yearPickerView.getYear()
             val month = monthPickerView.getMonth()
@@ -87,7 +80,6 @@ open class DatePickerView @JvmOverloads constructor(
             dispatchOnItemSelected()
         }
 
-        dayPickerView.removeAllOnItemSelectedListener()
         dayPickerView.addOnSelectedItemListener { position ->
             dispatchOnItemSelected()
         }
@@ -118,7 +110,6 @@ open class DatePickerView @JvmOverloads constructor(
             val year = yearPickerView.getYearStr()
             val month = monthPickerView.getMonthStr()
             val day = dayPickerView.getDayStr()
-
             mOnDateSelectedListener?.invoke(year, month, day)
         }
     }
@@ -158,23 +149,45 @@ open class DatePickerView @JvmOverloads constructor(
 
         yearPickerView.setYearInterval(startYear, endYear)
 
-        if (mScrollToEnd) {
-            monthPickerView.setMonthInterval(endMonth = endMonth)
-        } else {
-            monthPickerView.setMonthInterval(startMonth)
-        }
+//        if (mScrollToEnd) {
+//            monthPickerView.setMonthInterval(endMonth = endMonth)
+//        } else {
+//            monthPickerView.setMonthInterval(startMonth)
+//        }
+//
+//        if (mScrollToEnd) {
+//            dayPickerView.setDayInterval(endDay = endDay)
+//        } else {
+//            dayPickerView.setDayInterval(
+//                startDay,
+//                PickerUtils.getDayCountInMonth(startYear, startMonth)
+//            )
+//        }
+//
+//        if (mScrollToEnd) {
+//            scrollToEnd()
+//        }
+    }
 
-        if (mScrollToEnd) {
-            dayPickerView.setDayInterval(endDay = endDay)
-        } else {
-            dayPickerView.setDayInterval(
-                startDay,
-                PickerUtils.getDayCountInMonth(startYear, startMonth)
-            )
-        }
+    /**
+     *
+     */
+    override fun scrollToEnd() {
+        selectedEndItem()
+    }
 
-        if (mScrollToEnd) {
-            scrollToEnd()
+    /**
+     *
+     */
+    fun selectedEndItem() {
+        yearPickerView.post {
+            yearPickerView.selectedEndItem()
+            monthPickerView.post {
+                monthPickerView.selectedEndItem()
+                dayPickerView.post {
+                    dayPickerView.selectedEndItem()
+                }
+            }
         }
     }
 
@@ -241,12 +254,12 @@ open class DatePickerView @JvmOverloads constructor(
 
         yearPickerView.post {
             yearPickerView.selectedItem(year)
-        }
-        monthPickerView.post {
-            monthPickerView.selectedItem(month)
-        }
-        dayPickerView.post {
-            dayPickerView.selectedItem(day)
+            monthPickerView.post {
+                monthPickerView.selectedItem(month)
+                dayPickerView.post {
+                    dayPickerView.selectedItem(day)
+                }
+            }
         }
     }
 

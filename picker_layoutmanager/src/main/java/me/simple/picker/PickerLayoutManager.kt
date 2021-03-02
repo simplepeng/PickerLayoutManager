@@ -227,6 +227,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     override fun onLayoutCompleted(state: RecyclerView.State?) {
         super.onLayoutCompleted(state)
         mPendingScrollToPosition = RecyclerView.NO_POSITION
+//        dispatchOnItemSelectedListener()
     }
 
     override fun canScrollHorizontally(): Boolean {
@@ -703,8 +704,8 @@ open class PickerLayoutManager @JvmOverloads constructor(
     /**
      * 分发回调OnItemSelectedListener
      */
-    private fun dispatchOnItemSelectedListener(position: Int) {
-        if (mOnItemSelectedListener.isEmpty()) return
+    private fun dispatchOnItemSelectedListener(position: Int = getSelectedPosition()) {
+        if (mOnItemSelectedListener.isEmpty() || position < 0) return
 
         for (listener in mOnItemSelectedListener) {
             listener.invoke(position)

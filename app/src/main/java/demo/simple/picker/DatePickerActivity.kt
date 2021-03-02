@@ -20,9 +20,10 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
 //            2021, 5, 1
 //        )
         datePickerView.setDateInterval(
-            1949, 1, 1,
-            2030, 1, 1
+            1949, 2, 22,
+            2030, 4, 3
         )
+        datePickerView.selectedEndItem()
 //        datePickerView.scrollToCurrentDate()
 
         datePickerView.setOnDateSelectedListener { year, month, day ->

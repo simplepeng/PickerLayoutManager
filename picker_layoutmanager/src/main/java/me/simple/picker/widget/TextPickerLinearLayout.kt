@@ -155,7 +155,7 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
     /**
      * 滚动到底部
      */
-    fun scrollToEnd() {
+    open fun scrollToEnd() {
         for (view in getTextPickerViews()) {
             view.scrollToEnd()
         }
