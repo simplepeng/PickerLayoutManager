@@ -3,81 +3,75 @@ package demo.simple.picker
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_date_picker.*
 import me.simple.picker.PickerLayoutManager
+import me.simple.picker.datepicker.DatePickerView
+import me.simple.picker.widget.TextPickerLinearLayout
+import java.text.SimpleDateFormat
 import java.util.*
 
 class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListener {
+
+    val TAG = "DatePickerActivity"
+    val dfDate = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_date_picker)
 
-//        datePickerView.setDateInterval(
-//            1949, 2, 24,
-//            2021, 5, 1
-//        )
+//        initPickerViewStyle(datePickerView)
+//        initPickerViewStyle(timePickerView)
+
+        initDatePicker()
+        initTimePicker()
+        initListener()
+    }
+
+    private fun initDatePicker() {
+        datePickerView.setOnDateSelectedListener { year, month, day ->
+            Log.d(TAG, "date = $year-$month-$day")
+            tvDate.text = "$year-$month-$day"
+        }
+        datePickerView.setOnDateSelectedListener { calendar ->
+            val format = dfDate.format(calendar.time)
+            Log.d(TAG, "calendar = $format")
+        }
+
         datePickerView.setDateInterval(
             1949, 2, 22,
             2030, 4, 3
         )
-        datePickerView.selectedEndItem()
-//        datePickerView.scrollToCurrentDate()
+//        datePickerView.selectedEndItem()
 
-        datePickerView.setOnDateSelectedListener { year, month, day ->
-            tvDate.text = "$year-$month-$day"
-        }
-        datePickerView.run {
-//            setVisibleCount(5)
-//            setIsLoop(true)
-//            setItemScaleX(0.75f)
-//            setItemScaleY(0.75f)
-//            setItemAlpha(0.75f)
-//
-//            setSelectedTextColor(Color.RED)
-//            setUnSelectedTextColor(Color.GREEN)
-//            setSelectedTextSize(16f.dp)
-//            setUnSelectedTextSize(12f.dp)
-//            setSelectedIsBold(true)
-//
-//
-//            setDividerVisible(true)
-//            setDividerSize(2f.dp)
-//            setDividerColor(Color.RED)
-//            setDividerMargin(10f.dp)
-//
-//            resetLayoutManager()
-        }
-//        datePickerView.setOnItemFillListener(this)
+        btnDatePickerScrollTo.setOnClickListener {
+            val year = 2020
+            val month = 2
+            val day = 15
 
+            val calendar = Calendar.getInstance().apply {
+                set(year, month - 1, day)
+            }
+
+//            datePickerView.selectedCurrentDateItem()
+            datePickerView.setSelectedItem(calendar)
+//            datePickerView.setSelectedItem(year, month, day)
+        }
+
+        btnSelectedEndItem.setOnClickListener {
+            datePickerView.selectedEndItem()
+        }
+    }
+
+    private fun initTimePicker() {
         timePickerView.setOnTimeSelectedListener { hour, minute ->
             tvTime.text = "$hour:$minute"
         }
-//        timePickerView.run {
-//            setVisibleCount(5)
-//            setIsLoop(true)
-//            setItemScaleX(0.75f)
-//            setItemScaleY(0.75f)
-//            setItemAlpha(0.75f)
-//
-//            setSelectedTextColor(Color.RED)
-//            setUnSelectedTextColor(Color.GREEN)
-//            setSelectedTextSize(16f.dp)
-//            setUnSelectedTextSize(12f.dp)
-//            setSelectedIsBold(true)
-//
-//
-//            setDividerVisible(true)
-//            setDividerSize(2f.dp)
-//            setDividerColor(Color.RED)
-//            setDividerMargin(10f.dp)
-//
-//            resetLayoutManager()
-//        }
-//        timePickerView.setOnItemFillListener(this)
+    }
 
+    private fun initListener() {
         btnGetDate.setOnClickListener {
 
             val dateArr = datePickerView.getYearMonthDay()
@@ -98,21 +92,31 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
 
             toast("$date   $time")
         }
+    }
 
-        btnDatePickerScrollTo.setOnClickListener {
-            val year = 2020
-            val month = 2
-            val day = 15
+    private fun initPickerViewStyle(pickerView: TextPickerLinearLayout) {
+        pickerView.run {
+            setVisibleCount(5)
+            setIsLoop(true)
+            setItemScaleX(0.75f)
+            setItemScaleY(0.75f)
+            setItemAlpha(0.75f)
 
-            val calendar = Calendar.getInstance().apply {
-                set(year, month - 1, day)
-            }
+            setSelectedTextColor(Color.RED)
+            setUnSelectedTextColor(Color.GREEN)
+            setSelectedTextSize(16f.dp)
+            setUnSelectedTextSize(12f.dp)
+            setSelectedIsBold(true)
 
-            val smoothScroll = false
-//            datePickerView.scrollTo(calendar, smoothScroll)
-//            datePickerView.scrollTo(year, month, day)
-            datePickerView.selectedCurrentDateItem()
+
+            setDividerVisible(true)
+            setDividerSize(2f.dp)
+            setDividerColor(Color.RED)
+            setDividerMargin(10f.dp)
+
+            resetLayoutManager()
         }
+        pickerView.addOnItemFillListener(this)
     }
 
     override fun onItemSelected(child: View, position: Int) {

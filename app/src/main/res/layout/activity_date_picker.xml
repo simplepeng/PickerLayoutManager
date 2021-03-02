@@ -47,9 +47,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:text="scrollTo"
+        android:text="selectedCurrentDate"
         android:textAllCaps="false"
         app:layout_constraintStart_toEndOf="@+id/tvDate"
+        app:layout_constraintTop_toTopOf="@+id/tvDate" />
+
+    <Button
+        android:id="@+id/btnSelectedEndItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:text="selectedEndItem"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toEndOf="@+id/btnDatePickerScrollTo"
         app:layout_constraintTop_toTopOf="@+id/tvDate" />
 
     <me.simple.picker.timepicker.TimePickerView

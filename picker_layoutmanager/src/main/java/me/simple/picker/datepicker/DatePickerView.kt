@@ -17,11 +17,13 @@ open class DatePickerView @JvmOverloads constructor(
     val monthPickerView = MonthPickerView(context)
     val dayPickerView = DayPickerView(context)
 
-    private var mOnDateSelectedListener: ((
+    private var mSelectedListener1: ((
         year: String,
         month: String,
         day: String
     ) -> Unit)? = null
+
+    private var mSelectedListener2: ((calendar: Calendar) -> Unit)? = null
 
     private var mStartYear: Int = PickerUtils.START_YEAR
     private var mStartMonth: Int = PickerUtils.START_YEAR
@@ -103,14 +105,24 @@ open class DatePickerView @JvmOverloads constructor(
     }
 
     /**
-     *
+     * 分发item选中事件
      */
     private fun dispatchOnItemSelected() {
         this.post {
             val year = yearPickerView.getYearStr()
             val month = monthPickerView.getMonthStr()
             val day = dayPickerView.getDayStr()
-            mOnDateSelectedListener?.invoke(year, month, day)
+
+            mSelectedListener1?.invoke(year, month, day)
+
+            mSelectedListener2?.let {
+                val calendar = Calendar.getInstance()
+                calendar.set(
+                    year.toInt(), month.toInt() - 1, day.toInt(),
+                    0, 0, 0
+                )
+                it.invoke(calendar)
+            }
         }
     }
 
@@ -292,7 +304,13 @@ open class DatePickerView @JvmOverloads constructor(
      * 日期选中的监听
      */
     fun setOnDateSelectedListener(onSelected: (year: String, month: String, day: String) -> Unit) {
-        this.mOnDateSelectedListener = onSelected
+        this.mSelectedListener1 = onSelected
     }
 
+    /**
+     * 日期选中的监听
+     */
+    fun setOnDateSelectedListener(onSelected: (calendar: Calendar) -> Unit) {
+        this.mSelectedListener2 = onSelected
+    }
 }

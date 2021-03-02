@@ -227,7 +227,6 @@ open class PickerLayoutManager @JvmOverloads constructor(
     override fun onLayoutCompleted(state: RecyclerView.State?) {
         super.onLayoutCompleted(state)
         mPendingScrollToPosition = RecyclerView.NO_POSITION
-//        dispatchOnItemSelectedListener()
     }
 
     override fun canScrollHorizontally(): Boolean {
