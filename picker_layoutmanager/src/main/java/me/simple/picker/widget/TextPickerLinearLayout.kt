@@ -60,27 +60,48 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
             R.styleable.TextPickerLinearLayout
         )
 
-        mVisibleCount = typeA.getInt(R.styleable.TextPickerLinearLayout_visibleCount, mVisibleCount)
-        mIsLoop = typeA.getBoolean(R.styleable.TextPickerLinearLayout_isLoop, mIsLoop)
-        mScaleX = typeA.getFloat(R.styleable.TextPickerLinearLayout_scaleX, mScaleX)
-        mScaleY = typeA.getFloat(R.styleable.TextPickerLinearLayout_scaleY, mScaleY)
-        mAlpha = typeA.getFloat(R.styleable.TextPickerLinearLayout_alpha, mAlpha)
+        mVisibleCount = typeA.getInt(
+            R.styleable.TextPickerLinearLayout_visibleCount,
+            PickerLayoutManager.VISIBLE_COUNT
+        )
+        mIsLoop =
+            typeA.getBoolean(R.styleable.TextPickerLinearLayout_isLoop, PickerLayoutManager.IS_LOOP)
+        mScaleX =
+            typeA.getFloat(R.styleable.TextPickerLinearLayout_scaleX, PickerLayoutManager.SCALE_X)
+        mScaleY =
+            typeA.getFloat(R.styleable.TextPickerLinearLayout_scaleY, PickerLayoutManager.SCALE_Y)
+        mAlpha = typeA.getFloat(R.styleable.TextPickerLinearLayout_alpha, PickerLayoutManager.ALPHA)
 
         mDividerVisible =
-            typeA.getBoolean(R.styleable.TextPickerLinearLayout_dividerVisible, mDividerVisible)
+            typeA.getBoolean(
+                R.styleable.TextPickerLinearLayout_dividerVisible,
+                PickerRecyclerView.DIVIDER_VISIBLE
+            )
         mDividerSize =
-            typeA.getDimension(R.styleable.TextPickerLinearLayout_dividerSize, mDividerSize)
+            typeA.getDimension(
+                R.styleable.TextPickerLinearLayout_dividerSize,
+                PickerRecyclerView.DIVIDER_SIZE
+            )
         mDividerColor =
-            typeA.getColor(R.styleable.TextPickerLinearLayout_dividerColor, mDividerColor)
+            typeA.getColor(
+                R.styleable.TextPickerLinearLayout_dividerColor,
+                PickerRecyclerView.DIVIDER_COLOR
+            )
         mDividerMargin =
-            typeA.getDimension(R.styleable.TextPickerLinearLayout_dividerMargin, mDividerMargin)
+            typeA.getDimension(
+                R.styleable.TextPickerLinearLayout_dividerMargin,
+                PickerRecyclerView.DIVIDER_MARGIN
+            )
 
         mSelectedTextColor =
-            typeA.getColor(R.styleable.TextPickerLinearLayout_selectedTextColor, mSelectedTextColor)
+            typeA.getColor(
+                R.styleable.TextPickerLinearLayout_selectedTextColor,
+                PickerUtils.SELECTED_TEXT_COLOR
+            )
         mUnSelectedTextColor =
             typeA.getColor(
                 R.styleable.TextPickerLinearLayout_unSelectedTextColor,
-                mUnSelectedTextColor
+                PickerUtils.UNSELECTED_TEXT_COLOR
             )
         mSelectedTextSize =
             typeA.getDimension(
@@ -103,23 +124,6 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
         lp.weight = 1f
         return lp
     }
-
-//    private fun setDivider(pickerView: PickerRecyclerView) {
-//        pickerView.addItemDecoration(
-//            PickerItemDecoration(
-//                mDividerColor,
-//                mDividerSize,
-//                mDividerMargin
-//            )
-//        )
-//    }
-//
-//    private fun removeDivider(pickerView: PickerRecyclerView) {
-//        val count = pickerView.itemDecorationCount
-//        for (index in 0 until count) {
-//            pickerView.removeItemDecorationAt(index)
-//        }
-//    }
 
     private fun getTextPickerViews(): HashSet<TextPickerView> {
         val views = hashSetOf<TextPickerView>()

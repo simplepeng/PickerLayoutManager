@@ -45,15 +45,21 @@ open class DatePickerView @JvmOverloads constructor(
         addViewInLayout(dayPickerView, 2, generateDefaultLayoutParams(), true)
         requestLayout()
 
-        setListener()
+        resetLayoutManager()
 
         setDateInterval()
+    }
+
+    override fun resetLayoutManager() {
+        super.resetLayoutManager()
+        setListener()
     }
 
     /**
      *
      */
     private fun setListener() {
+        yearPickerView.removeAllOnItemSelectedListener()
         yearPickerView.addOnSelectedItemListener { position ->
             val year = yearPickerView.getYear()
             when (year) {
@@ -76,6 +82,7 @@ open class DatePickerView @JvmOverloads constructor(
             }
         }
 
+        monthPickerView.removeAllOnItemSelectedListener()
         monthPickerView.addOnSelectedItemListener { position ->
             val year = yearPickerView.getYear()
             val month = monthPickerView.getMonth()
@@ -85,6 +92,7 @@ open class DatePickerView @JvmOverloads constructor(
             dispatchOnItemSelected()
         }
 
+        dayPickerView.removeAllOnItemSelectedListener()
         dayPickerView.addOnSelectedItemListener { position ->
             dispatchOnItemSelected()
         }

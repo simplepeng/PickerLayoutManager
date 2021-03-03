@@ -91,7 +91,7 @@ open class PickerRecyclerView @JvmOverloads constructor(
     }
 
     open fun resetLayoutManager(lm: PickerLayoutManager) {
-        layoutManager = lm
+        this.layoutManager = lm
     }
 
     override fun setLayoutManager(layout: LayoutManager?) {

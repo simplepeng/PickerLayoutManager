@@ -41,6 +41,7 @@ open class TimePickerView @JvmOverloads constructor(
     }
 
     private fun setListener() {
+        hourPickerView.removeAllOnItemSelectedListener()
         hourPickerView.addOnSelectedItemListener {
             val hour = hourPickerView.getHour()
 
@@ -59,6 +60,7 @@ open class TimePickerView @JvmOverloads constructor(
             dispatchOnSelectedItem()
         }
 
+        minutePickerView.removeAllOnItemSelectedListener()
         minutePickerView.addOnSelectedItemListener {
             dispatchOnSelectedItem()
         }
