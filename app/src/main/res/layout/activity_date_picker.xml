@@ -45,11 +45,11 @@
         android:id="@+id/btnDatePickerScrollTo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
         android:text="selectedCurrentDate"
         android:textAllCaps="false"
-        app:layout_constraintStart_toEndOf="@+id/tvDate"
-        app:layout_constraintTop_toTopOf="@+id/tvDate" />
+        app:layout_constraintStart_toStartOf="@+id/tvDate"
+        app:layout_constraintTop_toBottomOf="@+id/tvDate" />
 
     <Button
         android:id="@+id/btnSelectedEndItem"
@@ -59,7 +59,7 @@
         android:text="selectedEndItem"
         android:textAllCaps="false"
         app:layout_constraintStart_toEndOf="@+id/btnDatePickerScrollTo"
-        app:layout_constraintTop_toTopOf="@+id/tvDate" />
+        app:layout_constraintTop_toTopOf="@+id/btnDatePickerScrollTo" />
 
     <me.simple.picker.timepicker.TimePickerView
         android:id="@+id/timePickerView"

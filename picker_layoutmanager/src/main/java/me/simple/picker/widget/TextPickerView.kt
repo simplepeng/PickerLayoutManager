@@ -16,6 +16,9 @@ import me.simple.picker.PickerRecyclerView
 import me.simple.picker.R
 import me.simple.picker.utils.PickerUtils
 
+/**
+ * 文本类型的PickerView
+ */
 open class TextPickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -51,7 +54,9 @@ open class TextPickerView @JvmOverloads constructor(
         resetLayoutManager()
     }
 
-    open fun initAttrs(attrs: AttributeSet?) {
+    override fun initAttrs(attrs: AttributeSet?) {
+        super.initAttrs(attrs)
+
         val typeA = context.obtainStyledAttributes(
             attrs,
             R.styleable.TextPickerView
@@ -154,6 +159,7 @@ open class TextPickerView @JvmOverloads constructor(
     override fun setLayoutManager(layout: LayoutManager?) {
         super.setLayoutManager(layout)
 
+        layoutManager.removeAllItemFillListener()
         layoutManager.addOnItemFillListener(this)
     }
 

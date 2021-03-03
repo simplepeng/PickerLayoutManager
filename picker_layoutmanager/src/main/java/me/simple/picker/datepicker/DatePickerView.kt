@@ -7,6 +7,9 @@ import me.simple.picker.utils.PickerUtils
 import java.util.*
 import kotlin.IllegalArgumentException
 
+/**
+ * 日期类型的PickerView
+ */
 open class DatePickerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -41,10 +44,7 @@ open class DatePickerView @JvmOverloads constructor(
         addViewInLayout(monthPickerView, 1, generateDefaultLayoutParams(), true)
         addViewInLayout(dayPickerView, 2, generateDefaultLayoutParams(), true)
         requestLayout()
-    }
 
-    override fun initAttrs(attrs: AttributeSet?) {
-        super.initAttrs(attrs)
         setListener()
 
         setDateInterval()

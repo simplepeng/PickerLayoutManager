@@ -22,16 +22,16 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    var mVisibleCount = 3
-    var mIsLoop = false
-    var mScaleX = 1.0f
-    var mScaleY = 1.0f
-    var mAlpha = 1.0f
+    var mVisibleCount = PickerLayoutManager.VISIBLE_COUNT
+    var mIsLoop = PickerLayoutManager.IS_LOOP
+    var mScaleX = PickerLayoutManager.SCALE_X
+    var mScaleY = PickerLayoutManager.SCALE_Y
+    var mAlpha = PickerLayoutManager.ALPHA
 
-    var mDividerVisible = true
-    var mDividerSize = 1.0f
-    var mDividerColor = Color.LTGRAY
-    var mDividerMargin = 0f
+    var mDividerVisible = PickerRecyclerView.DIVIDER_VISIBLE
+    var mDividerSize = PickerRecyclerView.DIVIDER_SIZE
+    var mDividerColor = PickerRecyclerView.DIVIDER_COLOR
+    var mDividerMargin = PickerRecyclerView.DIVIDER_MARGIN
 
     var mSelectedTextColor = PickerUtils.SELECTED_TEXT_COLOR
     var mUnSelectedTextColor = PickerUtils.UNSELECTED_TEXT_COLOR
@@ -104,22 +104,22 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
         return lp
     }
 
-    private fun setDivider(pickerView: PickerRecyclerView) {
-        pickerView.addItemDecoration(
-            PickerItemDecoration(
-                mDividerColor,
-                mDividerSize,
-                mDividerMargin
-            )
-        )
-    }
-
-    private fun removeDivider(pickerView: PickerRecyclerView) {
-        val count = pickerView.itemDecorationCount
-        for (index in 0 until count) {
-            pickerView.removeItemDecorationAt(index)
-        }
-    }
+//    private fun setDivider(pickerView: PickerRecyclerView) {
+//        pickerView.addItemDecoration(
+//            PickerItemDecoration(
+//                mDividerColor,
+//                mDividerSize,
+//                mDividerMargin
+//            )
+//        )
+//    }
+//
+//    private fun removeDivider(pickerView: PickerRecyclerView) {
+//        val count = pickerView.itemDecorationCount
+//        for (index in 0 until count) {
+//            pickerView.removeItemDecorationAt(index)
+//        }
+//    }
 
     private fun getTextPickerViews(): HashSet<TextPickerView> {
         val views = hashSetOf<TextPickerView>()
@@ -141,6 +141,9 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 删除监听
+     */
     fun removeOnItemFillListener(listener: PickerLayoutManager.OnItemFillListener) {
         getTextPickerViews().forEach {
             it.layoutManager.removeOnItemFillListener(listener)
@@ -224,14 +227,16 @@ open class TextPickerLinearLayout @JvmOverloads constructor(
 
             view.setSelectedTextColor(mSelectedTextColor)
             view.setUnSelectedTextColor(mUnSelectedTextColor)
+
             view.setSelectedTextSize(mSelectedTextSize)
             view.setUnSelectedTextSize(mUnSelectedTextSize)
+
             view.setSelectedIsBold(mSelectedIsBold)
 
-            removeDivider(view)
-            if (mDividerVisible) {
-                setDivider(view)
-            }
+            view.setDividerVisible(mDividerVisible)
+            view.setDividerColor(mDividerColor)
+            view.setDividerSize(mDividerSize)
+            view.setDividerMargin(mDividerMargin)
 
             val lm = PickerLayoutManager(
                 PickerLayoutManager.VERTICAL,

@@ -8,11 +8,21 @@ import androidx.annotation.Px
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 
+/**
+ * 包装PickerLayoutManager的PickerRecyclerView
+ */
 open class PickerRecyclerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : RecyclerView(context, attrs, defStyleAttr) {
+
+    companion object {
+        const val DIVIDER_VISIBLE = true
+        const val DIVIDER_SIZE = 1.0f
+        const val DIVIDER_COLOR = Color.LTGRAY
+        const val DIVIDER_MARGIN = 0f
+    }
 
     var mOrientation = PickerLayoutManager.VERTICAL
     var mVisibleCount = PickerLayoutManager.VISIBLE_COUNT
@@ -21,16 +31,15 @@ open class PickerRecyclerView @JvmOverloads constructor(
     var mScaleY = PickerLayoutManager.SCALE_Y
     var mAlpha = PickerLayoutManager.ALPHA
 
-    var mDividerVisible = true
-    var mDividerSize = 1.0f
-    var mDividerColor = Color.LTGRAY
-    var mDividerMargin = 0f
+    var mDividerVisible = DIVIDER_VISIBLE
+    var mDividerSize = DIVIDER_SIZE
+    var mDividerColor = DIVIDER_COLOR
+    var mDividerMargin = DIVIDER_MARGIN
 
     private var mDecor: PickerItemDecoration? = null
 
     init {
         initAttrs(attrs)
-        initDivider()
         resetLayoutManager(mOrientation, mVisibleCount, mIsLoop, mScaleX, mScaleY, mAlpha)
     }
 
@@ -87,6 +96,7 @@ open class PickerRecyclerView @JvmOverloads constructor(
 
     override fun setLayoutManager(layout: LayoutManager?) {
         super.setLayoutManager(layout)
+        initDivider()
         if (layout !is PickerLayoutManager) {
             throw IllegalArgumentException("LayoutManager only can use PickerLayoutManager")
         }
@@ -147,7 +157,7 @@ open class PickerRecyclerView @JvmOverloads constructor(
     }
 
     //设置分割线
-    private fun initDivider() {
+    open fun initDivider() {
         removeDivider()
 
         if (!mDividerVisible) return
@@ -156,7 +166,7 @@ open class PickerRecyclerView @JvmOverloads constructor(
     }
 
     //删除分割线
-    private fun removeDivider() {
+    open fun removeDivider() {
         mDecor?.let { removeItemDecoration(it) }
     }
 
