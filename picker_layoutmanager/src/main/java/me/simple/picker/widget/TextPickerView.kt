@@ -51,21 +51,25 @@ open class TextPickerView @JvmOverloads constructor(
         resetLayoutManager()
     }
 
-    private fun initAttrs(attrs: AttributeSet?) {
+    open fun initAttrs(attrs: AttributeSet?) {
         val typeA = context.obtainStyledAttributes(
             attrs,
             R.styleable.TextPickerView
         )
+
         mSelectedTextColor =
             typeA.getColor(R.styleable.TextPickerView_selectedTextColor, mSelectedTextColor)
         mUnSelectedTextColor =
             typeA.getColor(R.styleable.TextPickerView_unSelectedTextColor, mUnSelectedTextColor)
+
         mSelectedTextSize =
             typeA.getDimension(R.styleable.TextPickerView_selectedTextSize, mSelectedTextSize)
         mUnSelectedTextSize =
             typeA.getDimension(R.styleable.TextPickerView_unSelectedTextSize, mUnSelectedTextSize)
+
         mSelectedIsBold =
             typeA.getBoolean(R.styleable.TextPickerView_selectedIsBold, mSelectedIsBold)
+
         typeA.recycle()
     }
 
@@ -75,7 +79,7 @@ open class TextPickerView @JvmOverloads constructor(
     fun setData(data: List<String>) {
         mItems.clear()
         mItems.addAll(data)
-        adapter?.notifyDataSetChanged()
+        adapter!!.notifyDataSetChanged()
     }
 
     /**
@@ -140,7 +144,7 @@ open class TextPickerView @JvmOverloads constructor(
     }
 
     /**
-     *
+     * 选中最后一个item
      */
     open fun selectedEndItem() {
         if (adapter == null) return

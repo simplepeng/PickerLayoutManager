@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 
 open class PickerRecyclerView @JvmOverloads constructor(
@@ -14,24 +15,26 @@ open class PickerRecyclerView @JvmOverloads constructor(
 ) : RecyclerView(context, attrs, defStyleAttr) {
 
     var mOrientation = PickerLayoutManager.VERTICAL
-    var mVisibleCount = 3
-    var mIsLoop = false
-    var mScaleX = 1.0f
-    var mScaleY = 1.0f
-    var mAlpha = 1.0f
+    var mVisibleCount = PickerLayoutManager.VISIBLE_COUNT
+    var mIsLoop = PickerLayoutManager.IS_LOOP
+    var mScaleX = PickerLayoutManager.SCALE_X
+    var mScaleY = PickerLayoutManager.SCALE_Y
+    var mAlpha = PickerLayoutManager.ALPHA
 
     var mDividerVisible = true
     var mDividerSize = 1.0f
     var mDividerColor = Color.LTGRAY
     var mDividerMargin = 0f
 
+    private var mDecor: PickerItemDecoration? = null
+
     init {
         initAttrs(attrs)
-        setAttrs()
-        resetLayoutManager()
+        initDivider()
+        resetLayoutManager(mOrientation, mVisibleCount, mIsLoop, mScaleX, mScaleY, mAlpha)
     }
 
-    private fun initAttrs(attrs: AttributeSet?) {
+    open fun initAttrs(attrs: AttributeSet?) {
         val typeA = context.obtainStyledAttributes(
             attrs,
             R.styleable.PickerRecyclerView
@@ -56,14 +59,10 @@ open class PickerRecyclerView @JvmOverloads constructor(
         typeA.recycle()
     }
 
-    private fun setAttrs() {
-        removeDivider()
-        if (mDividerVisible) {
-            setDivider()
-        }
-    }
-
-    fun resetLayoutManager(
+    /**
+     * 重新设置LayoutManager
+     */
+    open fun resetLayoutManager(
         orientation: Int = mOrientation,
         visibleCount: Int = mVisibleCount,
         isLoop: Boolean = mIsLoop,
@@ -82,7 +81,7 @@ open class PickerRecyclerView @JvmOverloads constructor(
         resetLayoutManager(lm)
     }
 
-    fun resetLayoutManager(lm: PickerLayoutManager) {
+    open fun resetLayoutManager(lm: PickerLayoutManager) {
         layoutManager = lm
     }
 
@@ -91,74 +90,74 @@ open class PickerRecyclerView @JvmOverloads constructor(
         if (layout !is PickerLayoutManager) {
             throw IllegalArgumentException("LayoutManager only can use PickerLayoutManager")
         }
-        setAttrs()
     }
 
-    fun getSelectedPosition() = layoutManager.getSelectedPosition()
+    /**
+     * 获取选中的那个item的position
+     */
+    open fun getSelectedPosition() = layoutManager.getSelectedPosition()
 
+    /**
+     *
+     */
     override fun getLayoutManager(): PickerLayoutManager {
         return super.getLayoutManager() as PickerLayoutManager
     }
 
     //重新设置属性值
 
-    fun setOrientation(orientation: Int) {
+    open fun setOrientation(orientation: Int) {
         this.mOrientation = orientation
     }
 
-    fun setVisibleCount(count: Int) {
+    open fun setVisibleCount(count: Int) {
         this.mVisibleCount = count
     }
 
-    fun setIsLoop(isLoop: Boolean) {
+    open fun setIsLoop(isLoop: Boolean) {
         this.mIsLoop = isLoop
     }
 
-    fun setItemScaleX(scaleX: Float) {
+    open fun setItemScaleX(scaleX: Float) {
         this.mScaleX = scaleX
     }
 
-    fun setItemScaleY(scaleY: Float) {
+    open fun setItemScaleY(scaleY: Float) {
         this.mScaleY = scaleY
     }
 
-    fun setItemAlpha(alpha: Float) {
+    open fun setItemAlpha(alpha: Float) {
         this.mAlpha = alpha
     }
 
-    fun setDividerVisible(visible: Boolean) {
+    open fun setDividerVisible(visible: Boolean) {
         this.mDividerVisible = visible
     }
 
-    fun setDividerSize(@Px size: Float) {
+    open fun setDividerSize(@Px size: Float) {
         this.mDividerSize = size
     }
 
-    fun setDividerColor(@ColorInt color: Int) {
+    open fun setDividerColor(@ColorInt color: Int) {
         this.mDividerColor = color
     }
 
-    fun setDividerMargin(margin: Float) {
+    open fun setDividerMargin(margin: Float) {
         this.mDividerMargin = margin
     }
 
     //设置分割线
+    private fun initDivider() {
+        removeDivider()
 
-    private fun setDivider() {
-        this.addItemDecoration(
-            PickerItemDecoration(
-                mDividerColor,
-                mDividerSize,
-                mDividerMargin
-            )
-        )
+        if (!mDividerVisible) return
+        mDecor = PickerItemDecoration(mDividerColor, mDividerSize, mDividerMargin)
+        this.addItemDecoration(mDecor!!)
     }
 
+    //删除分割线
     private fun removeDivider() {
-        val count = this.itemDecorationCount
-        for (index in 0 until count) {
-            this.removeItemDecorationAt(index)
-        }
+        mDecor?.let { removeItemDecoration(it) }
     }
 
     /**
@@ -189,8 +188,18 @@ open class PickerRecyclerView @JvmOverloads constructor(
         layoutManager.addOnItemFillListener(listener)
     }
 
+    /**
+     *
+     */
     fun removeOnItemFillListener(listener: PickerLayoutManager.OnItemFillListener) {
         layoutManager.removeOnItemFillListener(listener)
+    }
+
+    /**
+     *
+     */
+    fun removeAllItemFillListener() {
+        layoutManager.removeAllItemFillListener()
     }
 
     /**

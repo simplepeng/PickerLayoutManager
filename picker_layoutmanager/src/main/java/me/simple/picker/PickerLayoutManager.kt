@@ -864,12 +864,18 @@ open class PickerLayoutManager @JvmOverloads constructor(
         }
     }
 
+    /**
+     * item选中回调
+     */
     open fun onItemSelected(child: View, position: Int) {
         for (listener in mOnItemFillListener) {
             listener.onItemSelected(child, position)
         }
     }
 
+    /**
+     * item取消选中
+     */
     open fun onItemUnSelected(child: View, position: Int) {
         for (listener in mOnItemFillListener) {
             listener.onItemUnSelected(child, position)
@@ -884,12 +890,25 @@ open class PickerLayoutManager @JvmOverloads constructor(
         fun onItemUnSelected(itemView: View, position: Int)
     }
 
+    /**
+     *
+     */
     fun addOnItemFillListener(listener: OnItemFillListener) {
         mOnItemFillListener.add(listener)
     }
 
+    /**
+     *
+     */
     fun removeOnItemFillListener(listener: OnItemFillListener) {
         mOnItemFillListener.remove(listener)
+    }
+
+    /**
+     *
+     */
+    fun removeAllItemFillListener() {
+        mOnItemFillListener.clear()
     }
 
     /**
