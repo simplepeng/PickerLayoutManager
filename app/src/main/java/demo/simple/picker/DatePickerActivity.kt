@@ -40,8 +40,8 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
         }
 
         datePickerView.setDateInterval(
-            1949, 2, 22,
-            2030, 4, 3
+            1949, 1, 1,
+            2030, 1, 1
         )
 //        datePickerView.selectedEndItem()
 
