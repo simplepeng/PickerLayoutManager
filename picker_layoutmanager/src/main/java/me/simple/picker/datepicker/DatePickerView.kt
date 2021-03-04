@@ -37,7 +37,7 @@ open class DatePickerView @JvmOverloads constructor(
     private var mEndMonth: Int = PickerUtils.getCurrentMonth()
     private var mEndDay: Int = PickerUtils.getCurrentDay()
 
-    private val mYearOnSelectedItemListener: OnItemSelectedListener = { position ->
+    private val mYearOnSelectedItemListener: OnItemSelectedListener = { _ ->
         val year = yearPickerView.getYear()
         when (year) {
             mStartYear -> {
@@ -59,7 +59,7 @@ open class DatePickerView @JvmOverloads constructor(
         }
     }
 
-    private val mMonthOnSelectedItemListener: OnItemSelectedListener = { position ->
+    private val mMonthOnSelectedItemListener: OnItemSelectedListener = { _ ->
         val year = yearPickerView.getYear()
         val month = monthPickerView.getMonth()
 
@@ -68,7 +68,7 @@ open class DatePickerView @JvmOverloads constructor(
         dispatchOnItemSelected()
     }
 
-    private val mDayOnSelectedItemListener: OnItemSelectedListener = { position ->
+    private val mDayOnSelectedItemListener: OnItemSelectedListener = { _ ->
         dispatchOnItemSelected()
     }
 
@@ -91,7 +91,7 @@ open class DatePickerView @JvmOverloads constructor(
     }
 
     /**
-     *
+     * 设置年月日item的监听
      */
     private fun setListener() {
         yearPickerView.addOnSelectedItemListener(mYearOnSelectedItemListener)
@@ -119,25 +119,30 @@ open class DatePickerView @JvmOverloads constructor(
     }
 
     /**
+     *
+     */
+    private val mDispatchOnItemSelectedRun = Runnable {
+        val year = yearPickerView.getYearStr()
+        val month = monthPickerView.getMonthStr()
+        val day = dayPickerView.getDayStr()
+
+        mSelectedListener1?.invoke(year, month, day)
+
+        mSelectedListener2?.let {
+            val calendar = Calendar.getInstance()
+            calendar.set(
+                year.toInt(), month.toInt() - 1, day.toInt(),
+                0, 0, 0
+            )
+            it.invoke(calendar)
+        }
+    }
+
+    /**
      * 分发item选中事件
      */
     private fun dispatchOnItemSelected() {
-        this.post {
-            val year = yearPickerView.getYearStr()
-            val month = monthPickerView.getMonthStr()
-            val day = dayPickerView.getDayStr()
-
-            mSelectedListener1?.invoke(year, month, day)
-
-            mSelectedListener2?.let {
-                val calendar = Calendar.getInstance()
-                calendar.set(
-                    year.toInt(), month.toInt() - 1, day.toInt(),
-                    0, 0, 0
-                )
-                it.invoke(calendar)
-            }
-        }
+        this.post(mDispatchOnItemSelectedRun)
     }
 
     /**
@@ -201,13 +206,13 @@ open class DatePickerView @JvmOverloads constructor(
     /**
      * 选中当前时间的那个item
      */
-    @Deprecated("方法名不合理", ReplaceWith("selectedCurrentDateItem"))
+    @Deprecated("方法名不合理", ReplaceWith("selectedTodayItem"))
     fun scrollToCurrentDate() {
         selectedTodayItem()
     }
 
     /**
-     * 选中当前时间的那个item
+     * 选中今天的那个item
      */
     fun selectedTodayItem() {
         val currentCalendar = PickerUtils.getCurrentCalendar()

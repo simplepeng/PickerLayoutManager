@@ -39,11 +39,12 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
             Log.d(TAG, "calendar = $format")
         }
 
-        datePickerView.setDateInterval(
-            1949, 1, 1,
-            2030, 1, 1
-        )
+//        datePickerView.setDateInterval(
+//            1949, 1, 1,
+//            2030, 1, 1
+//        )
 //        datePickerView.selectedEndItem()
+        datePickerView.selectedTodayItem()
 
         btnDatePickerScrollTo.setOnClickListener {
             val year = 2020

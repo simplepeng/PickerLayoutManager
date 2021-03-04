@@ -10,7 +10,7 @@
         android:id="@+id/datePickerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:isLoop="true"
+        app:isLoop="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="selectedCurrentDate"
+        android:text="selectedTodayItem"
         android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="@+id/tvDate"
         app:layout_constraintTop_toBottomOf="@+id/tvDate" />
