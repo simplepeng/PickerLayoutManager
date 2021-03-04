@@ -68,6 +68,11 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
     private fun initTimePicker() {
         timePickerView.setOnTimeSelectedListener { hour, minute ->
             tvTime.text = "$hour:$minute"
+            Log.d(TAG, "time = $hour:$minute")
+        }
+        timePickerView.setOnTimeSelectedListener { calendar ->
+            val format = dfDate.format(calendar.time)
+            Log.d(TAG, "calendar = $format")
         }
     }
 
