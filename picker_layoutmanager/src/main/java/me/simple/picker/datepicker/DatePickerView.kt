@@ -2,6 +2,7 @@ package me.simple.picker.datepicker
 
 import android.content.Context
 import android.util.AttributeSet
+import me.simple.picker.OnItemSelectedListener
 import me.simple.picker.widget.TextPickerLinearLayout
 import me.simple.picker.utils.PickerUtils
 import java.util.*
@@ -36,6 +37,40 @@ open class DatePickerView @JvmOverloads constructor(
     private var mEndMonth: Int = PickerUtils.getCurrentMonth()
     private var mEndDay: Int = PickerUtils.getCurrentDay()
 
+    private val mYearOnSelectedItemListener: OnItemSelectedListener = { position ->
+        val year = yearPickerView.getYear()
+        when (year) {
+            mStartYear -> {
+                monthPickerView.setMonthInterval(mStartMonth)
+            }
+            mEndYear -> {
+                monthPickerView.setMonthInterval(endMonth = mEndMonth)
+            }
+            else -> {
+                monthPickerView.setMonthInterval()
+            }
+        }
+
+        monthPickerView.post {
+            val month = monthPickerView.getMonth()
+            setDayInterval(year, month)
+
+            dispatchOnItemSelected()
+        }
+    }
+
+    private val mMonthOnSelectedItemListener: OnItemSelectedListener = { position ->
+        val year = yearPickerView.getYear()
+        val month = monthPickerView.getMonth()
+
+        setDayInterval(year, month)
+
+        dispatchOnItemSelected()
+    }
+
+    private val mDayOnSelectedItemListener: OnItemSelectedListener = { position ->
+        dispatchOnItemSelected()
+    }
 
     init {
         weightSum = 3f
@@ -59,43 +94,11 @@ open class DatePickerView @JvmOverloads constructor(
      *
      */
     private fun setListener() {
-        yearPickerView.removeAllOnItemSelectedListener()
-        yearPickerView.addOnSelectedItemListener { position ->
-            val year = yearPickerView.getYear()
-            when (year) {
-                mStartYear -> {
-                    monthPickerView.setMonthInterval(mStartMonth)
-                }
-                mEndYear -> {
-                    monthPickerView.setMonthInterval(endMonth = mEndMonth)
-                }
-                else -> {
-                    monthPickerView.setMonthInterval()
-                }
-            }
+        yearPickerView.addOnSelectedItemListener(mYearOnSelectedItemListener)
 
-            monthPickerView.post {
-                val month = monthPickerView.getMonth()
-                setDayInterval(year, month)
+        monthPickerView.addOnSelectedItemListener(mMonthOnSelectedItemListener)
 
-                dispatchOnItemSelected()
-            }
-        }
-
-        monthPickerView.removeAllOnItemSelectedListener()
-        monthPickerView.addOnSelectedItemListener { position ->
-            val year = yearPickerView.getYear()
-            val month = monthPickerView.getMonth()
-
-            setDayInterval(year, month)
-
-            dispatchOnItemSelected()
-        }
-
-        dayPickerView.removeAllOnItemSelectedListener()
-        dayPickerView.addOnSelectedItemListener { position ->
-            dispatchOnItemSelected()
-        }
+        dayPickerView.addOnSelectedItemListener(mDayOnSelectedItemListener)
     }
 
     /**
@@ -171,25 +174,6 @@ open class DatePickerView @JvmOverloads constructor(
         this.mEndDay = endDay
 
         yearPickerView.setYearInterval(startYear, endYear)
-
-//        if (mScrollToEnd) {
-//            monthPickerView.setMonthInterval(endMonth = endMonth)
-//        } else {
-//            monthPickerView.setMonthInterval(startMonth)
-//        }
-//
-//        if (mScrollToEnd) {
-//            dayPickerView.setDayInterval(endDay = endDay)
-//        } else {
-//            dayPickerView.setDayInterval(
-//                startDay,
-//                PickerUtils.getDayCountInMonth(startYear, startMonth)
-//            )
-//        }
-//
-//        if (mScrollToEnd) {
-//            scrollToEnd()
-//        }
     }
 
     /**
@@ -285,7 +269,6 @@ open class DatePickerView @JvmOverloads constructor(
             }
         }
     }
-
 
     /**
      * 获取当前选中时间的Calendar

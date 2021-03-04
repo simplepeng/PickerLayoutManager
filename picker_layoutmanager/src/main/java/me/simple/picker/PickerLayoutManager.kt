@@ -74,10 +74,10 @@ open class PickerLayoutManager @JvmOverloads constructor(
     private val mSnapHelper = LinearSnapHelper()
 
     //选中中间item的监听器的集合
-    private val mOnItemSelectedListener = mutableListOf<OnItemSelectedListener>()
+    private val mOnItemSelectedListener = mutableSetOf<OnItemSelectedListener>()
 
     //子view填充或滚动监听器的集合
-    private val mOnItemFillListener = mutableListOf<OnItemFillListener>()
+    private val mOnItemFillListener = mutableSetOf<OnItemFillListener>()
 
     //Recyclerview内置的帮助类
     private val mOrientationHelper: OrientationHelper by lazy {
