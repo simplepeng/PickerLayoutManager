@@ -60,10 +60,10 @@ pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFil
     override fun onItemSelected(itemView: View, position: Int) {
         val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
         tvItem.setTextColor(Color.RED)
-}
+    }
 
-override fun onItemUnSelected(itemView: View, position: Int) {
-    val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
+    override fun onItemUnSelected(itemView: View, position: Int) {
+        val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
         tvItem.setTextColor(Color.BLUE)
     }
 })       
