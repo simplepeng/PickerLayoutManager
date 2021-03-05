@@ -57,15 +57,15 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
 
 ```kotlin
 pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFillListener {
-	override fun onItemSelected(itemView: View, position: Int) {
-		val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
-		tvItem.setTextColor(Color.RED)
+    override fun onItemSelected(itemView: View, position: Int) {
+        val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
+        tvItem.setTextColor(Color.RED)
 }
 
 override fun onItemUnSelected(itemView: View, position: Int) {
-	val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
-		tvItem.setTextColor(Color.BLUE)
-	}
+    val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
+        tvItem.setTextColor(Color.BLUE)
+    }
 })       
 ```
 
