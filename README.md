@@ -22,7 +22,7 @@ allprojects {
 
 ```groovy
 dependencies {
-	implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.1'
+	implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.2'
 }
 ```
 
@@ -56,16 +56,16 @@ pickerLayoutManager.addOnItemSelectedListener { position ->
 ## 监听选中和取消选中时itemView被填充的回调
 
 ```kotlin
- pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFillListener {
-            override fun onItemSelected(itemView: View, position: Int) {
-                val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
-                tvItem.setTextColor(Color.RED)
-            	}
+pickerLayoutManager.addOnItemFillListener(object : PickerLayoutManager.OnItemFillListener {
+	override fun onItemSelected(itemView: View, position: Int) {
+		val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
+		tvItem.setTextColor(Color.RED)
+}
 
-            override fun onItemUnSelected(itemView: View, position: Int) {
-                val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
-                tvItem.setTextColor(Color.BLUE)
-            }
+override fun onItemUnSelected(itemView: View, position: Int) {
+	val tvItem = itemView.findViewById<TextView>(R.id.tv_item)
+		tvItem.setTextColor(Color.BLUE)
+	}
 })       
 ```
 
@@ -109,7 +109,7 @@ recyclerView.addItemDecoration(PickerItemDecoration())
 | selectedTextSize    | setSelectedTextSize | 文字选中的大小 |
 | unSelectedTextSize  | setUnSelectedTextSize | 文字未必选中的大小 |
 | selectedIsBold      | setSelectedIsBold | 文字选中是否加粗 |
-| scrollToEnd         | scrollToEnd() | 是否滚动到底部 |
+| ~~scrollToEnd~~     | scrollToEnd() | 是否滚动到底部 |
 
 #### 如何使用
 
@@ -154,7 +154,7 @@ textPickerView.setData(items)
    app:isLoop="true"
    app:layout_constraintStart_toStartOf="parent"
    app:layout_constraintTop_toTopOf="parent"
-   app:scrollToEnd="true" />
+   />
 
 <me.simple.picker.timepicker.TimePickerView
    android:id="@+id/timePickerView"
@@ -172,6 +172,7 @@ textPickerView.setData(items)
 datePickerView.setDateInterval()
 //滚动到当前日期，不可与`scrollToEnd`同时使用
 datePickerView.scrollToCurrentDate()
+datePickerView.selectedTodayItem()
 
 //默认从0点到24点
 timerPickerView.setTimeInterval()
@@ -190,6 +191,8 @@ timePickerView.setOnTimeSelectedListener { hour, minute ->
 ```
 
 ## 版本迭代
+
+* v1.0.2：`DatePickerView`增加`scrollTodayItem`，`scrollEndItem`等方法，丰富api调用
 
 * v1.0.1：修复`itemCount=1`且`isLoop=true`闪退的bug，`DatePickerView`增加`scrollToCurrentDate`的方法。
 
