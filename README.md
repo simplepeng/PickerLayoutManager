@@ -49,7 +49,7 @@ recyclerView.adapter = Adapter()
 
 ```kotlin
 pickerLayoutManager.addOnItemSelectedListener { position ->
-           toast(position.toString()) 
+    toast(position.toString()) 
 }
 ```
 
@@ -117,20 +117,20 @@ recyclerView.addItemDecoration(PickerItemDecoration())
 
 ```xml
 <me.simple.picker.widget.TextPickerView
-	android:id="@+id/textPickerView"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	app:layout_constraintEnd_toEndOf="parent"
-	app:layout_constraintStart_toStartOf="parent"
-	app:layout_constraintTop_toTopOf="parent" />
+    android:id="@+id/textPickerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
 ```
 
 设置数据源
 
 ```kotlin
 val items = mutableListOf<String>()
-	for (index in 0 until 100) {
-	items.add(index.toString())
+    for (index in 0 until 100) {
+    items.add(index.toString())
 }
 
 textPickerView.setData(items)
