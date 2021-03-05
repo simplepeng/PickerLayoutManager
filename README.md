@@ -14,7 +14,7 @@
 allprojects {
     repositories {
     maven { url 'https://www.jitpack.io' }
-	}
+  }
 }
 ```
 
@@ -22,7 +22,7 @@ allprojects {
 
 ```groovy
 dependencies {
-	implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.2'
+    implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.2'
 }
 ```
 
