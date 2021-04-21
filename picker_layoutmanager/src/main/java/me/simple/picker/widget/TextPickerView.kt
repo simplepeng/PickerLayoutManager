@@ -199,20 +199,28 @@ open class TextPickerView @JvmOverloads constructor(
     }
 
     override fun onItemSelected(itemView: View, position: Int) {
-        val tv = itemView as TextView
-        tv.setTextColor(mSelectedTextColor)
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSelectedTextSize)
-        if (mSelectedIsBold) {
-            tv.typeface = Typeface.DEFAULT_BOLD
+        val isItemSelected = itemView.tag as? Boolean
+        if (isItemSelected == null || !isItemSelected) {
+            val tv = itemView as TextView
+            tv.setTextColor(mSelectedTextColor)
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSelectedTextSize)
+            if (mSelectedIsBold) {
+                tv.typeface = Typeface.DEFAULT_BOLD
+            }
+            itemView.tag = true
         }
     }
 
     override fun onItemUnSelected(itemView: View, position: Int) {
-        val tv = itemView as TextView
-        tv.setTextColor(mUnSelectedTextColor)
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mUnSelectedTextSize)
-        if (mSelectedIsBold) {
-            tv.typeface = Typeface.DEFAULT
+        val isItemSelected = itemView.tag as? Boolean
+        if (isItemSelected == null || isItemSelected) {
+            val tv = itemView as TextView
+            tv.setTextColor(mUnSelectedTextColor)
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mUnSelectedTextSize)
+            if (mSelectedIsBold) {
+                tv.typeface = Typeface.DEFAULT
+            }
+            itemView.tag = false
         }
     }
 }
