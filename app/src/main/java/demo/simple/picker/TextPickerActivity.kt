@@ -1,21 +1,22 @@
 package demo.simple.picker
 
-import android.graphics.Color
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_text_picker.*
+import demo.simple.picker.databinding.ActivityTextPickerBinding
 
 class TextPickerActivity : BaseActivity() {
 
+    private val binding by lazy { ActivityTextPickerBinding.inflate(this.layoutInflater) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_text_picker)
+        setContentView(binding.root)
 
         val items = mutableListOf<String>()
         for (index in 0 until 100) {
             items.add(index.toString())
         }
 
-        textPickerView.setData(items)
+        binding.textPickerView.setData(items)
 
 //        textPickerView.run {
 //            setVisibleCount(5)

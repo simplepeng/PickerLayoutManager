@@ -47,7 +47,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         const val FILL_END = 1
 
         const val TAG = "PickerLayoutManager"
-        var DEBUG = BuildConfig.DEBUG
+        var DEBUG = true
 
         const val ORIENTATION = VERTICAL
         const val VISIBLE_COUNT = 3
@@ -958,13 +958,13 @@ open class PickerLayoutManager @JvmOverloads constructor(
     }
 
     private fun logChildCount(recycler: RecyclerView.Recycler) {
-        if (!BuildConfig.DEBUG) return
+        if (!DEBUG) return
         logDebug("childCount == $childCount -- scrapSize == ${recycler.scrapList.size}")
         logChildrenPosition()
     }
 
     private fun logChildrenPosition() {
-        if (!BuildConfig.DEBUG) return
+        if (!DEBUG) return
 
         val builder = StringBuilder()
         for (i in 0 until childCount) {
@@ -977,7 +977,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
     }
 
     private fun logRecycleChildren() {
-        if (!BuildConfig.DEBUG) return
+        if (!DEBUG) return
 
         val builder = StringBuilder()
         for (child in mRecycleViews) {

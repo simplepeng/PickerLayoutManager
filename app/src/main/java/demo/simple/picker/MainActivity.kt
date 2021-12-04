@@ -1,7 +1,6 @@
 package demo.simple.picker
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.CheckBox
@@ -9,19 +8,20 @@ import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_main.*
+import demo.simple.picker.databinding.ActivityMainBinding
 import me.simple.picker.PickerItemDecoration
 import me.simple.picker.PickerLayoutManager
 
 class MainActivity : BaseActivity() {
 
+    private val binding by lazy { ActivityMainBinding.inflate(this.layoutInflater) }
+
     private val mItems = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
 //        startActivity(Intent(this, DatePickerActivity::class.java))
 //        startActivity(Intent(this, TextPickerActivity::class.java))
@@ -32,11 +32,11 @@ class MainActivity : BaseActivity() {
 
         initLinearPicker()
 
-        btnNotify.setOnClickListener {
+        binding.btnNotify.setOnClickListener {
             for (i in 0..10) {
                 mItems.removeAt(mItems.size - 1)
             }
-            recyclerView.adapter?.notifyDataSetChanged()
+            binding.recyclerView.adapter?.notifyDataSetChanged()
         }
     }
 
@@ -48,11 +48,11 @@ class MainActivity : BaseActivity() {
 //            false
 //        )
         setListener(pickerLayoutManager)
-        recyclerView.run {
+        binding.recyclerView.run {
             layoutManager = pickerLayoutManager
             adapter = PickerAdapter(pickerLayoutManager.orientation)
         }
-        recyclerView.addItemDecoration(PickerItemDecoration())
+        binding.recyclerView.addItemDecoration(PickerItemDecoration())
     }
 
     private fun setListener(pickerLayoutManager: PickerLayoutManager) {
@@ -149,12 +149,12 @@ class MainActivity : BaseActivity() {
         dialog.findViewById<View>(R.id.btnToPosition)!!.setOnClickListener {
             dialog.dismiss()
             val position = etPosition.text.toString().toInt()
-            recyclerView.scrollToPosition(position)
+            binding.recyclerView.scrollToPosition(position)
         }
         dialog.findViewById<View>(R.id.btnSmoothToPosition)!!.setOnClickListener {
             dialog.dismiss()
             val position = etPosition.text.toString().toInt()
-            recyclerView.smoothScrollToPosition(position)
+            binding.recyclerView.smoothScrollToPosition(position)
         }
     }
 }

@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_date_picker.*
+import demo.simple.picker.databinding.ActivityDatePickerBinding
 import me.simple.picker.PickerLayoutManager
 import me.simple.picker.widget.TextPickerLinearLayout
 import java.text.SimpleDateFormat
@@ -14,12 +14,14 @@ import java.util.*
 
 class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListener {
 
+    private val binding by lazy { ActivityDatePickerBinding.inflate(this.layoutInflater) }
+
     val TAG = "DatePickerActivity"
     val dfDate = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_date_picker)
+        setContentView(binding.root)
 
 //        initPickerViewStyle(datePickerView)
 //        initPickerViewStyle(timePickerView)
@@ -30,11 +32,11 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
     }
 
     private fun initDatePicker() {
-        datePickerView.setOnDateSelectedListener { year, month, day ->
+        binding.datePickerView.setOnDateSelectedListener { year, month, day ->
             Log.d(TAG, "date = $year-$month-$day")
-            tvDate.text = "$year-$month-$day"
+            binding.tvDate.text = "$year-$month-$day"
         }
-        datePickerView.setOnDateSelectedListener { calendar ->
+        binding.datePickerView.setOnDateSelectedListener { calendar ->
             val format = dfDate.format(calendar.time)
             Log.d(TAG, "calendar = $format")
         }
@@ -44,9 +46,9 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
 //            2030, 1, 1
 //        )
 //        datePickerView.selectedEndItem()
-        datePickerView.selectedTodayItem()
+        binding.datePickerView.selectedTodayItem()
 
-        btnDatePickerScrollTo.setOnClickListener {
+        binding.btnDatePickerScrollTo.setOnClickListener {
             val year = 2020
             val month = 2
             val day = 15
@@ -55,32 +57,32 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
                 set(year, month - 1, day)
             }
 
-            datePickerView.selectedTodayItem()
+            binding.datePickerView.selectedTodayItem()
 //            datePickerView.setSelectedItem(calendar)
 //            datePickerView.setSelectedItem(year, month, day)
         }
 
-        btnSelectedEndItem.setOnClickListener {
-            datePickerView.selectedEndItem()
+        binding.btnSelectedEndItem.setOnClickListener {
+            binding.datePickerView.selectedEndItem()
         }
     }
 
     private fun initTimePicker() {
-        timePickerView.setOnTimeSelectedListener { hour, minute ->
-            tvTime.text = "$hour:$minute"
+        binding.timePickerView.setOnTimeSelectedListener { hour, minute ->
+            binding.tvTime.text = "$hour:$minute"
             Log.d(TAG, "time = $hour:$minute")
         }
-        timePickerView.setOnTimeSelectedListener { calendar ->
+        binding.timePickerView.setOnTimeSelectedListener { calendar ->
             val format = dfDate.format(calendar.time)
             Log.d(TAG, "calendar = $format")
         }
     }
 
     private fun initListener() {
-        btnGetDate.setOnClickListener {
+        binding.btnGetDate.setOnClickListener {
 
-            val dateArr = datePickerView.getYearMonthDay()
-            val timeArr = timePickerView.getTime()
+            val dateArr = binding.datePickerView.getYearMonthDay()
+            val timeArr = binding.timePickerView.getTime()
 
             val year = dateArr[0]
             val month = dateArr[1]
@@ -92,8 +94,8 @@ class DatePickerActivity : BaseActivity(), PickerLayoutManager.OnItemFillListene
             val date = "$year-$month-$day"
             val time = "$hour:$minute"
 
-            tvDate.text = date
-            tvTime.text = time
+            binding.tvDate.text = date
+            binding.tvTime.text = time
 
             toast("$date   $time")
         }
