@@ -8,22 +8,12 @@
 
 ## 导入依赖
 
-在根目录的`build.gradle`中添加`jitpack`的仓库
-
 ```groovy
-allprojects {
-    repositories {
-    maven { url 'https://www.jitpack.io' }
-  }
-}
+maven { url 'https://www.jitpack.io' }
 ```
 
-在`app`的`build.gradle`添加依赖
-
 ```groovy
-dependencies {
-    implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.3'
-}
+implementation 'com.github.simplepeng:PickerLayoutManager:v1.0.4'
 ```
 
 ## 如何使用
@@ -192,6 +182,7 @@ timePickerView.setOnTimeSelectedListener { hour, minute ->
 
 ## 版本迭代
 
+* v1.0.4：解决`visibleCount = 1`不能滑动的问题
 * v1.0.3：解决`TextPickerView`设置`isBold`频繁requestLayout的问题
 * v1.0.2：`DatePickerView`增加`scrollTodayItem`，`scrollEndItem`等方法，丰富api调用
 * v1.0.1：修复`itemCount=1`且`isLoop=true`闪退的bug，`DatePickerView`增加`scrollToCurrentDate`的方法。
