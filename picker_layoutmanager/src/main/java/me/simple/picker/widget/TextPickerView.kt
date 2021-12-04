@@ -28,21 +28,21 @@ open class TextPickerView @JvmOverloads constructor(
 
     val mItems = mutableListOf<String>()
 
-    var mSelectedTextColor = PickerUtils.SELECTED_TEXT_COLOR
-    var mUnSelectedTextColor = PickerUtils.UNSELECTED_TEXT_COLOR
+    private var mSelectedTextColor = PickerUtils.SELECTED_TEXT_COLOR
+    private var mUnSelectedTextColor = PickerUtils.UNSELECTED_TEXT_COLOR
 
-    var mSelectedTextSize = TypedValue.applyDimension(
+    private var mSelectedTextSize = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
         PickerUtils.SELECTED_TEXT_SIZE,
         resources.displayMetrics
     )
-    var mUnSelectedTextSize = TypedValue.applyDimension(
+    private var mUnSelectedTextSize = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
         PickerUtils.UNSELECTED_TEXT_SIZE,
         resources.displayMetrics
     )
 
-    var mSelectedIsBold = PickerUtils.SELECTED_IS_BOLD
+    private var mSelectedIsBold = PickerUtils.SELECTED_IS_BOLD
 
     init {
         initAttrs(attrs)
