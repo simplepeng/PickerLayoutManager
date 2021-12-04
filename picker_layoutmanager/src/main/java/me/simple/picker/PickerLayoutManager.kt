@@ -43,18 +43,19 @@ open class PickerLayoutManager @JvmOverloads constructor(
         const val HORIZONTAL = RecyclerView.HORIZONTAL
         const val VERTICAL = RecyclerView.VERTICAL
 
-        const val FILL_START = -1
-        const val FILL_END = 1
+        private const val FILL_START = -1
+        private const val FILL_END = 1
 
-        const val TAG = "PickerLayoutManager"
+        private const val TAG = "PickerLayoutManager"
+
         var DEBUG = true
 
-        const val ORIENTATION = VERTICAL
-        const val VISIBLE_COUNT = 3
-        const val IS_LOOP = false
-        const val SCALE_X = 1.0f
-        const val SCALE_Y = 1.0f
-        const val ALPHA = 1.0f
+        private const val ORIENTATION = VERTICAL
+        internal const val VISIBLE_COUNT = 3
+        internal const val IS_LOOP = false
+        internal const val SCALE_X = 1.0f
+        internal const val SCALE_Y = 1.0f
+        internal const val ALPHA = 1.0f
     }
 
     //将要填充的view的position
@@ -490,7 +491,14 @@ open class PickerLayoutManager @JvmOverloads constructor(
     ): Boolean {
         if (isLoop) return false
         val anchorPosition = getAnchorPosition(fillDirection)
-        return anchorPosition == 0 || anchorPosition == (state.itemCount - 1)
+        if (fillDirection == FILL_START && anchorPosition == 0) {
+            return true
+        }
+        if (fillDirection == FILL_END && anchorPosition == state.itemCount - 1) {
+            return true
+        }
+        return false
+//        return anchorPosition == 0 || anchorPosition == (state.itemCount - 1)
     }
 
     private fun getFixLastScroll(fillDirection: Int): Int {
@@ -976,6 +984,7 @@ open class PickerLayoutManager @JvmOverloads constructor(
         logDebug("children == $builder")
     }
 
+    //
     private fun logRecycleChildren() {
         if (!DEBUG) return
 
