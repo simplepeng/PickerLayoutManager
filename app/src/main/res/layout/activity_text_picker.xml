@@ -16,5 +16,6 @@
         app:selectedTextColor="@color/colorAccent"
         app:selectedTextSize="25dp"
         app:unSelectedTextColor="@android:color/black"
-        app:unSelectedTextSize="13dp" />
+        app:unSelectedTextSize="13dp"
+        app:visibleCount="1" />
 </androidx.constraintlayout.widget.ConstraintLayout>

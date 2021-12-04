@@ -1,5 +1,6 @@
 package demo.simple.picker
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -13,6 +14,7 @@ import demo.simple.picker.databinding.ActivityMainBinding
 import me.simple.picker.PickerItemDecoration
 import me.simple.picker.PickerLayoutManager
 
+@SuppressLint("NotifyDataSetChanged")
 class MainActivity : BaseActivity() {
 
     private val binding by lazy { ActivityMainBinding.inflate(this.layoutInflater) }
@@ -41,7 +43,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initLinearPicker() {
-        val pickerLayoutManager = PickerLayoutManager(PickerLayoutManager.VERTICAL)
+        val pickerLayoutManager =
+            PickerLayoutManager(PickerLayoutManager.VERTICAL, visibleCount = 1)
 //        val pickerLayoutManager = LinearLayoutManager(
 //            this@MainActivity,
 //            LinearLayoutManager.VERTICAL,
