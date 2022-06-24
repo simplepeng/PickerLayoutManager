@@ -182,6 +182,7 @@ timePickerView.setOnTimeSelectedListener { hour, minute ->
 
 ## 版本迭代
 
+* v1.0.5：fix:`getScale`方法
 * v1.0.4：解决`visibleCount = 1`不能滑动的问题
 * v1.0.3：解决`TextPickerView`设置`isBold`频繁requestLayout的问题
 * v1.0.2：`DatePickerView`增加`scrollTodayItem`，`scrollEndItem`等方法，丰富api调用
