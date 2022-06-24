@@ -827,7 +827,8 @@ open class PickerLayoutManager @JvmOverloads constructor(
 
     private fun getScale(scale: Float, intervalCount: Int): Float {
         if (scale == 1.0f) return scale
-        return scale / intervalCount
+//        return scale / intervalCount
+        return 1 - (1 - scale) * intervalCount
     }
 
     /**

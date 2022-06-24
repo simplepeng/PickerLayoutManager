@@ -43,8 +43,10 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initLinearPicker() {
-        val pickerLayoutManager =
-            PickerLayoutManager(PickerLayoutManager.VERTICAL, visibleCount = 3, isLoop = false)
+        val pickerLayoutManager = PickerLayoutManager(
+            PickerLayoutManager.VERTICAL, visibleCount = 7, isLoop = false,
+            scaleX = 0.9f, scaleY = 0.9f
+        )
 //        val pickerLayoutManager = LinearLayoutManager(
 //            this@MainActivity,
 //            LinearLayoutManager.VERTICAL,
